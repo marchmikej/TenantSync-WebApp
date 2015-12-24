@@ -360,11 +360,8 @@
 				this.$http.patch('/landlord/transaction/' + this.modal.transactionId, data)
 					.success( function(transaction) {
 						console.log(transaction);
-					})
-					.error( function(error) {
-
 					});
-				this.fetchTransactions();
+				//this.fetchTransactions();
 				this.showModal = false;
 			},
 

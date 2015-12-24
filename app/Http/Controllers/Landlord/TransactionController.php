@@ -91,7 +91,7 @@ class TransactionController extends Controller {
 	public function update($id)
 	{
 		$transaction = Transaction::find($id);
-		if(Gate::allows('owned-by-user', $transaction))
+		if(Gate::denies('owned-by-user', $transaction))
 		{
 			return abort(403, "That's not yours");
 		}
@@ -110,7 +110,7 @@ class TransactionController extends Controller {
 	public function destroy($id)
 	{
 		$transaction = Transaction::find($id);
-		if(Gate::allows('owned-by-user', $transaction))
+		if(Gate::denies('owned-by-user', $transaction))
 		{
 			return abort(403, "Thats not yours!");
 		}
