@@ -1,4 +1,7 @@
 /bootstrap/compiled.php
+/bootstrap/cache/compiled.php
+
+
 /vendor
 
 
