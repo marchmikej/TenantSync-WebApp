@@ -144,6 +144,13 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        /*
+         * Added by Mitch
+         */
+        App\Providers\AuthServiceProvider::class,
+        App\Providers\EventServiceProvider::class,
+        App\Providers\ViewServiceProvider::class,
+
     ],
 
     /*
@@ -191,6 +198,13 @@ return [
         'URL'       => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
+
+        /*
+         * Added by Mitch
+         */
+        'Token'     => App\Http\Utilities\Token::class,
+		'Debugbar'  => Barryvdh\Debugbar\LaravelDebugbar::class,
+        'Gate'      => Illuminate\Support\Facades\Gate::class,
 
     ],
 

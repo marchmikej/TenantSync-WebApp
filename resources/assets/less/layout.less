@@ -1,0 +1,82 @@
+@border-default: 1px solid darken(@gray-light, 10%);
+
+body 
+{
+	background: darken(@gray-lighter, 1%);
+}
+
+.footer
+{
+	position: static;
+    bottom: 0px;
+    width: 100%;
+    height: 50px;
+    color: #fff;
+    background-color: #3498db;
+}
+
+.page-content-wrapper {
+	min-height: 80vh;
+	position: relative;
+}
+
+.card {
+	background: #fff;
+	border: none;
+	border-radius: 3px;
+	padding: 21px 21px 21px 21px;
+	margin-bottom: 30px;
+	&.row {
+		padding-left: 0;
+		padding-right:0;
+	}
+	.stat 
+	{
+		font-size: 4em;
+	}
+	col-sm-1, col-sm-2, col-sm-3, col-sm-4, col-sm-5, col-sm-6, col-sm-7, col-sm-8, col-sm-9, col-sm-10, col-sm-11
+	{
+
+	} 
+}
+
+.card-header 
+{
+	border-bottom: 1px solid @brand-primary;
+	padding-bottom: 21px;
+	margin-bottom: 21px;
+	font-weight: 300;
+	color: #aaaaaa;	
+	font-size: 1.9em;
+	a 
+	{
+		color: #aaaaaa !important;
+	}
+}
+
+.card-column 
+{
+	border-right: 1px solid @gray-light;
+	min-height: ;
+}
+
+.card div.card-column:last-child
+{
+	border-right: none;	
+}
+
+.b-r {
+	border-right: @border-default;
+}
+
+.b-l {
+	border-left: @border-default;
+}
+
+.b-t {
+	border-top: @border-default;
+}
+
+.b-b {
+	border-bottom: @border-default;
+}

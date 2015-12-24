@@ -1,0 +1,54 @@
+.table-borderless > tbody > tr > td, .table-borderless > tbody > tr > th
+{
+    border: none;
+    border-top: none;
+}
+
+td .form-control 
+{
+	width: 75%;
+    height: auto;
+    padding: 6px 12px;
+}
+
+.table-heading 
+{
+	padding: 0px 8px;
+	> div 
+	{
+		font-weight: bold;
+		padding-bottom: 6px;
+		padding-top: 10px;
+	}
+}
+
+.table-row 
+{
+	font-size: 1.1em;
+	//border-top: 1px solid #d5d5d5;
+	padding: .75em 8px;
+	overflow: auto;	
+}
+
+
+
+.table-striped 
+{
+	> .table-row:nth-child(odd)
+	{
+		background: lighten(@gray-lighter, .75%);
+	}
+}
+
+.table-borderless 
+{
+	.table-row 
+	{
+		border-top: 0 !important;	
+	}
+}
+
+.sub-table
+{
+	font-size: .9em;
+}

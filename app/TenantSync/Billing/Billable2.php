@@ -1,6 +1,6 @@
 <?php namespace TenantSync\Billing;
 
-require_once base_path().'/vendor/usaepay-php/usaepay.php';
+require_once base_path().'/app/Services/usaepay-php/usaepay.php';
 use TenantSync\Models\Transaction;
 use TenantSync\Models\Registration;
 use TenantSync\Billing\UsaEpayGateway;

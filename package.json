@@ -1,7 +1,13 @@
 {
   "private": true,
-  "devDependencies": {
+  "dependencies": {
+    "bootstrap-sass": "^3.0.0",
+    "browserify": "^1.0",
     "gulp": "^3.8.8",
-    "laravel-elixir": "^1.0.0"
+    "http-browserify": "^1.7.0",
+    "laravel-elixir": "^3.0.0",
+    "numeral": "^1.5.3",
+    "vue": "^1.0.12",
+    "vue-resource": "^0.5.1"
   }
 }

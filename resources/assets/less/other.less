@@ -1,0 +1,103 @@
+// FullCalendar
+
+.fc-event-container
+{
+	.fc-day-grid-event 
+	{
+		
+		> .fc-content 
+		{
+			padding: 5px;
+			white-space: normal;
+			overflow: auto;
+			cursor: pointer;
+		}
+			.fc-time 
+			{
+				font-weight: 500;
+				font-size: 1.5em;
+			}
+
+			.fc-title 
+			{
+				color: rgba(255,255,255,0.59);
+			}
+	}
+}
+
+@media (max-width: 767px) {
+	.fc-event-container
+	{
+		.fc-day-grid-event 
+		{
+		 	max-height: 8em;
+			
+			> .fc-content 
+			{
+				white-space: normal;
+			}
+		}
+	}
+}
+
+//End FullCalendar CSS
+
+
+#chat 
+{
+	padding: 0px 5px;
+	.well 
+	{
+		padding: 10px;
+	}
+}
+
+.well
+{
+	border: none;
+	box-shadow: none;
+}
+
+.well-blue {
+	background-color: @brand-primary;
+}
+
+.well-white
+{
+	background-color: #fff;
+}
+
+.scrollable 
+{
+	overflow: auto;
+}
+
+.scrollable-x
+{
+	overflow-x: auto;
+}
+
+.scrollable-y 
+{
+	overflow-y: auto;
+}
+
+.h-sm 
+{
+	height: 200px;
+}
+
+.h-md
+{
+	height: 400px;
+}
+
+.h-lg
+{
+	height: 600px;
+}
+
+.overflow-hide
+{
+	overflow: hidden;
+}
