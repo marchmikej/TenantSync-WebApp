@@ -4,6 +4,7 @@ use Gate;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use TenantSync\Models\Transaction;
+use TenantSync\Models\RecurringTransaction;
 use TenantSync\Models\Property;
 
 class TransactionController extends Controller {
@@ -21,7 +22,12 @@ class TransactionController extends Controller {
 	public function index()
 	{
 		$landlord = $this->user;
-		return view('TenantSync::landlord.transactions.index', compact('landlord'));
+		foreach($landlord->properties as $property)
+		{
+			$netIncomes[] = $property->netIncome();
+		}
+		$netIncome = array_sum($netIncomes);
+		return view('TenantSync::landlord.transactions.index', compact('landlord', 'netIncome'));
 	}
 
 	public function all()
@@ -56,8 +62,16 @@ class TransactionController extends Controller {
 	public function store(Requests\TransactionCreatedRequest $request)
 	{
 		$this->input['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $this->input['date'])));
-
-		return Transaction::create($this->input);
+		$transaction = Transaction::create($this->input);
+		if($this->input['recurring'])
+		{
+			RecurringTransaction::create([
+				'transaction_id' => $transaction->id, 
+				'schedule' => $this->input['schedule'], 
+				'next_date' => date('Y-m-d', strtotime($transaction->date) + (60*60*24*$this->input['schedule']))
+			]);
+		}
+		return $transaction;
 	}
 
 	/**
@@ -95,10 +109,24 @@ class TransactionController extends Controller {
 		{
 			return abort(403, "That's not yours");
 		}
-
 		$this->input['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $this->input['date'])));
-
 		$transaction->update(['amount' => $this->input['amount'], 'description' => $this->input['description'], 'date' => $this->input['date'], 'payable_type' => $this->input['payable_type'], 'payable_id' => $this->input['payable_id']]);
+		
+		if($this->input['recurring'])
+		{
+			RecurringTransaction::create([
+				'transaction_id' => $transaction->id, 
+				'schedule' => $this->input['schedule'], 
+				'next_date' => date('Y-m-d', strtotime($transaction->date) + (60*60*24*$this->input['schedule']))
+			]);
+		}
+		if(!$this->input['recurring'] && $transaction->recurringTransaction)
+		{
+			RecurringTransaction::where([
+				'transaction_id' => $transaction->id, 
+			])
+			->delete();
+		}
 	}
 
 	/**
@@ -115,7 +143,12 @@ class TransactionController extends Controller {
 			return abort(403, "Thats not yours!");
 		}
 
-		return var_dump(Transaction::find($id)->delete());
+		if($transaction->recurringTransaction)
+		{
+			$transaction->recurringTransaction->delete();
+		}
+
+		return json_encode(Transaction::find($id)->delete());
 	}
 
 }

@@ -19,7 +19,23 @@ class Property extends Model {
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['user_id', 'address', 'apt', 'city', 'state', 'zip', 'closing_costs', 'taxes', 'expenses', 'purchase_price', 'insurance', 'down_payment', 'mortgage_rate', 'mortgage_term'];
+	protected $fillable = [
+		'user_id', 
+		'address', 
+		'apt', 
+		'city', 
+		'state', 
+		'zip', 
+		'closing_costs', 
+		'taxes', 
+		'expenses', 
+		'purchase_price',
+		'purchase_date', 
+		'insurance', 
+		'down_payment', 
+		'mortgage_rate', 
+		'mortgage_term'
+	];
 
 	/**
 	 * The attributes excluded from the model's JSON form.
@@ -63,7 +79,7 @@ class Property extends Model {
 		$roi = ($appreciation + $equity + $cash) / 3;
 		//$roi = (new RoiCalculator)->calculateRoi([$this->$incomes, ($this->value - $this->purchase_price)/$this->down_payment], [$this->expenses]);
 		$this->attributes['roi'] = $roi;
-		// return $roi;
+		return $roi;
 	}
 
 	public function netIncome()

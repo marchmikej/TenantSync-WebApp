@@ -7,24 +7,66 @@
 		<div class="col-sm-12">
 			<h4 class="card-header">Overview</h4>
 			<div class="col-sm-3 card-column">
-				<p class="text-center">Avg ROI</p>
-				<p class="stat text-success text-center">{{ round($roi, 2)*100 }}%</p>
+				<p class="text-center">ROI YTD</p>
+				<p class="stat text-primary text-center">{{ round($roi, 2)*100 }}%</p>
 			</div>
 			<div class="col-sm-3 card-column">
-				<p class="text-center">Vacancies</p>
-				<p class="stat text-primary text-center">-</p>
+				<p class="text-center">Revenue YTD</p>
+				<p class="stat text-success text-center">
+				@if($landlord->transactions->count())
+				{{ 
+				array_sum($landlord->transactions->filter(function($transaction) 
+					{
+						return $transaction->amount > 0;
+					}
+				) 
+				->pluck('amount')->toArray())
+				}}
+				@endif
+				</p>
 			</div>
 			<div class="col-sm-3 card-column">
-				<p class="text-center">Something here</p>
-				<p class="stat text-danger text-center">-</p>
+				<p class="text-center">Delinquency YTD</p>
+				<p class="stat text-warning text-center">
+				@if($landlord->rentBills->count())
+				{{ 
+					array_sum($landlord->rentBills->filter(function($rentBill) 
+						{
+							if($rentBill->vacant == 1)
+							{
+								return false;
+							}
+							return date('m', strtotime($rentBill->rent_month)) == date('m', time());
+						})
+					->pluck('bill_amount')->toArray()) - array_sum($landlord->rentPayments()->filter(function($rentPayment) 
+						{
+							return date('Y', strtotime($rentPayment->created_at)) == date('Y', time());
+						})
+					->pluck('amount')->toArray())
+				}}
+				@endif
+				</p>
 			</div>
 			<div class="col-sm-3 card-column">
-				<p class="text-center">Something Else</p>
-				<p class="stat text-warning text-center">-</p>
+				<p class="text-center">Vacancy YTD</p>
+				<p class="stat text-danger text-center">
+				@if($landlord->rentBills->count())
+				{{
+					array_sum($landlord->rentBills->filter(function($rentBill) 
+					{
+						if($rentBill->vacant == 0)
+						{
+							return false;
+						}
+						return date('Y', strtotime($rentBill->rent_month)) == date('Y', time());
+					})
+					->pluck('bill_amount')->toArray())
+				}}
+				@endif
+				</p>
 			</div>
 		</div>
 	</div>
-
 
 	<div class="row card">
 		<div class="col-sm-12">
@@ -33,7 +75,7 @@
 				</h4>
 				<div class="row table-heading">
 					<div class="col-sm-5">Address</div>
-					<div class="col-sm-2">ROI</div>
+					<div class="col-sm-2">ROI YTD</div>
 					<div class="col-sm-2">Devices</div>
 					<div class="col-sm-2">Value</div>
 					<div class="col-sm-1"></div>
@@ -65,13 +107,18 @@
 										<div class="col-sm-6 text-right">@{{ property.insurance ? property.insurance : '-' }}</div>
 									</div>
 									<div class="col-sm-6">
-										<div class="col-sm-6 text-left">Expected rent</div>
-										<div class="col-sm-6 text-right">	
-
-										@{{device.rent_due_day}}
-
-										</div>
-										<div class="col-sm-6 text-left">Actual rent</div>
+										<div class="col-sm-6 text-left">Mortgage Rate</div>
+										<div class="col-sm-6 text-right">@{{ property.rent_due ? device.rent_due : '-' }}</div>
+										<div class="col-sm-6 text-left">Mortgagae Payment</div>
+										<div class="col-sm-6 text-right">@{{ property.mortgage_payment ? device.mortgage_payment : '-' }}</div>
+										<div class="col-sm-6 text-left">Purchase Date</div>
+										<div class="col-sm-6 text-right">@{{ property.purchase_date ? device.purchase_date : '-' }}</div>
+<!-- 										<div class="col-sm-6 text-left">Aquisition Cost</div>
+										<div class="col-sm-6 text-right">@{{ +property.down_payment + +property.closing_costs }}</div>
+										<div class="col-sm-6 text-left">Appreciation</div>
+										<div class="col-sm-6 text-right">@{{ property.value - property.purchase_price }}</div>
+										<div class="col-sm-6 text-left">Appreciation / Aquisition</div>
+										<div class="col-sm-6 text-right">@{{ (property.value - property.purchase_price) /  (property.down_payment + property.closing_costs) }}</div> -->
 									</div>
 								</div>
 							</div>
@@ -84,7 +131,6 @@
 	</div>
 
 	
-	<!-- <pre>@{{ $data | json }}</pre> -->
 </div>
 
 

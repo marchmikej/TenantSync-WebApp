@@ -25,7 +25,8 @@ class Device extends Model {
 		'property_id', 
 		'serial', 
 		'alarm', 
-		'status', 
+		'status',
+		'vacant', 
 		'late_fee', 
 		'grace_period', 
 		'location', 
@@ -94,5 +95,8 @@ class Device extends Model {
 		return $this->morphMany('TenantSync\Models\Transaction', 'payable');
 	}
 
-
+	public function rentBills()
+	{
+		return $this->hasMany('TenantSync\Models\RentBill');
+	}
 }

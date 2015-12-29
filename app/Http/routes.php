@@ -35,7 +35,8 @@ Route::post('password/email', '\App\Http\Controllers\Auth\PasswordController@pos
 
 // Auth Routes
 Route::get('login', '\App\Http\Controllers\Auth\AuthController@getLogin');
-Route::get('applogin/{routing_id?}', '\App\Http\Controllers\Auth\AuthController@getAppLogin');
+Route::get('auth/login/{routing_id?}', 'HomeController@index');
+//Route::get('applogin/{routing_id?}', '\App\Http\Controllers\Auth\AuthController@getAppLogin');
 Route::post('auth/login/{routing_id?}', '\App\Http\Controllers\Auth\AuthController@postLogin');
 Route::get('logout', '\App\Http\Controllers\Auth\AuthController@getLogout');
 Route::group(['middleware' => ['auth']], function()
@@ -110,6 +111,8 @@ Route::group(['middleware' => ['auth']], function()
 		Route::get('calculator/estimate_roi', ['as' => 'landlord.calculator.estimate_roi', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\CalculatorController@estimateRoi']);
 
 		Route::get('maintenance/all', 'MaintenanceController@all');
+		Route::patch('maintenance/{id}', 'MaintenanceController@update');
+		Route::patch('maintenance/{id}/close', 'MaintenanceController@closeRequest');
 		Route::resource('maintenance', 'MaintenanceController');
 		// Route::group(['prefix' => 'maintenance'], function ()
 		// {

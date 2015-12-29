@@ -178,11 +178,6 @@ class ApiController extends Controller {
 		}
 	}
 
-	public function test()
-	{
-		return view('test');
-	}
-
 	public function rentStatus()
 	{
 		return response()->json(['rent_amount' => $this->device->rent_amount, 'balance_due' => $this->device->balance_due]);
@@ -194,8 +189,9 @@ class ApiController extends Controller {
 		{
 			$this->input['amount'] = $this->input['payment_amount'];
 			$response = $this->device->charge($this->input['amount'], $this->input);
-			// $transaction = Transaction::create(['amount' => $this->input['amount'], 'user_id' => $this->device->owner->id]);
-			// RentPayment::create(['user_id' => $this->device->owner->id, 'device_id' => $this->device->id, 'transaction_id' => $transaction->id]);
+
+			$transaction = Transaction::create(['amount' => $this->input['amount'], 'user_id' => $this->device->owner->id, 'payable_type' => 'device', 'payable_id' => $this->device->id, 'description' => 'Rent Payment', 'date' => date('Y-m-d', time())]);
+			RentPayment::create(['user_id' => $this->device->owner->id, 'device_id' => $this->device->id, 'transaction_id' => $transaction->id, 'amount' => $this->input['payment_amount']]);
 			return json_encode($response);
 		}
 		return json_encode(['errors', ['Something has gone wrong...']]);

@@ -11,9 +11,9 @@ class RoiCalculator {
 		$this->mortgageCalculator = new MortgageCalculator;
 	}
 
-	public function cashOnCashRoi($purchasePrice, $rent, $expenses, $taxes, $insurance = 800, $mortgagePercent = 75)
+	public function mortgagePayment($purchasePrice, $downPaymentPercent, $loanTerm, $interestRate)
 	{
-		$mortgage = $purchasePrice * ($mortgagePercent/100);
+		$mortgage = $purchasePrice * ($downPaymentPercent/100);
 		$closingCost = $purchasePrice * 0.025;
 		//$rent = $this->input['rent'];
 		//$expenses = $this->input['expenses'];
@@ -21,11 +21,15 @@ class RoiCalculator {
 		// $insurance = 800;
 
 		$this->mortgageCalculator->setAmountBorrowed($mortgage);
-		$this->mortgageCalculator->setInterestRate(4.125);
-		$this->mortgageCalculator->setYears(30);
-		$mortgagePayment = $this->mortgageCalculator->calculateRepayment();
+		$this->mortgageCalculator->setInterestRate($interestRate);
+		$this->mortgageCalculator->setYears($loanTerm);
+		return $this->mortgageCalculator->calculateRepayment();
+	}
+	public function cashOnCashRoi($purchasePrice, $rent, $expenses, $taxes, $loanTerm = 30, $interestRate = 4.25, $insurance = 800, $downPaymentPercent = 75)
+	{
+		$mortgagePayment = $this->mortgagePayment($purchasePrice, $downPaymentPercent, $loanTerm, $interestRate);
 		$cashFlow = ($rent - ($mortgagePayment + ($expenses/12) + ($taxes/12) + ($insurance/12)));
-		$roi = ($cashFlow * 12) / (($purchasePrice * 0.25) + $closingCost);
+		$roi = ($cashFlow * 12) / (( $purchasePrice * 0.25) + $closingCost);
 
 		return $roi;
 	}
@@ -55,7 +59,10 @@ class RoiCalculator {
 
 	public function equityRoi($property)
 	{
-		$roi = ($property->purchase_price - $property->down_payment) / ($property->down_payment + $property->closing_costs);
+		//mortgage payment principle only for the year
+		$mortgageAmount = $property->purchase_price - $property->down_payment;
+		$principal = $this->mortgageCalculator->principalPayment($mortgageAmount, $property->mortgage_rate, $property->mortgage_term);
+		$roi = ($principal) / ($property->down_payment + $property->closing_costs);
 		return $roi;
 	}
 

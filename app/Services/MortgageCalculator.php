@@ -96,4 +96,17 @@ class MortgageCalculator {
     {
         return $this->calculateRepayment() * $monthsLeft;
     }
+
+    /**
+     * Calculate the amount of principle paid each payment
+     * @param int $
+     * @return int
+     */
+    public function principalPayment($mortgageAmount, $interestRate, $loanTerm)
+    {
+        $this->setAmountBorrowed($mortgageAmount);
+        $this->setInterestRate($interestRate);
+        $this->setYears($loanTerm);
+        return $this->calculateRepayment() - $this->calculateInterestOnlyPayment();
+    }
 }

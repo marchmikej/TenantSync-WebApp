@@ -15,9 +15,11 @@ elixir(function(mix) {
     mix		
 		.less(['app.less'])
 		.styles([
-			'../../../public/css/app.css',
-			'../fullcalendar/fullcalendar.min.css'
-		])
+			'fullcalendar.min.css'
+		], 'public/css', 'resources/assets/fullcalendar')
+		.styles([
+			'app.css',
+		], 'public/css', 'public/css')
 		.scripts([
 			// '../bower/bootstrap/dist/js/bootstrap.min.js',
 			'../bower/moment/min/moment.min.js',

@@ -37,9 +37,9 @@ class HomeController extends Controller {
 
 	public function landlord()
 	{
-		$devices = $this->user->devices;
-		$maintenanceRequests = $this->user->maintenanceRequests;
-		return view('TenantSync::landlord.index', compact('devices', 'maintenanceRequests'));
+		$landlord = $this->user;
+		$devices = $this->user->devices->load(['property', 'alarm']);
+		return view('TenantSync::landlord.index', compact('devices', 'landlord'));
 	}
 
         

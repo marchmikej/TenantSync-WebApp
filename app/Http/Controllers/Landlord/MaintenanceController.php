@@ -98,7 +98,7 @@ class MaintenanceController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id, Requests\MaintenanceUpdatedRequest $request)
+	public function update($id)
 	{
 		$maintenanceRequest = MaintenanceRequest::find($id);
 
@@ -108,35 +108,39 @@ class MaintenanceController extends Controller {
 		}
 
 		$this->input['appointment_date'] = strtotime($this->input['appointment_date']);
-		
-		if (substr($this->input['appointment_date'], -2) == 'pm') 
-		{
-			$this->input['appointment_date'] = $this->input['appointment_date'] + 12*60*60;
-		}
 		$this->input['appointment_date'] = date('Y-m-d H:i:s', $this->input['appointment_date']);
-		$maintenanceRequest = MaintenanceRequest::find($id);
-
-		if($maintenanceRequest->appointment_date !== $this->input['appointment_date'])
+		
+		if(! empty($this->input['appointment_date']))
 		{
 			$maintenanceRequest->status = 'awaiting_approval';
+			$maintenanceRequest->appointment_date = $this->input['appointment_date'];
+			$maintenanceRequest->save();
 		}
-		$maintenanceRequest->update($this->input);
+		
 
 		if(empty(Transaction::find($maintenanceRequest->transaction_id)))
 		{
-			$transaction = Transaction::create(['user_id' => $maintenanceRequest->user_id, 'description' => 'Maintenance Request '.$maintenanceRequest->id, 'payable_type' => 'device', 'payable_id' => $maintenanceRequest->device->id]);
+			$transaction = Transaction::create(['user_id' => $maintenanceRequest->user_id, 'description' => 'Maintenance Request '.$maintenanceRequest->id, 'payable_type' => 'device', 'payable_id' => $maintenanceRequest->device->id, 'date' => date('Y-m-d', time())]);
 			$maintenanceRequest->update(['transaction_id' => $transaction->id]);
 		}
 
 		if(isset($this->input['cost']))
 		{
 			$transaction = Transaction::find($maintenanceRequest->transaction_id);
-			$transaction->update(['amount' => $this->input['cost']]);
+			$transaction->update(['amount' => $this->input['cost'], 'date' => date('Y-m-d', time())]);
 		}
 
 		\Event::fire(new LandlordRespondedToMaintenance($maintenanceRequest->device->id, 'Maintenance response received.'));
 
 		return redirect()->back();
+	}
+
+	public function closeRequest($id)
+	{
+		$maintenanceRequest = MaintenanceRequest::find($id);
+		$maintenanceRequest->status = 'closed';
+		$maintenanceRequest->save();
+		return $maintenanceRequest;
 	}
 
 	/**

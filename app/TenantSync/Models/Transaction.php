@@ -42,4 +42,14 @@ class Transaction extends Model {
 	    // which is always safe, because new 'class'
 	    // will work just the same as new 'Class'
     }
+
+    public function rentPayments()
+    {
+    	return $this->belongsToMany('TenantSync\Models\RentBill', 'rent_payments', 'transaction_id', 'rent_bill_id');
+    }
+
+    public function recurringTransaction()
+    {
+    	return $this->hasOne('TenantSync\Models\RecurringTransaction');
+    }
 }

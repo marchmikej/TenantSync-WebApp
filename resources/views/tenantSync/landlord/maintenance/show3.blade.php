@@ -121,9 +121,8 @@
 					</div> -->
 			
 			
-					<div class="form-group">
-						<input class="btn btn-primary" type="submit" value="Respond">
-					</div>	
+					<button class="col-sm-3 btn btn-primary">Respond</button>
+					<button class="col-sm-3 btn btn-primary col-sm-offset-9">Close</button>
 				</form>
 			</div>
 		</div>

@@ -74,6 +74,13 @@
 						</div>
 
 						<div class="form-group">
+							<label class="control-label col-sm-3" for="purchase_date">Purchase Date</label>
+							<div class="col-sm-9">
+								<input class="form-control" type="date" name="purchase_date" placeholder="Purchase Date" value="{{ $property->purchase_date }}"/>
+							</div>
+						</div>
+
+						<div class="form-group">
 							<label class="control-label col-sm-3" for="closing_costs">Closing Costs</label>
 							<div class="col-sm-9">
 								<input class="form-control" type="text" name="closing_costs" placeholder="Closing Costs" value="{{ $property->closing_costs }}"/>

@@ -25,7 +25,7 @@ class UsaEpayGateway {
 			{
 				$options['method_id'] = 0;
 			}
-			return $this->chargeCustomer($amount, $options);
+			return $this->chargeBillable($amount, $options);
 		}
 
 		try 
@@ -43,7 +43,7 @@ class UsaEpayGateway {
 		}
 	}
 
-	public function chargeCustomer($amount, $options)
+	public function chargeBillable($amount, $options)
 	{
 		debug((new CustomerTransactionRequest($amount, $options))->build());
 		if (! $this->billable->hasCustomerId())

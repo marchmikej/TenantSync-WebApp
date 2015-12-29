@@ -45,7 +45,7 @@ class LandlordController extends SalesController {
 		//$landlord->charge(500);
 		//$landlord->addDevice();
 
-		$landlord->updateRecurringBillingTransactions();
+		//$landlord->updateRecurringBillingTransactions();
 
 		return view('TenantSync::sales.landlord.show2', compact('landlord', 'states'));
 	}

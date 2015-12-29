@@ -111,9 +111,27 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasMany('TenantSync\Models\Transaction');
 	}
 
+	public function rentPayments()
+	{
+		return $this->hasMany('TenantSync\Models\Transaction')
+			->join('rent_payments', 'rent_payments.transaction_id', '=', 'transactions.id')
+			->select('transactions.*', 'rent_payments.rent_bill_id')
+			->get();
+	}
+
+	public function rentBills()
+	{
+		return $this->hasMany('TenantSync\Models\RentBill');
+	}
+
 	public function isRegistered()
 	{
 		return $this->registration->is_paid;
+	}
+
+	public function recurringTransactions()
+	{
+		return $this->hasManyThrough('TenantSync\Models\RecurringTransaction', 'TenantSync\Models\Transaction');
 	}
 
 }
