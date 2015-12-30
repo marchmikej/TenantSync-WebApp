@@ -31,7 +31,7 @@ class PhoneAppController extends Controller
         $returnValue="unsuccessful";
         if (Auth::attempt(['email' => $this->input['email'], 'password' => $this->input['password']])) {
             $devices = \DB::table('landlord_devices')
-                ->where('user_id', '=', Auth::id())
+                ->where('user_id', '=', $this->user->id)
                 ->where('routing_id', '=', $this->input['routeId'])
                 ->get();
             if(count($devices)==0) {
@@ -41,8 +41,13 @@ class PhoneAppController extends Controller
             } 
             $returnValue="successful";
         }
-        Auth::logout();
+        //Auth::logout();
         return $returnValue;
+    }
+
+    public function test()
+    {
+        return "this is a test";
     }
 
     /**
