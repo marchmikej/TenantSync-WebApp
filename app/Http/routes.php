@@ -20,7 +20,7 @@ Route::get('api/message', 'Api\ApiController@getMessages');
 Route::post('api/message', 'Api\ApiController@createMessage');
 Route::post('api/pay', 'Api\ApiController@payRent');
 Route::post('api/rent-status', 'Api\ApiController@rentStatus');
-Route::post('api/registeriapp', 'Api\PhoneAppController@create');
+Route::get('api/registeriapp', 'Api\PhoneAppController@create');
 
 
 Route::get('/', 'HomeController@index');
