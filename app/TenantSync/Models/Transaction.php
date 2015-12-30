@@ -52,4 +52,14 @@ class Transaction extends Model {
     {
     	return $this->hasOne('TenantSync\Models\RecurringTransaction');
     }
+
+    public function recurring()
+    {
+    	if($this->recurringTransaction)
+    	{
+    		$this->attributes['recurring'] = $this->recurringTransaction;
+    		return true;
+    	}
+    	return false;
+    }
 }

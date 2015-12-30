@@ -116,7 +116,7 @@
 							<div :class="transaction.amount > 0 ? 'text-success' : 'text-danger'" class="col-sm-2"><strong>@{{ transaction.amount }}</strong></div>
 							<div class="col-sm-2 overflow-hide">@{{ getTransactionPayable(transaction) }}</div>
 							<div class="col-sm-5 overflow-hide">@{{ transaction.description }}</div>
-							<div v-show="transaction" class="col-sm-1 text-right"><span class="text-warning icon icon-edit"></span></div>
+							<div class="col-sm-1 text-right"><span v-show="transaction.recurring" class="text-warning icon icon-cycle"></span></div>
 							<div class="col-sm-1">@{{ (transaction.date.substring(5) + '/' + transaction.date.substring(2, 4)).replace('-', '/') }}</div>
 							<div class="col-sm-1">
 								<button @click=" generateModal( transaction.id )" class="btn btn-clear p-a-0"><span class="text-primary icon icon-edit"></span></button>
@@ -205,9 +205,9 @@
 	    	</div><!-- /.modal-content -->
 	  	</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
+<pre>@{{ $data | json }}</pre>
 </div>
 
-<pre></pre>
 
 
 
@@ -277,6 +277,8 @@
 					this.modal.description = (this.transactions[id].description) ? this.transactions[id].description : '';
 					this.modal.date = this.transactions[id].date;
 					this.modal.billable = this.transactions[id].payable_id;
+					this.modal.schedule = this.transactions[id].recurring ? this.transactions[id].recurring.schedule : null;
+					this.modal.recurring = this.transactions[id].recurring ? true : false;
 				}
 				this.showModal = true;
 			},
