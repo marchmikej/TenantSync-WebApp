@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Auth;
+use DB;
 use App\Http\Controllers\Controller;
 
 class PhoneAppController extends Controller
@@ -26,7 +28,21 @@ class PhoneAppController extends Controller
      */
     public function create()
     {
-        //
+        $returnValue="unsuccessful";
+        if (Auth::attempt(['email' => $this->input['email'], 'password' => $this->input['password']])) {
+            $devices = \DB::table('landlord_devices')
+                ->where('user_id', '=', Auth::id())
+                ->where('routing_id', '=', $this->input['routeId'])
+                ->get();
+            if(count($devices)==0) {
+                DB::table('landlord_devices')->insert(
+                    ['user_id' => $this->user->id, 'routing_id' => $this->input['routeId'], 'type' => $this->input['type']]
+                );
+            } 
+            $returnValue="successful";
+        }
+        Auth::logout();
+        return $returnValue;
     }
 
     /**
