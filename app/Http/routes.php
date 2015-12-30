@@ -165,16 +165,16 @@ Route::group(['middleware' => ['auth']], function()
 			Route::patch('{id}',['as' => 'landlord.transaction.update', 'uses' => 'TransactionController@update']);
 			Route::delete('{id}',['as' => 'landlord.transaction.delete', 'uses' => 'TransactionController@destroy']);
 		});
-		Route::group(['prefix' => 'api'], function ()
-		{
-			Route::group(['prefix' => 'devices'], function ()
-			{
-				Route::get('/',['as' => 'landlord.device.index', 'permission' => 'is_landlord', 'uses' => 'DeviceController@index']);
-				Route::get('/all',['as' => 'landlord.device.all', 'permission' => 'is_landlord', 'uses' => 'Api\DeviceController@all']);
-				Route::get('{id}',['as' => 'landlord.device.show', 'permission' => 'is_landlord', 'uses' => 'DeviceController@all']);
-				Route::post('message',['as' => 'landlord.message.reply', 'permission' => 'can_message', 'uses' => 'Api\MessageController@store']);
-			});
-		});
+		// Route::group(['prefix' => 'api'], function ()
+		// {
+		// 	Route::group(['prefix' => 'devices'], function ()
+		// 	{
+		// 		Route::get('/',['as' => 'landlord.device.index', 'permission' => 'is_landlord', 'uses' => 'DeviceController@index']);
+		// 		Route::get('/all',['as' => 'landlord.device.all', 'permission' => 'is_landlord', 'uses' => 'Api\DeviceController@all']);
+		// 		Route::get('{id}',['as' => 'landlord.device.show', 'permission' => 'is_landlord', 'uses' => 'DeviceController@all']);
+		// 		Route::post('message',['as' => 'landlord.message.reply', 'permission' => 'can_message', 'uses' => 'Api\MessageController@store']);
+		// 	});
+		// });
 	});
 
 	Route::group(['prefix' => 'manager', 'namespace' => 'Landlord'], function()

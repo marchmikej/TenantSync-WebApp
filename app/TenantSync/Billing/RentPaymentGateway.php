@@ -10,8 +10,11 @@ class RentPaymentGateway {
 		$this->device = $device;
 	}
 
-	public function makePayment($amount, $options)
+	public function makePayment($amount, $options = array())
 	{
+		//credit device for the amount charged
+		//process all payments for bill from the device credit
+		
 		$bills = $this->unpaidBills($this->device);	
 		$bill = $bills->shift();
 		$result = $this->attemptPayment($amount);
@@ -36,27 +39,30 @@ class RentPaymentGateway {
 
 	public function adjustBill($amount, $bill)
 	{
-		if($difference == 0)
+		if(($amount - $bill->balance_due) == 0)
 		{
 			$this->closeBill($bill);	
 		}
 		if($amount > $bill->balance_due)
 		{
 			$this->closeBill($bill);
-			$this->applyCredit($this->device, $difference);
+			$this->applyCredit($amount - $bill->balance_due);
 		}
 		if($amount < $bill->balance_due)
 		{
 			$bill->balance_due = $bill->balance_due - $amount;
 		}
-		
+
 		return $bill;
 	}
 
-	public function applyCredit($amount, $bill)
+	public function applyCredit($credit)
 	{
-		//check if there are any outstanding bills to apply the credit to.
-		if($this->)
+		if($this->unpaidBills)
+		{
+			$this->makePayment($credit);
+		}
+		return $this
 	}
 
 	public function markBillAsPaid($bill)

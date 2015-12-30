@@ -8,6 +8,7 @@ use TenantSync\Models\Transaction;
 use App\Http\Controllers\Controller;
 use App\Events\DeviceMadeUpdate;
 use TenantSync\Landlord\LandlordGateway;
+use TenantSync\Billing\RentPaymentGateway;
 use TenantSync\Models\MaintenanceRequest;
 
 class ApiController extends Controller {
@@ -184,14 +185,20 @@ class ApiController extends Controller {
 	}
 
 	public function payRent()
-	{
+	{ 
+		//**validate device
+		//**attempt to charge the device
+		//apply a rent payment if charge successful
+		//return true or false
 		if($this->deviceIsValid($this->device))
 		{
 			$this->input['amount'] = $this->input['payment_amount'];
 			$response = $this->device->charge($this->input['amount'], $this->input);
-
-			$transaction = Transaction::create(['amount' => $this->input['amount'], 'user_id' => $this->device->owner->id, 'payable_type' => 'device', 'payable_id' => $this->device->id, 'description' => 'Rent Payment', 'date' => date('Y-m-d', time())]);
-			RentPayment::create(['user_id' => $this->device->owner->id, 'device_id' => $this->device->id, 'transaction_id' => $transaction->id, 'amount' => $this->input['payment_amount']]);
+			if($response)
+			{
+				$transaction = Transaction::create(['amount' => $this->input['amount'], 'user_id' => $this->device->owner->id, 'payable_type' => 'device', 'payable_id' => $this->device->id, 'description' => 'Rent Payment', 'date' => date('Y-m-d', time())]);
+				(new RentPaymentGateway($this->device))->makePayment($amount);
+			}
 			return json_encode($response);
 		}
 		return json_encode(['errors', ['Something has gone wrong...']]);

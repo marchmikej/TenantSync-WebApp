@@ -1,4 +1,5 @@
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
+@import "../fullcalendar/fullcalendar.min.css";
 html {
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;

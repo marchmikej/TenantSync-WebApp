@@ -89,7 +89,7 @@
 			<div class="table-body table-striped">
 				@foreach($devices as $device)
 					<div class="table-row row">
-						<div class="col-sm-6">{{$device->property->address . ', ' }}<a href="{{ route('landlord.device.show', $device->id) }}">{{ $device->location }}</a></div>
+						<div class="col-sm-6">{{$device->property->address . ', ' }}<a href="{{ route('landlord.device.show', ['id' => $device->id]) }}">{{ $device->location }}</a></div>
 						<div class="col-sm-2">{{ $device->rent_amount }}</div>
 						<div class="col-sm-2">{{ $device->status }}</div>
 						<div class="col-sm-2">{{ $device->alarm ? $device->alarm->slug : 'Off' }}</div>

@@ -16,7 +16,7 @@ elixir(function(mix) {
 		.less(['app.less'])
 		.styles([
 			'fullcalendar.min.css'
-		], 'public/css', 'resources/assets/fullcalendar')
+		], 'public/css/fullcalendar.min.css', 'resources/assets/fullcalendar')
 		.styles([
 			'app.css',
 		], 'public/css', 'public/css')
