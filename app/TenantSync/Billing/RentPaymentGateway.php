@@ -10,21 +10,30 @@ class RentPaymentGateway {
 		$this->device = $device;
 	}
 
-	public function makePayment($amount, $options = array())
+	public function processPayment($amount, $payment)
 	{
 		//credit device for the amount charged
+		$this->addToCredit($amount);
 		//process all payments for bill from the device credit
-		
-		$bills = $this->unpaidBills($this->device);	
-		$bill = $bills->shift();
-		$result = $this->attemptPayment($amount);
-		if($result)
-		{
-			$this->addTransaction($amount);
-			$this->adjustBill($amount, $bill);
-		}
+		$this->payBills($payment);
 
-		return $result;
+		//$bills = $this->unpaidBills();
+		//$bill = $bills->shift();
+	}
+
+	public function payBills($payment)
+	{
+		//loop through the open bills and apply any credit to them
+		$bills = $this->unpaidBills();
+		//$bill = $bills->shift();
+		foreach($bills as $bill)
+		{
+			$this->payBill($bill, $payment);
+			if(! $this->deviceHasCredit())
+			{
+				break;
+			}
+		}
 	}
 
 	public function unpaidBills()
@@ -32,42 +41,50 @@ class RentPaymentGateway {
 		return RentBill::where(['user_id' => $this->device->owner->id, 'device_id' => $this->device->id, 'paid' => 0, 'vacant' => 0])->orderBy('rent_month', 'asc')->get();	
 	}
 
-	public function attemptPayment($amount)
+	public function payBill($bill, $payment)
 	{
-		return (new UsaEpayGateway($device))->charge($amount, $options);
-	}
-
-	public function adjustBill($amount, $bill)
-	{
-		if(($amount - $bill->balance_due) == 0)
+		if($this->device->credit >= $bill->balance_due)
 		{
-			$this->closeBill($bill);	
-		}
-		if($amount > $bill->balance_due)
-		{
+			$this->subtractFromCredit($bill->balance_due);
+			$this->addPayment($bill->balance_due, $bill, $payment);
 			$this->closeBill($bill);
-			$this->applyCredit($amount - $bill->balance_due);
-		}
-		if($amount < $bill->balance_due)
-		{
-			$bill->balance_due = $bill->balance_due - $amount;
 		}
 
-		return $bill;
+		if($this->device->credit < $bill->balance_due)
+		{
+			$this->addPayment($this->device->credit, $bill, $payment);
+			$this->subtractFromCredit($this->device->credit);
+		}
+
 	}
 
-	public function applyCredit($credit)
+	public function addPayment($amount, $bill, $payment)
 	{
-		if($this->unpaidBills)
-		{
-			$this->makePayment($credit);
-		}
-		return $this
+		$payment->rentBills()->attach([$bill->id => ['amount' => abs($amount)]]);
+		$bill->balance_due = $bill->balance_due - abs($amount);
+		$bill->save();
 	}
 
-	public function markBillAsPaid($bill)
+	public function deviceHasCredit()
+	{
+		return $this->device->credit;
+	}
+
+	public function closeBill($bill)
 	{
 		$bill->paid = 1;
-		return $bill->save();
+		$bill->save();
+	}
+
+	public function addToCredit($amount)
+	{
+		$this->device->credit += abs($amount);
+		$this->device->save();
+	}
+
+	public function subtractFromCredit($amount)
+	{
+		$this->device->credit = $this->device->credit - abs($amount);
+		$this->device->save();
 	}
 }

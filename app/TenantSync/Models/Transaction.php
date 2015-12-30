@@ -43,9 +43,9 @@ class Transaction extends Model {
 	    // will work just the same as new 'Class'
     }
 
-    public function rentPayments()
+    public function rentBills()
     {
-    	return $this->belongsToMany('TenantSync\Models\RentBill', 'rent_payments', 'transaction_id', 'rent_bill_id');
+    	return $this->belongsToMany('TenantSync\Models\RentBill', 'rent_payments', 'transaction_id', 'rent_bill_id')->withTimestamps();;
     }
 
     public function recurringTransaction()

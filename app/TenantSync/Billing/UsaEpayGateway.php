@@ -3,7 +3,7 @@
 namespace TenantSync\Billing;
 
 use TenantSync\Billing\TransactionRequest;
-require_once base_path().'/vendor/usaepay-php/usaepay.php'; /* StripeGateway */
+require_once base_path().'/app/Services/usaepay-php/usaepay.php'; /* StripeGateway */
 
 class UsaEpayGateway {
 
@@ -48,7 +48,7 @@ class UsaEpayGateway {
 		debug((new CustomerTransactionRequest($amount, $options))->build());
 		if (! $this->billable->hasCustomerId())
 		{
-			throw new InvalidArgumentException('No payment info provided or no customer Id.');
+			throw new \InvalidArgumentException('No payment info provided or no customer Id.');
 		}
 		return $this->gateway->runCustomerTransaction($this->billable->createToken(), $this->billable->customer_id, $options['method_id'], [
 				'Command'=>'Sale',

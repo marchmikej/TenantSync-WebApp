@@ -36,7 +36,7 @@
 							{
 								return false;
 							}
-							return date('m', strtotime($rentBill->rent_month)) == date('m', time());
+							return date('Y', strtotime($rentBill->rent_month)) == date('Y', time());
 						})
 					->pluck('bill_amount')->toArray()) - array_sum($landlord->rentPayments()->filter(function($rentPayment) 
 						{

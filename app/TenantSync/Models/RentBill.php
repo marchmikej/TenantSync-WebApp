@@ -25,9 +25,9 @@ class RentBill extends Model
     	return $this->belongsTo('TenantSync\Models\Device');
     }
 
-    public function addPayment()
+    public function transactions()
     {
-    	//
+    	return $this->belongsToMany('TenantSync\Models\Transaction', 'rent_payments', 'rent_bill_id', 'transaction_id')->withTimestamps();;
     }
 
 }
