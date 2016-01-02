@@ -37,7 +37,7 @@ class TransactionRequest extends UsaEpayObject {
 		$this->options['amount'] = $amount;
  	}
  	
-	public function build($amount, $options)
+	public function build()
 	{
 		return $this->properties($this->options);
 	}
@@ -60,7 +60,7 @@ class TransactionRequest extends UsaEpayObject {
 	{     
 	    if (empty($this->options['payment_type']) || empty($types[$this->options['payment_type']])) 
 	    {
-	        throw new InvalidArgumentException('Please provide a proper payment type.');
+	        throw new \InvalidArgumentException('Please provide a proper payment type.');
 	    } 
 	    
 	    $key = $types[$this->options['payment_type']];

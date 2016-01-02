@@ -186,18 +186,15 @@ class ApiController extends Controller {
 
 	public function payRent()
 	{ 
-		//**validate device
-		//**attempt to charge the device
-		//apply a rent payment if charge successful
-		//return true or false
+		//card number, expiration, card_holder, cvv2, payment_type
 		if($this->deviceIsValid($this->device))
 		{
 			$this->input['amount'] = $this->input['payment_amount'];
 			$response = $this->device->charge($this->input['amount'], $this->input);
 			if($response)
 			{
-				$transaction = Transaction::create(['amount' => $this->input['amount'], 'user_id' => $this->device->owner->id, 'payable_type' => 'device', 'payable_id' => $this->device->id, 'description' => 'Rent Payment', 'date' => date('Y-m-d', time())]);
-				(new RentPaymentGateway($this->device))->makePayment($amount);
+				$payment = Transaction::create(['amount' => $this->input['amount'], 'user_id' => $this->device->owner->id, 'payable_type' => 'device', 'payable_id' => $this->device->id, 'description' => 'Rent Payment', 'date' => date('Y-m-d', time()), 'reference_number' => $response->RefNum]);
+				return (new RentPaymentGateway($this->device))->processPayment($payment->amount, $payment);
 			}
 			return json_encode($response);
 		}

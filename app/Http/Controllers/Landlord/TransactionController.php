@@ -39,6 +39,7 @@ class TransactionController extends Controller {
 			{
 				$transaction->property = Property::find($transaction->payable->property_id);
 			}
+			$transaction->recurring();
 		}
 
 		return $transactions;
@@ -114,11 +115,20 @@ class TransactionController extends Controller {
 		
 		if($this->input['recurring'])
 		{
-			RecurringTransaction::create([
+			if(! RecurringTransaction::where(['transaction_id' => $transaction->id])->exists())
+			{
+				RecurringTransaction::create([
+					'transaction_id' => $transaction->id, 
+					'schedule' => $this->input['schedule'], 
+					'next_date' => date('Y-m-d', strtotime($transaction->date) + (60*60*24*$this->input['schedule']))
+				]);
+			}
+			RecurringTransaction::where(['transaction_id' => $transaction->id])->update([
 				'transaction_id' => $transaction->id, 
 				'schedule' => $this->input['schedule'], 
 				'next_date' => date('Y-m-d', strtotime($transaction->date) + (60*60*24*$this->input['schedule']))
 			]);
+			
 		}
 		if(!$this->input['recurring'] && $transaction->recurringTransaction)
 		{

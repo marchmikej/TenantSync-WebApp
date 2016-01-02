@@ -150,7 +150,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\ViewServiceProvider::class,
-        Barryvdh\Debugbar\ServiceProvider::class,
+        //Barryvdh\Debugbar\ServiceProvider::class,
 
     ],
 
@@ -204,7 +204,7 @@ return [
          * Added by Mitch
          */
         'Token'     => App\Http\Utilities\Token::class,
-		'Debugbar'  => Barryvdh\Debugbar\LaravelDebugbar::class,
+		//'Debugbar'  => Barryvdh\Debugbar\LaravelDebugbar::class,
         'Gate'      => Illuminate\Support\Facades\Gate::class,
 
     ],
