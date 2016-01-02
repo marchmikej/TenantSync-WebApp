@@ -20,9 +20,6 @@ Route::get('api/message', 'Api\ApiController@getMessages');
 Route::post('api/message', 'Api\ApiController@createMessage');
 Route::post('api/pay', 'Api\ApiController@payRent');
 Route::post('api/rent-status', 'Api\ApiController@rentStatus');
-Route::post('api/registeriapp', 'Api\PhoneAppController@create');
-Route::get('api/test', 'Api\PhoneAppController@test');
-Route::post('api/test', 'Api\PhoneAppController@test');
 
 Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index');
@@ -54,7 +51,8 @@ Route::group(['middleware' => ['auth']], function()
 // Protected by the ACL middleware
 Route::group(['middleware' => ['auth']], function()
 {
-
+	Route::post('api/phoneverify/{id}', 'Api\PhoneAppController@phoneverify');
+	Route::get('api/managenotifications/{id}', 'Api\PhoneAppController@manageNotifications');
 	// Sales Rep Routes
 	Route::group(['prefix' => 'sales', 'namespace' => 'Sales'], function()
 	{
