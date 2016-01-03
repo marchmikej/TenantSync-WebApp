@@ -1,4 +1,4 @@
-@if ($device->id == $user->id)
+@if ($device->user_id == $user->id)
 	Do you want this device to receive notifications.
 @else
 	This device is currently assigned to another user if you want it assigned to {{$user->email}} please select Update Notification.
@@ -19,7 +19,7 @@
     </div>
 </form>
 
-@if ($device->id != $user->id)
+@if ($device->user_id != $user->id)
 	<form method="GET" action="/home">
 		<div>
         	<button type="submit">Home</button>
