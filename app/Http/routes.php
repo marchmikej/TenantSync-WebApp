@@ -51,6 +51,7 @@ Route::group(['middleware' => ['auth']], function()
 // Protected by the ACL middleware
 Route::group(['middleware' => ['auth']], function()
 {
+	// Phone App Notification Routes
 	Route::post('api/phoneverify/{id}', 'Api\PhoneAppController@phoneverify');
 	Route::get('api/managenotifications/{id}', 'Api\PhoneAppController@manageNotifications');
 	// Sales Rep Routes

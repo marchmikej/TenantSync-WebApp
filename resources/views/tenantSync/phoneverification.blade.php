@@ -1,5 +1,5 @@
 @if ($device->id == $user->id)
-	Do you want this device to receive notifications
+	Do you want this device to receive notifications.
 @else
 	This device is currently assigned to another user if you want it assigned to {{$user->email}} please select Update Notification.
 	<br>To keep select Home.

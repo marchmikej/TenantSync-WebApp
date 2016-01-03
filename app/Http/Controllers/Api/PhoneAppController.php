@@ -28,7 +28,7 @@ class PhoneAppController extends Controller
      */
     public function create()
     {
-        //
+        // 
     }
 
     public function manageNotifications($route_id) {
