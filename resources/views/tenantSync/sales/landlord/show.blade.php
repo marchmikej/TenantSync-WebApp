@@ -73,24 +73,21 @@
 		<div class="col-sm-12 p-a well">
 			<table class="devices-table table">
 				<thead>
-					<th>Serial</th>
-					<th>Alarm</th>
-					<th>Status</th>
 					<th>Address</th>
 					<th>Apt.</th>
-					<th>City</th>
-					<th>State</th>
-					<th>Zip</th>
-					<th>Rent</th>
-					<th>Due</th>
+					<th>Alarm</th>
+					<th>Status</th>
+ d					<th>Serial</th>
 					<th></th>
 				</thead>
 				<tbody>
 					@foreach($landlord->devices as $device)
 					<tr>
-						<td><a href="/sales/device/{{ $device->id }}">{{ $device->serial }}</a></td>
+						<td><a href="/sales/device/{{ $device->id }}">{{ $device->address . ', ' .  $device->city . ' ' . $device->state }}</a></td>
+						<td>{{ $device->apt }}</td>
 						<td>{{ $device->alarm->slug }}</td>
 						<td>{{ $device->status }}</td>
+						<td>{{ $device->serial }}</td>
 						
 						<td></td>
 					</tr>

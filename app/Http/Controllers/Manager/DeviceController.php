@@ -20,7 +20,7 @@ class DeviceController extends Controller {
 	 */
 	public function index()
 	{
-		$properties = $this->manager->devices;
+		$properties = $this->manager->properties;
 		return view('TenantSync::manager/device/index', compact('properties'));
 	}
 

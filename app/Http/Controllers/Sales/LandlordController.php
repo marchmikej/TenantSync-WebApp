@@ -43,7 +43,7 @@ class LandlordController extends SalesController {
 		$landlord = User::find($id);
 		//$landlord->charge(500, ['account_holder' => 'mitchtest', 'payment_type' => 'card', 'card_number' => '4000100211112222', 'expiration' => '0919', 'cvv2' => '999', 'description' => "mitch's test charge with new billable trait", 'address' => '5042 parker rd', 'zip' => '14075']);
 		//$landlord->charge(500);
-		//$landlord->addDevice();
+		$landlord->addDevice($landlord->devices->first());
 
 		//$landlord->updateRecurringBillingTransactions();
 

@@ -116,41 +116,17 @@ Route::group(['middleware' => ['auth']], function()
 		Route::patch('maintenance/{id}', 'MaintenanceController@update');
 		Route::patch('maintenance/{id}/close', 'MaintenanceController@closeRequest');
 		Route::resource('maintenance', 'MaintenanceController');
-		// Route::group(['prefix' => 'maintenance'], function ()
-		// {
-		// 	Route::get('/', ['as' => 'landlord.maintenance.index', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\MaintenanceController@index']);
-		// 	Route::get('all', ['as' => 'landlord.maintenance.all', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\MaintenanceController@all']);
-		// 	Route::get('{id}', ['as' => 'landlord.maintenance.show', 'permission' => 'can_view_maintenance', 'uses' => '\App\Http\Controllers\Landlord\MaintenanceController@show']);
-		// 	Route::post('{id}/edit', ['as' => 'landlord.maintenance.update', 'permission' => 'can_respond_to_maintenance', 'uses' => '\App\Http\Controllers\Landlord\MaintenanceController@update']);
-		// });
+
 
 		Route::get('device/all', 'DeviceController@all');
 		Route::post('device/message', 'MessageController@store');
 		Route::resource('device', 'DeviceController');
-		// Route::group(['prefix' => 'device'], function ()
-		// {
-		// 	Route::get('/',['as' => 'landlord.device.index', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\DeviceController@index']);
-		// 	Route::post('/',['as' => 'landlord.device.store', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\DeviceController@store']);
-		// 	Route::get('/all',['as' => 'landlord.device.all', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\DeviceController@all']);
-		// 	Route::get('/create',['as' => 'landlord.device.create', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\DeviceController@create']);
-		// 	Route::get('{id}',['as' => 'landlord.device.show', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\DeviceController@show']);
-		// 	Route::post('{id}/edit',['as' => 'landlord.device.update', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\DeviceController@update']);
-		// 	Route::post('message',['as' => 'landlord.message.reply', 'permission' => 'can_message', 'uses' => '\App\Http\Controllers\Landlord\MessageController@store']);
-		// });
+
 
 		Route::get('properties/all', 'PropertyController@all');
 		Route::get('properties/{id}/devices', 'PropertyController@devices');
 		Route::resource('properties', 'PropertyController');
-		// Route::group(['prefix' => 'properties'], function ()
-		// {
-		// 	Route::get('/',['as' => 'landlord.properties.index', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\PropertyController@index']);
-		// 	Route::post('/',['as' => 'landlord.properties.store', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\PropertyController@store ']);
-		// 	Route::get('/all',['as' => 'landlord.properties.all', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\PropertyController@all']);
-		// 	Route::get('/create',['as' => 'landlord.properties.create', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\PropertyController@create']);
-		// 	Route::get('{id}',['as' => 'landlord.properties.show', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\PropertyController@show']);
-		// 	Route::get('{id}/devices', ['as' => 'landlord.property.devices', 'uses' => '\App\Http\Controllers\Landlord\PropertyController@devices']);
-		// 	Route::post('{id}/edit', ['as' => 'landlord.property.update', 'uses' => '\App\Http\Controllers\Landlord\PropertyController@update']);
-		// });
+
 
 		Route::resource('gateway', 'GatewayController');
 		Route::resource('payment', 'PaymentController');
@@ -167,63 +143,31 @@ Route::group(['middleware' => ['auth']], function()
 			Route::patch('{id}',['as' => 'landlord.transaction.update', 'uses' => 'TransactionController@update']);
 			Route::delete('{id}',['as' => 'landlord.transaction.delete', 'uses' => 'TransactionController@destroy']);
 		});
-		// Route::group(['prefix' => 'api'], function ()
-		// {
-		// 	Route::group(['prefix' => 'devices'], function ()
-		// 	{
-		// 		Route::get('/',['as' => 'landlord.device.index', 'permission' => 'is_landlord', 'uses' => 'DeviceController@index']);
-		// 		Route::get('/all',['as' => 'landlord.device.all', 'permission' => 'is_landlord', 'uses' => 'Api\DeviceController@all']);
-		// 		Route::get('{id}',['as' => 'landlord.device.show', 'permission' => 'is_landlord', 'uses' => 'DeviceController@all']);
-		// 		Route::post('message',['as' => 'landlord.message.reply', 'permission' => 'can_message', 'uses' => 'Api\MessageController@store']);
-		// 	});
-		// });
 	});
 
-	Route::group(['prefix' => 'manager', 'namespace' => 'Landlord'], function()
+	Route::group(['prefix' => 'manager', 'namespace' => 'Manager'], function()
 	{
-		Route::get('/', ['as' => 'manager.index', 'permission' => 'is_manager', 'uses' => '\App\Controllers\Manager\DeviceController@index']);
-		Route::get('calendar', ['as' => 'manager.calendar', 'permission' => 'is_manager', 'uses' => '\App\Controllers\Manager\CalendarController@index']);
-		Route::get('calendar/all', ['as' => 'manager.calendar.all', 'permission' => 'is_manager', 'uses' => '\App\Controllers\Manager\CalendarController@all']);
+		Route::get('/', ['as' => 'manager.index', 'permission' => 'is_manager', 'uses' => 'DeviceController@index']);
+		Route::get('calendar', ['as' => 'manager.calendar', 'permission' => 'is_manager', 'uses' => 'CalendarController@index']);
+		Route::get('calendar/all', ['as' => 'manager.calendar.all', 'permission' => 'is_manager', 'uses' => 'CalendarController@all']);
 		
 		Route::group(['prefix' => 'device'], function()
 		{
-			Route::get('/', ['as' => 'manager.device.index', 'permission' => 'is_manager', 'uses' => '\App\Controllers\Manager\DeviceController@index']);
-			Route::get('/all', ['as' => 'manager.device.all', 'permission' => 'is_manager', 'uses' => '\App\Controllers\Manager\DeviceController@all']);
-			Route::get('{id}', ['as' => 'manager.device.show', 'permission' => 'is_manager', 'uses' => '\App\Controllers\Manager\DeviceController@show']);
+			Route::get('/', ['as' => 'manager.device.index', 'permission' => 'is_manager', 'uses' => 'DeviceController@index']);
+			Route::get('/all', ['as' => 'manager.device.all', 'permission' => 'is_manager', 'uses' => 'DeviceController@all']);
+			Route::get('{id}', ['as' => 'manager.device.show', 'permission' => 'is_manager', 'uses' => 'DeviceController@show']);
 		});
+
+		Route::get('properties/all', 'PropertyController@all');
+		Route::resource('properties', 'PropertyController');
 
 		Route::group(['prefix' => 'maintenance'], function()
 		{
-			Route::get('/', ['as' => 'manager.maintenance.index', 'permission' => 'is_manager', 'uses' => '\App\Controllers\Manager\MaintenanceController@index']);
-			Route::get('/all', ['as' => 'manager.maintenance.all', 'permission' => 'is_manager', 'uses' => '\App\Controllers\Manager\MaintenanceController@all']);
-			Route::get('{id}', ['as' => 'manager.maintenance.show', 'permission' => 'is_manager', 'uses' => '\App\Controllers\Manager\MaintenanceController@show']);
+			Route::get('/', ['as' => 'manager.maintenance.index', 'permission' => 'is_manager', 'uses' => 'MaintenanceController@index']);
+			Route::get('/all', ['as' => 'manager.maintenance.all', 'permission' => 'is_manager', 'uses' => 'MaintenanceController@all']);
+			Route::get('{id}', ['as' => 'manager.maintenance.show', 'permission' => 'is_manager', 'uses' => 'MaintenanceController@show']);
 		});
-
-
 	});
-
-
-	// // Tenant Routes
-	// Route::group(['prefix' => 'tenant', 'namespace' => 'Landlord'], function()
-	// {
-	// 	Route::get('/',['as' => 'landlord.index', 'permission' => 'is_landlord', 'uses' => '\App\Controllers\HomeController@landlord']);
-
-	// 	Route::group(['prefix' => 'maintenance'], function ()
-	// 	{
-	// 		Route::get('/', ['as' => 'landlord.maintenance.index', 'permission' => 'view_maintenance_for_landlord', 'uses' => '\App\Http\Controllers\Landlord\MaintenanceController@index']);
-	// 		Route::get('{id}', ['as' => 'landlord.maintenance.show', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\MaintenanceController@show']);
-	// 		Route::post('{id}/edit', ['as' => 'landlord.maintenance.update', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\MaintenanceController@update']);
-	// 	});
-
-	// 	Route::group(['prefix' => 'device'], function ()
-	// 	{
-	// 		Route::get('/',['as' => 'landlord.device.index', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\DeviceController@index']);
-	// 		Route::get('{id}',['as' => 'landlord.device.show', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\DeviceController@show']);
-	// 		Route::post('message',['as' => 'landlord.message.reply', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\MessageController@store']);
-	// 	});
-	// });
-
-
 });
 
 

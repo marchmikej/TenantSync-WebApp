@@ -7,7 +7,6 @@ use TenantSync\Billing\UsaEpayObject;
 class Card extends UsaEpayObject {
 
 	protected $fillable = [
-		'card_holder' => 'CardHolder',
 		'card_number' => 'CardNumber',
       	'expiration' => 'CardExpiration',
       	'address' => 'AvsStreet',
@@ -19,7 +18,6 @@ class Card extends UsaEpayObject {
       	'sort' => 'SecondarySort',
 	];
 	protected $required = [
-		'card_holder',
 		'card_number',
 		'expiration',
 		'cvv2',

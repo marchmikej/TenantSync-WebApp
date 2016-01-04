@@ -30,8 +30,8 @@ trait Billable2 {
 
 	public function createToken($toLandlord = false)
 	{
-		$sourcekey = '_w0QMP432PiyAlbfXYC88Ehc3k7xP48F';
-		$pin = '4321';
+		//$sourcekey = '_w0QMP432PiyAlbfXYC88Ehc3k7xP48F';
+		//$pin = '4321';
 
 		if($toLandlord == true)
 		{
@@ -223,36 +223,41 @@ trait Billable2 {
 	}
 
 
-	public function addDevice()
+	public function addDevice($device)
 	{
 		$tran = new \SoapClient($this->soapUrl);
 		$token = $this->createToken();
 
 		// try { 
  
-		  $customer = $tran->getCustomer($token, $this->customer_id); 
-		  $customer->Amount = $customer->Amount + 10.00 ; 
-		  $customer->Description = 'Added a Device'; 
-		  $customer->Enabled = true;
+		$customer = $tran->getCustomer($token, $this->customer_id); 
+		$customer->Amount = $this->recurringAmount(); 
+		$customer->Description = 'Added a Device with Id of "' . $device->id . '"'; 
+		$customer->Enabled = true;
 
-		  $transaction = Transaction::create(['user_id' => $this->id, 'amount' => 50]);
-		  Registration::create(['user_id' => $this->id, 'transaction_id' => $transaction->id]);
+		// $transaction = Transaction::create(['user_id' => $this->id, 'amount' => 50]);
+		//Registration::create(['user_id' => $this->id, 'transaction_id' => $transaction->id]);
 
-		  //charge the customer the cost of the device for the remainder of the current billing cycle
-		  // $amount = date(time());
-		  // $tran->charge();
-		  $daysLeftInCycle = date('j/m/Y', strtotime($customer->Next) - time());
-		  //var_export($daysLeftInCycle);die();
+		//charge the customer the cost of the device for the remainder of the current billing cycle
+		$day = date('d', strtotime($customer->Next));
+		$month = 3;date('m', strtotime($customer->Next));
+		$year = date('Y', strtotime($customer->Next));
 
-		  $res = $tran->updateCustomer($token, $this->customer_id, $customer); 
+		//Calculate the number of days in this cycle
+		$lengthOfThisCycle = (mktime(0,0,0, $month, $day, $year) - mktime(0,0,0, $month - 1, $day, $year)) /60/60/24;
+		$daysLeftInCycle = date('d', strtotime($customer->Next) - time());
+		$amount = /* cost of device per month -> */ 10 * ($daysLeftInCycle / $lengthOfThisCycle);
+
+		$this->charge($amount);
+
+		$res = $tran->updateCustomer($token, $this->customer_id, $customer); 
 		// } 
-		 
+
 		// catch (\SoapFault $e)  {
-			echo $tran->__getLastRequest();
-			echo $tran->__getLastResponse();
-			//die("QuickSale failed :" .$e->getMessage());
-			//return redirect()->back()->withErrors([$e->getMessage()]);
-			var_export(date('j/m/Y', strtotime($customer->Next) - time()));die();
+		echo $tran->__getLastRequest();
+		echo $tran->__getLastResponse();
+		//die("QuickSale failed :" .$e->getMessage());
+		//return redirect()->back()->withErrors([$e->getMessage()]);
 		// }
 	}
 

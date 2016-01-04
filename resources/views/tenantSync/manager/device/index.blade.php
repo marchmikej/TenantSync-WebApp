@@ -58,12 +58,12 @@
 						<!-- <th></th> -->
 					</thead>
 					<tbody>
-						<tr v-repeat="property : properties">
-							<td><a href="/manager/device/@{{ property.id }}">@{{property.location}}</a></td>
-							<td>@{{property.status.substr(0, 1).toUpperCase() + property.status.substr(1)}}</td>
-							<td>@{{property.alarm_id}}</td>
-							<td>@{{property.alarm}}</td>
-							<td>@{{property.alarm}}</td>
+						<tr v-for="property in properties">
+							<td><a href="/manager/properties/@{{ property.id }}">@{{property.address + ', ' + property.city}}</a></td>
+							<td>@{{property.id }}</td>
+							<td>@{{property.id }}</td>
+							<td>@{{property.id }}</td>
+							<td>@{{property.id }}</td>
 							<!-- <td><button v-on="click: generateModal( transaction.id )" class="btn btn-clear"><span class="text-primary icon icon-edit"></span></button></td> -->
 							<!-- <td><button v-on="click: deleteTransaction( transaction.id )" class="btn btn-clear"><span class="text-danger icon icon-cross"></span></button></td> -->
 						</tr>
@@ -84,7 +84,7 @@
 						<!-- <th></th> -->
 					</thead>
 					<tbody>
-						<tr v-repeat="maintenance : maintenanceRequests">
+						<tr v-for="maintenance in maintenanceRequests">
 							<td><a href="/landlord/maintenance/@{{ maintenance.id }}">@{{maintenance.request}}</a></td>
 							<td>@{{maintenance.status.substr(0, 1).toUpperCase() + maintenance.status.substr(1)}}</td>
 							<td>@{{maintenance.status}}</td>
@@ -107,7 +107,7 @@
 		        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 		        	<h4 class="modal-title text-info">Edit Transaction</h4>
 		      	</div> -->
-		      	<form v-on="keydown: submitTransaction | key 'enter'" class="form form-horizontal">
+		      	<form @keyup.enter=" submitTransaction" class="form form-horizontal">
 		      		<meta type="hidden" id="_token" value="{{ csrf_token() }}">
 		      		<div class="modal-body">
 		        		<div class="form-group">
@@ -124,8 +124,8 @@
 		        		</div>
 		      		</div>
 			      	<div class="modal-footer">
-			        	<button v-on="click: showModal = false" type="button" class="btn btn-default">Close</button>
-			        	<button  v-on="click: submitTransaction" type="button" class="btn btn-primary">Save changes</button>
+			        	<button @click=" showModal = false" type="button" class="btn btn-default">Close</button>
+			        	<button  @click=" submitTransaction" type="button" class="btn btn-primary">Save changes</button>
 			      	</div>
 		      	</form>
 	    	</div><!-- /.modal-content -->
@@ -145,10 +145,9 @@
 		el: '#container',
 
 		data: {
-			properties: {
-			},
-			maintenanceRequests: {
-			}
+			properties: [],
+
+			maintenanceRequests: [],
 		},
 
 		ready: function(){
@@ -158,7 +157,7 @@
 
 		methods: {
 			fetchProperties: function(){
-				this.$http.get('/manager/device/all')
+				this.$http.get('/manager/properties/all')
 				.success(function(properties){
 					this.properties = properties;
 				});

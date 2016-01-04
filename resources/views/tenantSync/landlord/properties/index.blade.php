@@ -28,7 +28,7 @@
 			<div class="col-sm-3 card-column">
 				<p class="text-center">Delinquency YTD</p>
 				<p class="stat text-warning text-center">
-				@if($landlord->rentBills->count())
+				@if($landlord->rentBills->count() && $landlord->rentPayments())
 				{{ 
 					array_sum($landlord->rentBills->filter(function($rentBill) 
 						{

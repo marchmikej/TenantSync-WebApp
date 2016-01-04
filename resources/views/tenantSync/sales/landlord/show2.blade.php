@@ -125,24 +125,21 @@
 		<div class="col-sm-12">
 			<table class="devices-table table">
 				<thead>
-					<th>Serial</th>
-					<th>Alarm</th>
-					<th>Status</th>
 					<th>Address</th>
 					<th>Apt.</th>
-					<th>City</th>
-					<th>State</th>
-					<th>Zip</th>
-					<th>Rent</th>
-					<th>Due</th>
+					<th>Alarm</th>
+					<th>Status</th>
+ 					<th>Serial</th>
 					<th></th>
 				</thead>
 				<tbody>
 					@foreach($landlord->devices as $device)
 					<tr>
-						<td><a href="/sales/device/{{ $device->id }}">{{ $device->serial }}</a></td>
-						<td>{{ $device->alarm_id !== 0 ? '> '.str_replace('_', ' ', $device->alarm->slug).' late' : 'Off' }}</td>
+						<td><a href="/sales/device/{{ $device->id }}">{{ $device->property->address . ', ' .  $device->property->city . ' ' . $device->property->state }}</a></td>
+						<td>{{ $device->location }}</td>
+						<td>{{ $device->alarm_id !== 0 ? str_replace('_', ' ', $device->alarm->slug) : 'Off' }}</td>
 						<td>{{ $device->status }}</td>
+						<td>{{ $device->serial }}</td>
 						
 						<td></td>
 					</tr>

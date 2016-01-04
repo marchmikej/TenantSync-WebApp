@@ -10,7 +10,7 @@ class MaintenanceController extends Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->manager = Manager::where(['user_id' => $this->user->id])->first();	
+		$this->manager = $this->user->manager;
 	}
 
 	/**

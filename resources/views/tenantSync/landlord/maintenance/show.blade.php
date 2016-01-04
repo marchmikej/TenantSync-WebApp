@@ -4,16 +4,8 @@
 
 	<div id="maintenance">
 		<div class="row">
-				<h4 class="m-t-0 text-primary">{{ $maintenanceRequest->device->location }}</h4>
+			<h4 class="m-t-0 text-primary">{{ $maintenanceRequest->device->property->address . ', ' . $maintenanceRequest->device->location }}</h4>
 			<div class="col-sm-12 card">
-				<!-- <div class="col-sm-3">
-					<div class="row">
-						<p class="text-center m-t-0">Days Open</p>
-					</div>
-					<div class="row">
-						<h2 class="text-danger text-center m-t-0 m-b-0">10</h2>
-					</div>
-				</div> -->
 				<div class="col-sm-6">
 					<h3 class="text-info m-t-0">Request</h3>
 					<p class="">{{ ucfirst($maintenanceRequest->request) }}</p>

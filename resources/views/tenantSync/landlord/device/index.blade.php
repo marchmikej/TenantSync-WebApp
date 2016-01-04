@@ -18,13 +18,13 @@
 						Recent Maintenance
 					</h3>
 					<div class="row table-heading">
-						<div class="col-sm-2">Unit</div>
-						<div class="col-sm-10">Request</div>
+						<div class="col-sm-4">Unit</div>
+						<div class="col-sm-8">Request</div>
 					</div>
 					<div class="table-body table-striped">
 						<div v-for="maintenance in maintenanceRequests" class="table-row row">
-							<div class="col-sm-2">@{{ maintenance.device.location }}</div>
-							<div class="col-sm-10"><a href="/landlord/maintenance/@{{ maintenance.id }}">@{{ maintenance.request }}</a></div>
+							<div class="col-sm-4">@{{ maintenance.device.property.address + ', ' + maintenance.device.location }}</div>
+							<div class="col-sm-8"><a href="/landlord/maintenance/@{{ maintenance.id }}">@{{ maintenance.request }}</a></div>
 						</div>
 					</div>
 				</div>
@@ -40,15 +40,13 @@
 							Recent Messages
 						</h3>
 						<div class="row table-heading">
-						<div class="col-sm-2">Unit</div>
+						<div class="col-sm-4">Unit</div>
 						<div class="col-sm-8">Message</div>
-						<div class="col-sm-2">Date</div>
 					</div>
 					<div class="table-body table-striped">
 						<div v-for="message in messages" class="table-row row">
-							<div class="col-sm-2">@{{ message.device.location }}</div>
-							<div class="col-sm-7">@{{ message.body }}</div>
-							<div class="col-sm-3">@{{ message.created_at.substring(0, 11) }}</div>
+							<div class="col-sm-4"><a href="/landlord/device/@{{ message.device.id }}">@{{ message.device.property.address + ', ' + message.device.location }}</a></div>
+							<div class="col-sm-8">@{{ message.body }}</div>
 						</div>
 					</div>
 				</div>
@@ -104,7 +102,6 @@
 	</div>
 
 	
-	<!-- <pre>@{{ $data | json }}</pre> -->
 </div>
 
 

@@ -2,7 +2,7 @@
 
 @section('content')
 
-	<div class="row">
+	<div class="row card">
 		<div class="col-sm-6">
 			<h1 class="m-t-0 text-info">
 				Landlords<a href="/sales/register"><button class=" btn btn-clear text-muted p-y-0"><h3 class="m-a-0 icon icon-plus"></h3></button></a>

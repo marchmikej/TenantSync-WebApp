@@ -30,7 +30,7 @@ class UsaEpayGateway {
 
 		try 
 		{
-			$res = $this->gateway->runTransaction($this->billable->createToken(), (new TransactionRequest($amount, $options))->build());
+			$res = $this->gateway->runTransaction($this->billable->createToken(true), (new TransactionRequest($amount, $options))->build());
 			// if($toLandlord)
 			// {
 			// 	Transaction::create(['user_id' => $this->owner->id, 'reference_number' => $res->RefNum, 'amount' => $amount]);

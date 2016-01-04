@@ -85,11 +85,6 @@ class Device extends Model {
 			];
 	}
 
-	public function managers()
-	{
-		return $this->belongsToMany('TenantSync\Models\Manager');
-	}
-
 	public function transactions()
 	{
 		return $this->morphMany('TenantSync\Models\Transaction', 'payable');

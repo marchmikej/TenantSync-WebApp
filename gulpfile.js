@@ -21,23 +21,27 @@ elixir(function(mix) {
 			'app.css',
 		], 'public/css', 'public/css')
 		.scripts([
-			// '../bower/bootstrap/dist/js/bootstrap.min.js',
+			'../bower/jquery/dist/jquery.min.js',
+			'../theme/dist/toolkit.min.js',
+			'../../../node_modules/vue/dist/vue.js', 
+			'../../../node_modules/vue-resource/dist/vue-resource.min.js'
+		], 
+			'public/js/app.js'
+		)
+		.scripts([
 			'../bower/moment/min/moment.min.js',
 			'../bower/moment-timezone/builds/moment-timezone.min.js',
 			'../bower/datetimepicker/build/js/datetimepicker.min.js',
+			'../../../node_modules/numeral/numeral.js',
 			'../fullcalendar/fullcalendar.min.js'
 		],
 			'public/js/plugins.js'
 		)
-		.scripts([
-				'../bower/jquery/dist/jquery.min.js',
-				'../theme/dist/toolkit.min.js',
-				'../../../node_modules/vue/dist/vue.js', 
-				'../../../node_modules/vue-resource/dist/vue-resource.min.js',
-				'../../../node_modules/numeral/numeral.js',
-				'app.js'
-			], 
-			'public/js/vendor.js'
+		.browserify([
+			'vue-all.js',
+
+		],
+
 		)
 });
 

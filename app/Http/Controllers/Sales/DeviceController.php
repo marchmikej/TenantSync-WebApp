@@ -29,7 +29,7 @@ class DeviceController extends SalesController {
 		$this->input['token'] = \Token::create();
 		$device = Device::create($this->input);
 
-		//$device->owner->addDevice(); 
+		//$device->owner->addDevice($device); 
 		//get customer, specifically their next reacurring charge date
 		//subtract todays date from that date
 		//get the percentage of the month left

@@ -14,14 +14,19 @@ class Manager extends Model {
 		return $this->belongsTo('TenantSync\Models\User', 'landlord_id', 'id');
 	}
 
-	public function devices()
-	{
-		return $this->belongsToMany('TenantSync\Models\Device');
-	}
-
 	public function maintenanceRequests()
 	{
-		return MaintenanceRequest::whereIn('device_id', $this->devices->keyBy('id')->keys()->toArray())->get();
+		return MaintenanceRequest::whereIn('device_id', $this->devices()->pluck('id')->toArray())->get();
+	}
+
+	public function properties()
+	{
+		return $this->belongsToMany('TenantSync\Models\Property');
+	}
+
+	public function devices()
+	{
+		return \DB::table('devices')->whereIn('property_id', $this->properties->keyBy('id')->keys()->toArray())->select('devices.*')->get();
 	}
 
 }

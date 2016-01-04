@@ -205,7 +205,6 @@
 	    	</div><!-- /.modal-content -->
 	  	</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
-<pre>@{{ $data | json }}</pre>
 </div>
 
 
@@ -325,7 +324,7 @@
 					.success( function(transaction) {
 						console.log(transaction);
 					});
-				//this.fetchTransactions();
+				this.fetchTransactions();
 				this.showModal = false;
 			},
 

@@ -3,23 +3,24 @@
 @section('content')
 <div id="device">
 	<div class="row">
-		<h4 class="m-t-0 text-primary">{{ $device->location }}</h4>
+		<h4 class="text-primary"><a href="/landlord/properties/{{ $device->property->id }}">{{ $device->property->address . ', ' . $device->property->city }}</a></h4>
 		<div class="col-sm-12 card">
-			<div class="col-sm-3">
+			<h4 class="m-t-0 text-primary card-header">{{ $device->location }}</h4>
+			<div class="col-sm-3 card-column">
 				<p class="text-center m-t-0">ROI</p>
-				<h3 class="text-center text-success">30%</h3>
+				<h3 class="stat text-center text-success">-</h3>
 			</div>
-			<div class="col-sm-3">
+			<div class="col-sm-3 card-column">
 				<p class="text-center m-t-0">Maintenance</p>
-				<h3 class="text-center text-danger">3</h3>
+				<h3 class="stat text-center text-danger">-</h3>
 			</div>
-			<div class="col-sm-3">
+			<div class="col-sm-3 card-column">
 				<p class="text-center m-t-0">Messages</p>
-				<h3 class="text-center text-info">5</h3>
+				<h3 class="stat text-center text-info">-</h3>
 			</div>
-			<div class="col-sm-3">
+			<div class="col-sm-3 card-column">
 				<p class="text-center m-t-0">Something</p>
-				<h3 class="text-center text-primary">Here</h3>
+				<h3 class="stat text-center text-primary">-</h3>
 			</div>
 		</div>
 	</div>

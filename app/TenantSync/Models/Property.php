@@ -65,6 +65,11 @@ class Property extends Model {
 		return $this->morphMany('TenantSync\Models\Transaction', 'payable');
 	}
 
+	public function managers()
+	{
+		return $this->belongsToMany('TenantSync\Models\Manager');
+	}
+
 	public function roi()
 	{
 		if(empty($this->purchase_price) || $this->purchase_price == 0) {

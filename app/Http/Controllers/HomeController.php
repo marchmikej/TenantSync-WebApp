@@ -42,6 +42,11 @@ class HomeController extends Controller {
 		return view('TenantSync::landlord.index', compact('devices', 'landlord'));
 	}
 
+	public function manager()
+	{
+		return redirect()->route('manager.index');
+	}
+
         
         public function test()
         {

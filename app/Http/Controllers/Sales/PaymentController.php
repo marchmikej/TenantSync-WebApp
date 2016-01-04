@@ -31,7 +31,6 @@ class PaymentController extends SalesController {
 	public function create()
 	{
 		$paymentMethods = $landlord->getPaymentMethods();
-		debug($paymentMethods);
 		return view('TenantSync::sales.payment.create', compact('landlord', 'paymentMethods'));
 	}
 

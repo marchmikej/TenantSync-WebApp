@@ -101,6 +101,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasMany('TenantSync\Models\Manager');
 	}
 
+	public function manager()
+	{
+		return $this->hasOne('TenantSync\Models\Manager');
+	}
+
 	public function registration()
 	{
 		return $this->hasOne('TenantSync\Models\Registration');
@@ -132,6 +137,40 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function recurringTransactions()
 	{
 		return $this->hasManyThrough('TenantSync\Models\RecurringTransaction', 'TenantSync\Models\Transaction');
+	}
+
+	public function orders()
+	{
+		return $this->hasMany('TenantSync\Models\Order');
+	}
+
+	public function recurringAmount()
+	{
+		$numberCurrentlyFinanced = 0;
+		if($this->orders)
+		{
+			$numberCurrentlyFinanced = $this->orders->filter(function($order) 
+				{
+					if(! $order->financed)
+					{
+						return false;
+					}
+					$day = date('d', time());
+					$month = date('m', time());
+					$year = date('Y', strtotime('+1 year'));
+					return date('Y-m-d', mktime(0,0,0, $month, $day, $year)) > date('Y-m-d', time());
+				}
+			)->count();
+		}
+
+		$numberOfDevices = 0;
+		if($this->devices)
+		{
+			$numberOfDevices = $this->devices->count();
+		}
+
+		return $numberOfDevices + $numberCurrentlyFinanced;
+		//calculate recurring amount based on rates of each device and financing of each device
 	}
 
 }

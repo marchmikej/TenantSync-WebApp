@@ -3,10 +3,10 @@
 @section('content')
 
 <div class="row" id="calculator">
-	<div class="card col-sm-12">
+	<div class="card col-sm-6 col-sm-offset-3">
 		<h3 class="card-header">Aquisition Calculator</h3>
 		<form  class="form form-horizontal" @keydown.enter="calculateRoi">
-			<div class="col-sm-6 p-x-md">
+			<div class="col-sm-12">
 				<div class="form-group">
 					<label class="control-label" for="address">Address</label>
 					<input v-model="property.address" class="form-control" type="text" name="address" placeholder="Address" value="{{ old('address') }}"/>
@@ -34,9 +34,7 @@
 						</div>
 					</div>
 				</div>
-			</div>
 
-			<div class="col-sm-6 p-x-md">
 				<div class="form-group">
 					<label class="control-label" for="purchase_price">Purchase Price</label>
 					<input v-model="property.purchasePrice" class="form-control" type="text" name="purchase_price" placeholder="Purchase Price" value="{{ old('purchase_price') }}"/>
@@ -63,12 +61,19 @@
 			</div>
 
 			<div class="form-group">
-				<div class="col-sm-2 col-sm-offset-10">
+				<div class="col-sm-4 col-sm-offset-8">
 					<button id="submitButton" @click="calculateRoi" class="btn btn-primary form-control">Calculate</button>
 				</div>
 			</div>
 		</form>
 	</div>
+
+	<!-- <div class="card col-sm-6 col-sm-offset-3">
+		Welcome to Valmar Calculator. Use this calculator to pre-approve any revenue generating real estate deal you would like to offer for sale. 
+		Just enter the details for your property above including the Address, Expected Purchase Price, Total Annual Rent, Taxes and Estimated Annual 
+		Expenses and press “Calculate”. Any result not rejected by the calculator will be strongly considered for purchase. To follow through on the offer 
+		contact us at 716.480.3231. Thank you for your interest in dealing with Valmar Companies!
+	</div> -->
 
 
 	<div class="row">

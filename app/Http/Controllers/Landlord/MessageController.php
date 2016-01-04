@@ -41,7 +41,7 @@ class MessageController extends Controller {
 		else
 		{
 			// return Message::where('device_id', '=', $this->user->devices->fetch('id')->toArray())->take(10)->get()->keyBy('id');
-			return Message::where('user_id', '=', $this->user->id)->with('device')->take(5)->orderBy('created_at')->get()->keyBy('id');
+			return Message::where('user_id', '=', $this->user->id)->with('device', 'device.property')->take(5)->orderBy('created_at')->get()->keyBy('id');
 		}
 	}
 

@@ -33,7 +33,7 @@
 				console.log(events);
 				for (var i = events.length - 1; i >= 0; i--) {
 					if(events[i].appointment_date){
-						var event = {start: events[i].appointment_date.replace(' ', 'T').substring(0, events[i].appointment_date.length-3), title: events[i].request};
+						var event = {start: events[i].appointment_date.replace(' ', 'T').substring(0, events[i].appointment_date.length - 3), title: events[i].request};
 						this.events.push(event);
 					}
 					continue;

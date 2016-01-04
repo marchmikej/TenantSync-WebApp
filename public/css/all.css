@@ -10366,10 +10366,13 @@ td .form-control {
 .table-heading {
   padding: 0px 8px;
 }
-.table-heading > div {
+.table-heading div {
   font-weight: bold;
   padding-bottom: 6px;
   padding-top: 10px;
+}
+.table-heading div.sortable {
+  cursor: pointer;
 }
 .table-row {
   font-size: 1.1em;
