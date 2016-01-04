@@ -163,7 +163,7 @@ var vue = new Vue({
 
 				this.$http.get('/landlord/device/all?' + include)
 				.success(function(devices) {
-					for(var i = 0; i < devices.length - 1; i++)
+					for(var i = 0; i < devices.length; i++)
 					{
 						devices[i].rent_amount = Number(devices[i].rent_amount);
 					}
