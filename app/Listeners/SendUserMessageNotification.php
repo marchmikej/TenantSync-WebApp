@@ -42,7 +42,7 @@ class SendUserMessageNotification {
                 $deviceToken = $device_token=$users[$x]->routing_id;
 
                 // Put your private key's passphrase here:
-                $passphrase = "125three";
+                $passphrase = env('APN_PASSPHRASE', "NONE");
 
                 // Put your alert message here:
                 $message = $event->message;

@@ -28,26 +28,34 @@ class PhoneAppController extends Controller
      */
     public function create()
     {
-        $returnValue="unsuccessful";
-        if (Auth::attempt(['email' => $this->input['email'], 'password' => $this->input['password']])) {
-            $devices = \DB::table('landlord_devices')
-                ->where('user_id', '=', $this->user->id)
-                ->where('routing_id', '=', $this->input['routeId'])
-                ->get();
-            if(count($devices)==0) {
-                DB::table('landlord_devices')->insert(
-                    ['user_id' => $this->user->id, 'routing_id' => $this->input['routeId'], 'type' => $this->input['type']]
-                );
-            } 
-            $returnValue="successful";
-        }
-        //Auth::logout();
-        return $returnValue;
+        // 
     }
 
-    public function test()
-    {
-        return "this is a test";
+    public function manageNotifications($route_id) {
+        $device = \DB::table('landlord_devices')
+            ->where('routing_id', '=', $route_id)
+            ->first();
+        if(!$device) {
+            DB::table('landlord_devices')->insert(
+                ['user_id' => $this->user->id, 'routing_id' => $route_id, 'type' => '0', 'verified' => '0']
+            );
+            $device = \DB::table('landlord_devices')
+            ->where('routing_id', '=', $route_id)
+            ->first();
+        }  
+        return view('TenantSync::phoneverification', compact('device')); 
+    }
+
+    public function phoneverify($id) {
+        if($this->input['notify']=="yes") {
+            $verify=1;
+        } else {
+            $verify=2;
+        }
+        DB::table('landlord_devices')
+            ->where('id', $id)
+            ->update(['verified' => $verify]);
+        return redirect('home');
     }
 
     /**

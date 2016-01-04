@@ -126,7 +126,7 @@ class ApiController extends Controller {
 						];
 			}
 			$maintenanceCount = \DB::table('maintenance_requests')
-        		->where('status', '=', "open")
+        		->where('status', '=', "awaiting_approval")
         		->where('appointment_date', '<>', "NULL")
         		->count();
 
