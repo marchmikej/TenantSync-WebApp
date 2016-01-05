@@ -102,17 +102,13 @@
 					<h3 class="card-header">
 						Transactions<button @click="generateModal()" class=" btn btn-clear text-primary p-y-0"><h3 class="m-a-0 icon icon-plus"></h3></button>
 					</h3>
-					<div class="row table-heading">
-						<div class="col-sm-2">Amount</div>
-						<div class="col-sm-2">Applied To</div>
-						<div class="col-sm-5">Description</div>
-						<div class="col-sm-1"></div>
-						<div class="col-sm-1">Date</div>
-						<div class="col-sm-1"></div>
-						
+
+					<div class="table-heading row">
+						<div v-for="column in columns" @click="sortBy($index)" :class="[column.width, column.isSortable ? 'sortable' : '' ]">@{{ toTitleCase(column.name) }}<span :class="sortKeyClasses($index)"></span></div>
 					</div>
+
 					<div class="table-body table-striped">
-						<div v-for="transaction in transactions | orderBy 'date' -1" class="table-row row">
+						<div v-for="transaction in transactions | orderBy sortKey reverse" class="table-row row">
 							<div :class="transaction.amount > 0 ? 'text-success' : 'text-danger'" class="col-sm-2"><strong>@{{ transaction.amount }}</strong></div>
 							<div class="col-sm-2 overflow-hide">@{{ getTransactionPayable(transaction) }}</div>
 							<div class="col-sm-5 overflow-hide">@{{ transaction.description }}</div>
@@ -226,6 +222,10 @@
 
 
 		data: {
+			sortKey: 'date',
+
+			reverse: -1,
+
 			showModal: false,
 
 			modal: {
@@ -237,6 +237,39 @@
 				recurring: false,
 				schedule: null,
 			},
+
+			columns: [
+				{
+					name: 'amount',
+					width: 'col-sm-2',
+					isSortable: true
+				},
+				{
+					name: 'applied_to',
+					width: 'col-sm-2',
+					isSortable: false
+				},
+				{
+					name: 'description',
+					width: 'col-sm-5',
+					isSortable: false
+				},
+				{
+					name: '',
+					width: 'col-sm-1',
+					isSortable: true
+				},
+				{
+					name: 'date',
+					width: 'col-sm-1',
+					isSortable: true
+				},
+				{
+					name: '',
+					width: 'col-sm-1',
+					isSortable: false
+				}
+			],
 			
 			// incomes: [
 
@@ -340,10 +373,8 @@
 			fetchTransactions: function() {
 				this.$http.get('/landlord/transaction/all')
 					.success( function(transactions) {
+						_.each(transactions, function(transaction) { transaction.amount = Number(transaction.amount); });
 						this.transactions = transactions;
-						//this.incomes = [];
-						//this.expenses = [];
-						//this.splitTransactions();
 					});
 			},
 

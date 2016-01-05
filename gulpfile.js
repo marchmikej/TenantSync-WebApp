@@ -33,15 +33,14 @@ elixir(function(mix) {
 			'../bower/moment-timezone/builds/moment-timezone.min.js',
 			'../bower/datetimepicker/build/js/datetimepicker.min.js',
 			'../../../node_modules/numeral/numeral.js',
-			'../fullcalendar/fullcalendar.min.js'
+			'../fullcalendar/fullcalendar.min.js',
+			'../../../node_modules/underscore/underscore.js'
 		],
 			'public/js/plugins.js'
 		)
 		.browserify([
 			'vue-all.js',
-
-		],
-
-		)
+			'vue-sortable.js'
+		])
 });
 

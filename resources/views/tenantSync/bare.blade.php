@@ -114,6 +114,7 @@
 	<!-- <script src="/js/chart.js"></script> -->
 	<script src="/js/vendor.js"></script>
 	<script src="/js/plugins.js"></script>
+	<script src="/js/bundle.js"></script>
 
 	@yield('scripts')
 

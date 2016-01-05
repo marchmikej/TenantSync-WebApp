@@ -30,18 +30,27 @@ class DeviceController extends Controller {
 
 	public function all()
 	{	
-		$id = $this->user->id;
+		$paginate = 15;
+		$query = Device::where(['user_id' => $this->user->id]);
+		
 		if(isset($this->input['with']))
 		{
 			$with = $this->input['with'];
-			return Device::where(['user_id' => $id])->with($with)->get();
+			$query = $query->with($with);
 		}
 
-		return Device::with(['property' => function ($query)  use ($id)
-			{
-    			$query->where(['user_id' => $id]);
-			}
-		])->get();
+		if(isset($this->input['sort']) && ! empty($this->input['sort']))
+		{
+			$sort = $this->input['sort'];
+			$query->orderBy($sort);
+		}
+
+		if(isset($this->input['paginate']))
+		{
+			$paginate = $this->input['paginate'];
+		}
+
+		return $query->paginate($paginate);
 	}
 
 	/**

@@ -80,12 +80,6 @@
 		<div class="row card">
 			<div class="col-sm-12">
 				<h4 class="card-header"><a href="/landlord/device">Devices</a></h4>
-				<!-- <div class="table-heading row">
-					<div class="col-sm-6">Address</div>
-					<div @click="sortBy('rent_amount')" class="col-sm-2">Rent Amount<span :class="['icon', sortKeyClass()]"></span></div>
-					<div @click="sortBy('status')" class="col-sm-2">Status<span :class="['icon', reverse > 0 ? 'icon-chevron-down' : 'icon-chevron-up']"></span></div>
-					<div @click="sortBy('alarm')" class="col-sm-2">Alarm<span :class="['icon', reverse > 0 ? 'icon-chevron-down' : 'icon-chevron-up']"></span></div>            sortKeyClass(column.name)
-				</div> -->
 				<div class="table-heading row">
 					<div v-for="column in columns" @click="sortBy($index)" :class="[column.width, column.isSortable ? 'sortable' : '' ]">@{{ toTitleCase(column.name) }}<span :class="sortKeyClasses($index)"></span></div>
 				</div>
@@ -98,6 +92,7 @@
 						<div class="col-sm-2">@{{ device.alarm ? device.alarm.slug : 'Off' }}</div>
 					</div>
 				</div>
+				<div class="col-sm-4 col-sm-offset-4 text-center">d</div>
 			</div>
 		</div>
 	</div>
@@ -120,9 +115,6 @@ var vue = new Vue({
 		el: '#app',
 	
 		data: {
-			sortKey: '',
-			
-			reverse: 1,
 
 			columns: [
 				{
@@ -149,6 +141,8 @@ var vue = new Vue({
 
 
 			devices: [],
+
+			paginated: null,
 		},
 	
 		ready: function() {
@@ -157,59 +151,22 @@ var vue = new Vue({
 
 		methods: {
 			fetchDevices: function() {
-				var include = ['property', 'alarm'].map(function(item) {
-					return 'with[]=' + item;
-				}).join('&');
+				// var include = ['property', 'alarm'].map(function(item) {
+				// 	return 'with[]=' + item;
+				// }).join('&');
+				var append = this.generateUrlVars({ with: ['property', 'alarm'], paginate: this.paginate, sort: this.sortKey});
 
-				this.$http.get('/landlord/device/all?' + include)
-				.success(function(devices) {
-					for(var i = 0; i < devices.length; i++)
+				console.log();
+				this.$http.get('/landlord/device/all?' + append)
+				.success(function(result) {
+					for(var i = 0; i < result.data.length; i++)
 					{
-						devices[i].rent_amount = Number(devices[i].rent_amount);
+						result.data[i].rent_amount = Number(result.data[i].rent_amount);
 					}
-					
-					this.devices = devices;
+					this.devices = result.data;
+					this.paginated = result;
 				});
 			},
-
-			sortBy: function(index) {
-				if(! this.columns[index].isSortable)
-				{
-					return false;
-				} 
-
-				var sortKey = this.columns[index].name;
-				this.reverse = (this.sortKey == sortKey) ? this.reverse * -1 : 1;
-				this.sortKey = sortKey;
-			},
-
-			sortKeyClasses: function(index) {
-				if(! this.columns[index].isSortable)
-				{
-					return false;
-				}
-
-				var sortKey = this.columns[index].name;
-				var classes = [
-						'icon'
-					];
-
-				if(sortKey == this.sortKey)
-				{
-					classes.push('text-warning');
-					if(this.reverse > 0)
-					{
-						classes.push('icon-chevron-up');
-						return classes;
-					}
-					classes.push('icon-chevron-down');
-					return classes;
-				}
-				classes.push('icon-chevron-up', 'text-muted');
-				return classes;
-			
-			},
-
 		}
 	});
 

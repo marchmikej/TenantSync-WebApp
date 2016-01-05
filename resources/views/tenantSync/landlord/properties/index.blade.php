@@ -73,17 +73,20 @@
 				<h4 class="card-header">
 					Properties<!-- <button  class=" btn btn-clear text-primary"><h4 class="m-a-0 icon icon-plus"></h4></button> -->
 				</h4>
-				<div class="row table-heading">
+				<!-- <div class="row table-heading">
 					<div class="col-sm-5">Address</div>
 					<div class="col-sm-2">ROI YTD</div>
 					<div class="col-sm-2">Devices</div>
 					<div class="col-sm-2">Value</div>
 					<div class="col-sm-1"></div>
+				</div> -->
+				<div class="table-heading row">
+					<div v-for="column in columns" @click="sortBy($index)" :class="[column.width, column.isSortable ? 'sortable' : '' ]">@{{ toTitleCase(column.name) }}<span :class="sortKeyClasses($index)"></span></div>
 				</div>
 
 				<div class="table-body table-striped">
 				
-						<div v-for="property in properties" class="table-row row">
+						<div v-for="property in properties | orderBy sortKey reverse" class="table-row row">
 							<div class="col-sm-5"><a href="/landlord/properties/@{{ property.id }}">@{{property.address + ', ' + property.city + ' ' + property.state}}</a></div>
 							<div class="col-sm-2 text-success">@{{ numeral(property.roi).format('0.0 %') }}</div>
 							<div class="col-sm-2 text-danger">@{{ property.devices.length }}</div>
@@ -148,6 +151,34 @@
 
 
 			data: {
+
+				columns: [
+					{
+						name: 'address',
+						width: 'col-sm-5',
+						isSortable: false
+					},
+					{
+						name: 'roi',
+						width: 'col-sm-2',
+						isSortable: true
+					},
+					{
+						name: 'devices',
+						width: 'col-sm-2',
+						isSortable: true
+					},
+					{
+						name: 'value',
+						width: 'col-sm-2',
+						isSortable: true
+					},
+					{
+						name: '',
+						width: 'col-sm-1',
+						isSortable: false
+					}
+				],
 
 				properties: {
 					

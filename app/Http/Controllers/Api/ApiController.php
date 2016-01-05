@@ -194,7 +194,7 @@ class ApiController extends Controller {
 			if($response)
 			{
 				$payment = Transaction::create(['amount' => $this->input['amount'], 'user_id' => $this->device->owner->id, 'payable_type' => 'device', 'payable_id' => $this->device->id, 'description' => 'Rent Payment', 'date' => date('Y-m-d', time()), 'reference_number' => $response->RefNum]);
-				return (new RentPaymentGateway($this->device))->processPayment($payment->amount, $payment);
+				(new RentPaymentGateway($this->device))->processPayment($payment->amount, $payment);
 			}
 			return json_encode($response);
 		}

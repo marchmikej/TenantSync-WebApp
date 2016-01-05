@@ -15,8 +15,8 @@ class Check extends UsaEpayObject /*implements UsaEpayRequestObject*/ {
 		'license_state' => 'DriversLicenseState',
 	];
 	protected $required = [
-		'Account',
-		'Routing',
+		'account_number',
+		'routing_number',
 	];
 	
 

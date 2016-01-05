@@ -39,7 +39,7 @@ class UsaEpayGateway {
 		} 
 		catch (\SoapFault $e) 
 		{
-			return redirect()->back()->withErrors([$e->getMessage()]);
+			return abort(500, $e->getMessage());
 		}
 	}
 
