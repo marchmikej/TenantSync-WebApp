@@ -65,6 +65,7 @@ class SendUserMessageNotification {
                 $body['aps'] = array(
                     'alert' => $message,
                     'badge' => 1,
+                    'url' => $event->urlSend,
                     'sound' => 'default'
                 );
 
