@@ -26,9 +26,17 @@ class SendUserMessageNotification {
 	 */
 	public function handle(DeviceMadeUpdate $event)
     {
-        $users = \DB::table('landlord_devices')
-        ->where('user_id', '=', $event->userId)
+        $deviceData = \DB::table('devices')
+        ->where('id', '=', $deviceId)
         ->get();
+
+        $users = DB::table('manager_property')
+            ->where('manager_property.property_id', '=', $deviceData[0]->property_id)
+            ->join('managers', 'manager_property.manager_id', '=', 'managers.id')
+            ->join('landlord_devices', 'managers.user_id', '=', 'landlord_devices.user_id')
+            ->select('managers.user_id', 'landlord_devices.routing_id')
+            ->get();
+        return $users;
 
         // This is the message sent to the device
         $message = "MESSAGE: " . $event->message . " ENDMESSAGE URL: " . $event->urlSend;
