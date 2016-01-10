@@ -36,7 +36,6 @@ class SendUserMessageNotification {
             ->join('landlord_devices', 'managers.user_id', '=', 'landlord_devices.user_id')
             ->select('managers.user_id', 'landlord_devices.routing_id')
             ->get();
-        return $users;
 
         // This is the message sent to the device
         $message = "MESSAGE: " . $event->message . " ENDMESSAGE URL: " . $event->urlSend;
