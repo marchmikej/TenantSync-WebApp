@@ -34,7 +34,7 @@ class SendUserMessageNotification {
             ->where('manager_property.property_id', '=', $deviceData[0]->property_id)
             ->join('managers', 'manager_property.manager_id', '=', 'managers.id')
             ->join('landlord_devices', 'managers.user_id', '=', 'landlord_devices.user_id')
-            ->select('managers.user_id', 'landlord_devices.routing_id')
+            ->select('managers.user_id', 'landlord_devices.routing_id', 'landlord_devices.type')
             ->get();
 
         // This is the message sent to the device
