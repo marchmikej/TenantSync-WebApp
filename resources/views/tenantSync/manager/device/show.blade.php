@@ -3,7 +3,7 @@
 @section('content')
 <div id="device">
 	<div class="row">
-		<h4 class="text-primary"><a href="/landlord/properties/{{ $device->property->id }}">{{ $device->property->address . ', ' . $device->property->city }}</a></h4>
+		<h4 class="text-primary"><a href="/manager/properties/{{ $device->property->id }}">{{ $device->property->address . ', ' . $device->property->city }}</a></h4>
 		<div class="col-sm-12 card">
 			<h4 class="m-t-0 text-primary card-header">{{ $device->location }}</h4>
 			<div class="col-sm-3 card-column">
@@ -40,7 +40,7 @@
 							<div class="table-body table-striped">
 								<div v-for="maintenance in maintenanceRequests" class="table-row row">
 									<div class="col-sm-2">@{{ maintenance.device.location }}</div>
-									<div class="col-sm-10"><a href="/landlord/maintenance/@{{ maintenance.id }}">@{{ maintenance.request }}</a></div>
+									<div class="col-sm-10"><a href="/manager/maintenance/@{{ maintenance.id }}">@{{ maintenance.request }}</a></div>
 								</div>
 							</div>
 						</div>
@@ -61,7 +61,7 @@
 								@endforeach
 							</div>
 							<div class="row">
-								<form class="form row" action="/landlord/device/message" method="POST">
+								<form class="form row" action="/manager/device/message" method="POST">
 									<input type="hidden" name="_token" value="{{ csrf_token() }}">
 									<input type="hidden" name="device_id" value="{{ $device->id }}">
 									<div class="form-group">
@@ -83,7 +83,7 @@
 				<div class="col-sm-12 card">
 					<div class="col-sm-6">
 						<h3 class="card-header m-t-0">Info</h3>
-						<form action="/landlord/device/{{$device->id}}" method="POST" class="form form-horizontal">
+						<form action="/manager/device/{{$device->id}}" method="POST" class="form form-horizontal">
 							<input type="hidden" name="_token" value="{{ csrf_token() }}">
 							<input type="hidden" name="_method" value="PATCH">
 							<div class="form-group">
@@ -201,7 +201,7 @@
 
 		methods: {
 			fetchMaintenance: function() {
-				this.$http.get('/landlord/maintenance/all')
+				this.$http.get('/manager/maintenance/all')
 				.success(function(maintenanceRequests) {
 					this.maintenanceRequests = maintenanceRequests;
 				});

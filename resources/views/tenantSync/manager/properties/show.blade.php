@@ -1,4 +1,4 @@
-@extends('TenantSync::landlord/layout')
+@extends('TenantSync::manager/layout')
 
 @section('content')
 
@@ -28,7 +28,7 @@
 	<div class=" card row">
 		<div class="col-sm-12">
 			<h4 class="card-header">Property Info</h4>
-			<form action="/landlord/properties/{{$property->id}}" method="Post" class="form form-horizontal">
+			<form action="/manager/properties/{{$property->id}}" method="Post" class="form form-horizontal">
 				<input type="hidden" name="_token" value="{{ csrf_token() }}">
 				<input type="hidden" name="_method" value="PATCH">
 				<div class="row">
@@ -132,7 +132,7 @@
 	<div class="card row">
 		<div class="col-sm-12">
 			<h4 class="card-header">
-				Devices<!-- <a href="/landlord/device/create?propertyId={{ $property->id }}"><button class=" btn btn-clear text-primary"><h4 class="m-a-0 icon icon-plus"></h4></button></a> -->
+				Devices<!-- <a href="/manager/device/create?propertyId={{ $property->id }}"><button class=" btn btn-clear text-primary"><h4 class="m-a-0 icon icon-plus"></h4></button></a> -->
 			</h4>
 			<div class="table-heading row">
 				<div class="col-sm-3">Location</div>
@@ -142,7 +142,7 @@
 			</div>
 			<div class="table-body table-striped">
 				<div  v-for="device in devices" class="table-row row">
-					<div class="col-sm-3"><a href="/landlord/device/@{{ device.id }}">@{{ device.location }}</a></div>
+					<div class="col-sm-3"><a href="/manager/device/@{{ device.id }}">@{{ device.location }}</a></div>
 					<div class="col-sm-3">@{{ device.rent_due }}</div>
 					<div class="col-sm-3">@{{ device.rent_amount }}</div>
 					<div class="col-sm-3">@{{ device.status }}</div>
@@ -188,7 +188,7 @@
 					var params = window.location.href.split('/');
 					this.propertyId = params[5].split('?')[0];
 
-					this.$http.get('/landlord/properties/' + this.propertyId + '/devices')
+					this.$http.get('/manager/properties/' + this.propertyId + '/devices')
 						.success( function(devices) {
 							this.devices = devices;
 						})

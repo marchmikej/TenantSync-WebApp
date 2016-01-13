@@ -33,7 +33,17 @@ class AuthServiceProvider extends ServiceProvider
 
         $gate->define('has-transaction', function($user, $transaction) 
         {   
-            return $user->hasTransaction($model);
+            return $user->hasTransaction($transaction);
+        });
+
+        $gate->define('has-property', function($user, $property) 
+        {   
+            return $user->hasProperty($property);
+        });
+
+        $gate->define('has-device', function($user, $device) 
+        {   
+            return $user->hasDevice($device);
         });
     }
 }

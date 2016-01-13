@@ -19,6 +19,21 @@ trait AuthorizesUser {
 		# code...
 	}
 
+	public function hasProperty($property)
+	{
+		return !! $this->manager->properties->find($property->id);
+	}
+
+	public function hasDevice($device)
+	{
+		$id = $device->id;
+		// var_export($this->manager->devices());die();
+		$result = array_filter($this->manager->devices(), function($device) use ($id) {
+			return $device->id = $id;
+		});
+		return !! $result;
+	}
+
 	// public function owns($model)
 	// {
 	// 	if($this->user->role_id == 5)

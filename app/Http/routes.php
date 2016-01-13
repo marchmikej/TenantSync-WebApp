@@ -155,14 +155,17 @@ Route::group(['middleware' => ['auth']], function()
 		Route::get('messages/all', 'MessageController@all');
 		Route::resource('messages', 'MessageController');
 
-		Route::group(['prefix' => 'device'], function()
-		{
-			Route::get('/', ['as' => 'manager.device.index', 'permission' => 'is_manager', 'uses' => 'DeviceController@index']);
-			Route::get('/all', ['as' => 'manager.device.all', 'permission' => 'is_manager', 'uses' => 'DeviceController@all']);
-			Route::get('{id}', ['as' => 'manager.device.show', 'permission' => 'is_manager', 'uses' => 'DeviceController@show']);
-		});
+		// Route::group(['prefix' => 'device'], function()
+		// {
+		// 	Route::get('/', ['as' => 'manager.device.index', 'permission' => 'is_manager', 'uses' => 'DeviceController@index']);
+		// 	Route::get('/all', ['as' => 'manager.device.all', 'permission' => 'is_manager', 'uses' => 'DeviceController@all']);
+		// 	Route::get('{id}', ['as' => 'manager.device.show', 'permission' => 'is_manager', 'uses' => 'DeviceController@show']);
+		// });
+		Route::get('device/all', 'DeviceController@all');
+		Route::resource('device', 'DeviceController');
 
 		Route::get('properties/all', 'PropertyController@all');
+		Route::get('properties/{id}/devices', 'PropertyController@devices');
 		Route::resource('properties', 'PropertyController');
 
 		Route::group(['prefix' => 'maintenance'], function()

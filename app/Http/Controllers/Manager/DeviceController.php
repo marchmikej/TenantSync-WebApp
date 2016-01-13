@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Manager;
 
+use Gate;
 use App\Http\Requests;
 use TenantSync\Models\Device;
 use TenantSync\Models\Manager;
@@ -81,7 +82,7 @@ class DeviceController extends Controller {
 	 */
 	public function show($id)
 	{
-		$device = Device::find($id);
+		$device = Device::findOrFail($id);
 		return view('TenantSync::manager/device/show', compact('device'));
 	}
 
@@ -104,8 +105,17 @@ class DeviceController extends Controller {
 	 */
 	public function update($id)
 	{
-		//
+		$device = Device::find($id);
+
+		if(Gate::denies('has-device', $device))
+		{
+			return abort(403, "Thats not yours!");
+		}
+
+		$device->update(\Request::except('_token'));
+		return redirect()->back();
 	}
+
 
 	/**
 	 * Remove the specified resource from storage.

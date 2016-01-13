@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Manager;
 
+use Gate;
+use App\Http\Utilities\State;
 use App\Http\Requests;
 use TenantSync\Models\Device;
 use TenantSync\Models\Property;
@@ -23,7 +25,13 @@ class PropertyController extends Controller
      */
     public function index()
     {
-        //
+        $manager = $this->manager;
+        foreach($manager->properties as $property)
+        {
+            $roiGroup[] = $property->roi();
+        }
+        $roi = array_sum($roiGroup) / count($roiGroup);
+        return view('TenantSync::landlord/properties/index', compact('manager', 'roi'));
     }
 
     public function all()
@@ -61,6 +69,11 @@ class PropertyController extends Controller
         return $result;
     }
 
+    public function devices($id)
+    {
+        return Device::where(['property_id' => $id])->get();
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -90,7 +103,14 @@ class PropertyController extends Controller
      */
     public function show($id)
     {
-        //
+        $property = Property::find($id);
+        if(Gate::denies('has-property', $property))
+        {
+            return abort(403, "Thats not yours!");
+        }
+
+        $states = State::all();
+        return view('TenantSync::manager/properties/show', compact('states', 'property'));
     }
 
     /**
@@ -111,9 +131,16 @@ class PropertyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update($id)
     {
-        //
+        $property = Property::find($id);
+        if(Gate::denies('has-property', $property))
+        {
+            return abort(403, "Thats not yours!");
+        }
+
+        $property->update(\Request::except('_token'));
+        return redirect()->back();
     }
 
     /**
