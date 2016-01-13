@@ -5,6 +5,7 @@ use App\Events\DeviceMadeUpdate;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldBeQueued;
 use DB;
+use Mail;
 
 class SendUserMessageNotification {
 
@@ -27,21 +28,29 @@ class SendUserMessageNotification {
 	public function handle(DeviceMadeUpdate $event)
     {
         $deviceData = \DB::table('devices')
-        ->where('id', '=', $deviceId)
+        ->where('id', '=', $event->deviceId)
         ->get();
 
         $users = DB::table('manager_property')
             ->where('manager_property.property_id', '=', $deviceData[0]->property_id)
             ->join('managers', 'manager_property.manager_id', '=', 'managers.id')
             ->join('landlord_devices', 'managers.user_id', '=', 'landlord_devices.user_id')
-            ->select('managers.user_id', 'landlord_devices.routing_id', 'landlord_devices.type')
+            ->join('properties', 'manager_property.property_id', '=', 'properties.id')
+            ->join('users', 'managers.user_id', '=', 'users.id')
+            ->select('managers.user_id', 'landlord_devices.routing_id', 'landlord_devices.type', 'properties.address', 'users.email', 'managers.last_name', 'managers.first_name')
             ->get();
 
-        // This is the message sent to the device
-        $message = "MESSAGE: " . $event->message . " ENDMESSAGE URL: " . $event->urlSend;
+        for ($x = 0; $x < count($users); $x++)
+        {   
+            $currentRow=$users[$x];
+            Mail::queue('emails.usersend', ['currentRow' => $currentRow, 'event' => $event], function ($m) use ($currentRow) {
+                $m->to($currentRow->email, $currentRow->last_name)->subject('Message from ' . $currentRow->address);
+                $m->from('admin@tenantsync.com', 'TenantSync');
+            });
+            // This is the message sent to the device
+            $message = "MESSAGE: " . $event->message . " from " . $deviceData[0]->location . " " . $users[$x]->address . " ENDMESSAGE URL: " . $event->urlSend;
+            $iosMessage = $event->message . " from " . $deviceData[0]->location . " " . $users[$x]->address;
 
-        for ($x = 0; $x < count($users); $x++)  
-        {
             // If type == 0 it is an iphone
             // If type == 1 it is an android
             if($users[$x]->type == 0) {
@@ -70,7 +79,7 @@ class SendUserMessageNotification {
 
                 // Create the payload body
                 $body['aps'] = array(
-                    'alert' => $message,
+                    'alert' => $iosMessage,
                     'badge' => 1,
                     'url' => $event->urlSend,
                     'sound' => 'default'
