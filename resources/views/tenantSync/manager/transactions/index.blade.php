@@ -1,17 +1,17 @@
-@extends('TenantSync::landlord/layout')
+@extends('TenantSync::manager/layout')
 @section('heading')
 <!-- Transactions -->
 @endsection
 
 @section('head')
-	<meta id="user_id" value="{{ $user->id }}">
+	<meta id="user_id" value="{{ $manager->landlord->id }}">
 @endsection
 
 @section('content')
 
-<div id="ledger" v-cloak>
-	<div class="card row">
-		<div id="stats" class="col-sm-12">
+<div id="ledger">
+	<div class="row">
+		<div class="col-sm-12 card">
 			<h4 class="card-header">Overview</h4>
 			<div class="col-sm-3 card-column">
 				<p class="text-center">Net Income MTD</p>
@@ -24,9 +24,9 @@
 			<div class="col-sm-3 card-column">
 				<p class="text-center">Monthly Recurring Expenses</p>
 				<p class="stat text-primary text-center">
-				@if($landlord->recurringTransactions)
+				@if($manager->landlord->recurringTransactions)
 				{{
-					array_sum($landlord->recurringTransactions->map(function($recurring) 
+					array_sum($manager->landlord->recurringTransactions->map(function($recurring) 
 						{
 							return $recurring->transaction->amount;
 						}
@@ -41,7 +41,7 @@
 				<p class="stat text-danger text-center">
 				{{ 
 					round(array_sum(
-					$landlord->transactions
+					$manager->landlord->transactions
 					->filter(function($transaction) {
 						if($transaction->amount > 0)
 						{
@@ -60,7 +60,7 @@
 				<p class="stat text-warning text-center">
 				{{ 
 					round(array_sum(
-					$landlord->transactions
+					$manager->landlord->transactions
 					->filter(function($transaction) {
 						if($transaction->amount < 0)
 						{
@@ -77,7 +77,9 @@
 		</div>
 	</div>
 	
-	<most-expensive-property-table user-role="landlord" inline-template>
+	
+
+	<most-expensive-property-table user-role="manager" inline-template>
 		<div class="row card">
 			<div class="col-sm-12">
 				<h3 class="card-header m-t-0">Most Expensive</h3>
@@ -96,7 +98,7 @@
 		</div>
 	</most-expensive-property-table>
 
-	<transactions-table user-role="landlord" inline-template>
+	<transactions-table  user-role="manager" inline-template>
 		<div class="card row">
 			<div class="col-sm-12">
 				<h3 class="card-header">
@@ -229,41 +231,208 @@
 @section('scripts')
 
 <script>
-Vue.config.debug =true;
-
-	Vue.filter('numeric', function (item, field, operator, value) {
-	  console.log(item);
-	})
 
 	var vue = new Vue({
 
 		el: '#ledger',
 
 
-		data: {
+		// data: {
+		// 	sortKey: 'date',
 
-			properties: [
+		// 	reverse: -1,
 
-			],
+		// 	showModal: false,
 
-			numeral: window.numeral,
-		},
+		// 	modal: {
+		// 		amount: '',
+		// 		description: '',
+		// 		transactionId: 0,
+		// 		date: '',
+		// 		billable: {{ $landlord->id }},
+		// 		recurring: false,
+		// 		schedule: null,
+		// 	},
+
+		// 	columns: [
+		// 		{
+		// 			name: 'amount',
+		// 			label: 'Amount',
+		// 			width: 'col-sm-2',
+		// 			isSortable: true
+		// 		},
+		// 		{
+		// 			name: 'payable',
+		// 			label: 'Applied To',
+		// 			width: 'col-sm-2',
+		// 			isSortable: false
+		// 		},
+		// 		{
+		// 			name: 'description',
+		// 			label: 'Description',
+		// 			width: 'col-sm-5',
+		// 			isSortable: false
+		// 		},
+		// 		{
+		// 			name: '',
+		// 			label: '',
+		// 			width: 'col-sm-1',
+		// 			isSortable: false
+		// 		},
+		// 		{
+		// 			name: 'date',
+		// 			label: 'date',
+		// 			width: 'col-sm-1',
+		// 			isSortable: true
+		// 		},
+		// 		{
+		// 			name: '',
+		// 			label: '',
+		// 			width: 'col-sm-1',
+		// 			isSortable: false
+		// 		}
+		// 	],
+			
+		// 	// incomes: [
+
+		// 	// ],
+		// 	// expenses: [
+
+		// 	// ],
+
+		// 	transactions: [
+
+		// 	],
+
+		// 	properties: {
+
+		// 	},
+
+		// 	numeral: window.numeral,
+		// },
 
 
-		ready: function() {
-			// this.fetchTransactions(1, this.sortKey, this.reverse);
-			// this.fetchProperties();
-		},
+		// ready: function() {
+		// 	this.fetchTransactions(1, this.sortKey, this.reverse);
+		// 	this.fetchProperties();
+		// },
 
 
 		methods: {
 
+			refreshTable: function(sortKey, reverse) {
+				this.fetchTransactions(1, sortKey, reverse);
+			},
+
+			generateModal: function(id) {
+				this.modal.amount = '';
+				this.modal.transactionId = null;
+				this.modal.description = '';
+				if(id)
+				{
+					this.modal.amount = this.transactions[id].amount;
+					this.modal.transactionId = id;
+					this.modal.description = (this.transactions[id].description) ? this.transactions[id].description : '';
+					this.modal.date = this.transactions[id].date;
+					this.modal.billable = this.transactions[id].payable_id;
+					this.modal.schedule = this.transactions[id].recurring ? this.transactions[id].recurring.schedule : null;
+					this.modal.recurring = this.transactions[id].recurring ? true : false;
+				}
+				this.showModal = true;
+			},
+
+			submitTransaction: function() {
+				var data = {
+					amount: this.modal.amount,
+					description: this.modal.description,
+					payable_id: this.modal.billable,
+					payable_type: $('#billable option:selected').data('type'),
+					date: this.modal.date,
+					recurring: this.modal.recurring,
+					schedule: this.modal.schedule
+				};
+
+				if(this.modal.transactionId)
+				{
+					this.updateTransaction(data);
+				}
+				else
+				{
+					data.user_id = document.getElementById('user_id').getAttribute('value');
+					this.createTransaction(data);
+				}
+			},
+
+			createTransaction: function(data) {
+				this.$http.post('/manager/transaction', data)
+					.success( function(transaction){
+						this.transactions[transaction.id] = transaction;
+						this.fetchTransactions();
+						this.modal.amount = '';
+						this.modal.description = '';
+						this.showModal = false;
+					});
+			},
+
+			updateTransaction: function(data) {
+				this.transactions[this.modal.transactionId].amount = this.modal.amount;
+				this.transactions[this.modal.transactionId].description = this.modal.description;
+				this.transactions[this.modal.transactionId].date = this.modal.date;
+			
+				this.$http.patch('/manager/transaction/' + this.modal.transactionId, data)
+					.success( function(transaction) {
+						console.log(transaction);
+					});
+				this.fetchTransactions();
+				this.showModal = false;
+			},
+
+			deleteTransaction: function(id) {
+				
+				if(confirm('Are you sure you want to delete this transaction?'))
+				{
+					this.$http.delete('/manager/transaction/' + id)
+						.success( function() {
+							delete this.transactions[id];
+							console.log('Transaction deleted.')
+							this.fetchTransactions();
+						});
+				}
+			},
+
+			fetchTransactions: function(page, sortKey, reverse) {
+				var append = this.generateUrlVars({paginate: this.paginate, sort: sortKey, page: page, asc: reverse});
+
+				this.$http.get('/manager/transaction/all?' + append)
+					.success( function(result) {
+						_.each(result.data, function(transaction) { transaction.amount = Number(transaction.amount); });
+						this.transactions = result.data;
+						this.paginated = result;
+						this.page = result.current_page;
+					});
+			},
+
 			fetchProperties: function() {
-				this.$http.get('/landlord/properties/all')
-				.success(function(result) {
-					this.properties = result;
+				this.$http.get('/manager/properties/all?sortBy=netIncome')
+				.success(function(properties) {
+					this.properties = properties;
 				});
 			},
+
+			getTransactionPayable: function(transaction) {
+				
+				switch (transaction.payable_type) {
+					case 'TenantSync\\Models\\Property':
+						return transaction.payable.address;
+						break;
+					case 'TenantSync\\Models\\Device':
+						return transaction.payable.location + ', ' + transaction.property.address;
+						break;
+					case 'TenantSync\\Models\\User':
+						return 'General';
+						break;
+				}
+			}
 		},
 
 

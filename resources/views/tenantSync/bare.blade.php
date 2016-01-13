@@ -65,7 +65,7 @@
 		</nav>
 	</header>
 
-	<div class="page-content-wrapper">
+	<div id="app" class="page-content-wrapper">
 		<div class="container">
 			<h2 class="text-info">@yield('heading')</h2>
 		</div>
@@ -110,11 +110,12 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
 
 
-	<script src="/js/all.js"></script>
+	<!-- <script src="/js/all.js"></script> -->
 	<!-- <script src="/js/chart.js"></script> -->
-	<script src="/js/vendor.js"></script>
-	<script src="/js/plugins.js"></script>
-	<script src="/js/bundle.js"></script>
+	<!-- <script src="/js/vendor.js"></script> -->
+	<!-- <script src="/js/plugins.js"></script> -->
+	<script src="/js/core.js"></script>
+	<script src="/js/app.js"></script>
 
 	@yield('scripts')
 

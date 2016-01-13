@@ -3,7 +3,7 @@
 @section('content')
 
 <div id="property">
-	<div class="row card">
+	<!-- <div class="row card">
 		<div class="col-sm-12">
 		<h4 class="card-header">Overview</h4>
 			<div class="col-sm-3">
@@ -23,7 +23,7 @@
 				<p class="stat text-warning text-center">-</p>
 			</div>
 		</div>
-	</div>
+	</div> -->
 	
 	<div class=" card row">
 		<div class="col-sm-12">
@@ -143,7 +143,7 @@
 			<div class="table-body table-striped">
 				<div  v-for="device in devices" class="table-row row">
 					<div class="col-sm-3"><a href="/landlord/device/@{{ device.id }}">@{{ device.location }}</a></div>
-					<div class="col-sm-3">@{{ device.rent_due_day }}</div>
+					<div class="col-sm-3">@{{ device.rent_due }}</div>
 					<div class="col-sm-3">@{{ device.rent_amount }}</div>
 					<div class="col-sm-3">@{{ device.status }}</div>
 				</div>

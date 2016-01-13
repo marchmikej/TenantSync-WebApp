@@ -1,4 +1,7 @@
-@extends('TenantSync::landlord/layout')
+@extends('TenantSync::manager/layout')
+@section('head')
+	<link rel="stylesheet" href="/css/fullcalendar.min.css">
+@endsection
 
 @section('content')
 

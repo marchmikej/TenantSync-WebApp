@@ -7,8 +7,6 @@ var math = {
 		    '<': function(a, b) { return a < b },
 		};
 
-Vue.numeral = window.numeral;
-
 var toTitleCase = function(string)
 {
 	var strings = string.replace('_', ' ').split(' ');
@@ -20,3 +18,27 @@ var toTitleCase = function(string)
 }
 
 Vue.prototype.toTitleCase = toTitleCase;
+
+Vue.mixin({
+	methods: {
+		generateUrlVars: function(includes) {
+			var include = $.param(includes);
+			return include;
+		},
+	}
+});
+
+Vue.filter('search', function (list, string) {
+	if(! string) {
+		return list;
+	}
+
+  	return _.filter(list, function(item) {
+  		return _.find(item, function(property) {
+  			if(typeof property === 'string') {
+  				return property.toLowerCase().includes(string.toLowerCase());
+	  		}
+	  		return false;
+	  	}.bind(string));
+  	}.bind(string));
+})

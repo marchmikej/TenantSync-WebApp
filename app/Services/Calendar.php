@@ -31,7 +31,10 @@ class Calendar {
 	public function allManagerEvents($user)
 	{
 		$manager = Manager::where(['user_id' => $user->id])->first();
-		$maintenanceRequests = MaintenanceRequest::whereIn('device_id', $manager->devices->keyBy('id')->keys()->toArray())->get();
+		$devices = array_map(function($device) {
+				return $device->id;
+			}, $manager->devices());
+		$maintenanceRequests = MaintenanceRequest::whereIn('device_id', $devices)->get();
 		return $maintenanceRequests->toArray();
 	}
 

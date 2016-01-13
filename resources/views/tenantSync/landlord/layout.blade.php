@@ -1,4 +1,6 @@
 @extends('TenantSync::bare')
+@include('TenantSync::globals')
+
 @section('topmenu')
 
 	@if($user->role == 'landlord')

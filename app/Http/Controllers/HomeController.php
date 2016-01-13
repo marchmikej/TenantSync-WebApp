@@ -44,12 +44,7 @@ class HomeController extends Controller {
 
 	public function manager()
 	{
-		return redirect()->route('manager.index');
+		$manager = $this->user->manager;
+		return view('TenantSync::manager.index', compact('manager'));
 	}
-
-        
-        public function test()
-        {
-            return view('test');
-        }
 }  

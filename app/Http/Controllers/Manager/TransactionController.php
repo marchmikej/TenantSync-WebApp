@@ -1,18 +1,19 @@
-<?php namespace App\Http\Controllers\Landlord;
+<?php namespace App\Http\Controllers\Manager;
 
 use Gate;
 use App\Http\Requests;
-use TenantSync\Models\Property;
-use TenantSync\Models\Transaction;
 use App\Http\Controllers\Controller;
-use TenantSync\Mutators\TransactionMutator;
+use TenantSync\Models\Transaction;
 use TenantSync\Models\RecurringTransaction;
+use TenantSync\Mutators\TransactionMutator;
+use TenantSync\Models\Property;
 
 class TransactionController extends Controller {
 
 	public function __construct(TransactionMutator $transactionMutator)
 	{
 		parent::__construct();
+		$this->manager = $this->user->manager;
 		$this->transactionMutator = $transactionMutator;
 	}
 
@@ -23,20 +24,21 @@ class TransactionController extends Controller {
 	 */
 	public function index()
 	{
-		$landlord = $this->user;
+		$landlord = $this->manager->landlord;
+		$manager = $this->manager;
 		foreach($landlord->properties as $property)
 		{
 			$netIncomes[] = $property->netIncome();
 		}
 		$netIncome = array_sum($netIncomes);
-		return view('TenantSync::landlord.transactions.index', compact('landlord', 'netIncome'));
+		return view('TenantSync::manager.transactions.index', compact('manager', 'landlord', 'netIncome'));
 	}
 
 	public function all()
 	{
 		$paginate = 15;
 		$query = Transaction::query(); 
-		$query = $query->where(['user_id' => $this->user->id]);
+		$query = $query->where(['user_id' => $this->manager->landlord->id]);
 
 		if(isset($this->input['sort']) && ! empty($this->input['sort']))
 		{
@@ -68,7 +70,6 @@ class TransactionController extends Controller {
 
 		$paginated =  $query->paginate($paginate);
 		$transactions =  $paginated->load('payable');
-		//$transactions = Transaction::where(['user_id' => $this->user->id])->with(['payable'])->get()->keyBy('id');
 		$this->transactionMutator->set('address', $transactions);
 		$paginated->data = $transactions;
 		return $paginated;
@@ -135,7 +136,7 @@ class TransactionController extends Controller {
 	public function update($id)
 	{
 		$transaction = Transaction::find($id);
-		if(Gate::denies('owned-by-user', $transaction))
+		if(Gate::denies('has-transaction', $transaction))
 		{
 			return abort(403, "That's not yours");
 		}
@@ -185,7 +186,7 @@ class TransactionController extends Controller {
 	public function destroy($id)
 	{
 		$transaction = Transaction::find($id);
-		if(Gate::denies('owned-by-user', $transaction))
+		if(Gate::denies('accessible-by-user', $transaction))
 		{
 			return abort(403, "Thats not yours!");
 		}

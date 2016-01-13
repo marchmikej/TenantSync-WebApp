@@ -20,13 +20,37 @@ class DeviceController extends Controller {
 	 */
 	public function index()
 	{
-		$properties = $this->manager->properties;
-		return view('TenantSync::manager/device/index', compact('properties'));
+		$devices = $this->manager->devices();
+		$manager = $this->manager;
+		return view('TenantSync::manager/device/index', compact('devices', 'manager'));
 	}
 
 	public function all()
 	{
-		return $this->manager->devices;
+		$paginate = 15;
+		$query = Device::whereIn('property_id', $this->manager->properties->keyBy('id')->keys()->toArray())->select('devices.*');
+
+		if(isset($this->input['sort']) && ! empty($this->input['sort']))
+		{
+			$sort = $this->input['sort'];
+			$order = isset($this->input['asc']) && $this->input['asc'] != 1 ? 'desc' : 'asc';
+			$query = $query->orderBy($sort, $order);
+		}
+		
+		if(isset($this->input['paginate']))
+		{
+			$paginate = $this->input['paginate'];
+		}	
+		
+		if(isset($this->input['with']))
+		{
+			$with = $this->input['with'];
+			$query = $query->with($with);
+		}
+
+		return $query->paginate($paginate);
+		//return \DB::table('devices')->whereIn('property_id', $this->properties->keyBy('id')->keys()->toArray())->select('devices.*')->paginate()
+
 	}
 
 	/**

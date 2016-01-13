@@ -147,9 +147,14 @@ Route::group(['middleware' => ['auth']], function()
 	Route::group(['prefix' => 'manager', 'namespace' => 'Manager'], function()
 	{
 		Route::get('/', ['as' => 'manager.index', 'permission' => 'is_manager', 'uses' => 'DeviceController@index']);
+		Route::get('calculator', ['as' => 'landlord.calculator', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Manager\CalculatorController@index']);
+		Route::get('calculator/estimate_roi', ['as' => 'landlord.calculator.estimate_roi', 'permission' => 'is_landlord', 'uses' => '\App\Http\Manager\Landlord\CalculatorController@estimateRoi']);
 		Route::get('calendar', ['as' => 'manager.calendar', 'permission' => 'is_manager', 'uses' => 'CalendarController@index']);
 		Route::get('calendar/all', ['as' => 'manager.calendar.all', 'permission' => 'is_manager', 'uses' => 'CalendarController@all']);
 		
+		Route::get('messages/all', 'MessageController@all');
+		Route::resource('messages', 'MessageController');
+
 		Route::group(['prefix' => 'device'], function()
 		{
 			Route::get('/', ['as' => 'manager.device.index', 'permission' => 'is_manager', 'uses' => 'DeviceController@index']);
@@ -165,6 +170,17 @@ Route::group(['middleware' => ['auth']], function()
 			Route::get('/', ['as' => 'manager.maintenance.index', 'permission' => 'is_manager', 'uses' => 'MaintenanceController@index']);
 			Route::get('/all', ['as' => 'manager.maintenance.all', 'permission' => 'is_manager', 'uses' => 'MaintenanceController@all']);
 			Route::get('{id}', ['as' => 'manager.maintenance.show', 'permission' => 'is_manager', 'uses' => 'MaintenanceController@show']);
+		});
+
+
+
+		Route::group(['prefix' => 'transaction'], function ()
+		{
+			Route::get('/',['as' => 'landlord.transaction.index', 'uses' => 'TransactionController@index']);
+			Route::get('/all',['as' => 'landlord.transaction.all', 'uses' => 'TransactionController@all']);
+			Route::post('/',['as' => 'landlord.transaction.store', 'uses' => 'TransactionController@store']);
+			Route::patch('{id}',['as' => 'landlord.transaction.update', 'uses' => 'TransactionController@update']);
+			Route::delete('{id}',['as' => 'landlord.transaction.delete', 'uses' => 'TransactionController@destroy']);
 		});
 	});
 });

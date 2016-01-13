@@ -30,5 +30,10 @@ class AuthServiceProvider extends ServiceProvider
         {   
             return $user->owns($model);
         });
+
+        $gate->define('has-transaction', function($user, $transaction) 
+        {   
+            return $user->hasTransaction($model);
+        });
     }
 }

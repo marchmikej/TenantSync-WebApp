@@ -12550,7 +12550,6 @@ td .form-control {
 .table-row {
   font-size: 1.1em;
   padding: .75em 8px;
-  overflow: auto;
 }
 
 .table-striped > .table-row:nth-child(odd) {

@@ -14,6 +14,11 @@ trait AuthorizesUser {
 		return $this->id == $model->user_id;
 	}
 
+	public function hasTransaction($transaction)
+	{
+		# code...
+	}
+
 	// public function owns($model)
 	// {
 	// 	if($this->user->role_id == 5)

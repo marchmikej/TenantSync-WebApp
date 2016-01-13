@@ -44,9 +44,6 @@ class Property extends Model {
 	 */
 	protected $hidden = [];
 
-	// Custom attributes so they can be loaded with the model for javascript
-	public $roi;
-
 	// Name for morph relationship
 	protected $morphClass = 'property';
 

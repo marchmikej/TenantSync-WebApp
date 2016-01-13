@@ -77,24 +77,37 @@
 				</div>
 			</div>
 		</div>
-		<div class="row card">
-			<div class="col-sm-12">
-				<h4 class="card-header"><a href="/landlord/device">Devices</a></h4>
-				<div class="table-heading row">
-					<div v-for="column in columns" @click="sortBy($index)" :class="[column.width, column.isSortable ? 'sortable' : '' ]">@{{ toTitleCase(column.name) }}<span :class="sortKeyClasses($index)"></span></div>
-				</div>
-		
-				<div class="table-body table-striped">
-					<div v-for="device in devices | orderBy sortKey reverse" class="table-row row">
-						<div class="col-sm-6">@{{ device.property.address + ', ' }}<a :href="'/landlord/device/' + device.id">@{{ device.location }}</a></div>
-						<div class="col-sm-2">@{{ device.rent_amount }}</div>
-						<div class="col-sm-2">@{{ device.status }}</div>
-						<div class="col-sm-2">@{{ device.alarm ? device.alarm.slug : 'Off' }}</div>
+		<devices-table user-role="landlord" inline-template>
+			<div class="row card">
+				<div class="col-sm-12">
+					<h4 class="card-header">Devices</h4>
+					<table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers>
+			
+					<div class="table-body table-striped">
+						<div v-for="device in devices | orderBy sortKey reverse" class="table-row row">
+							<div class="col-sm-6"><a :href="'/landlord/device/' + device.id">@{{ device.address }}</a></div>
+							<div class="col-sm-2">@{{ device.rent_amount }}</div>
+							<div class="col-sm-2">@{{ device.status }}</div>
+							<div class="col-sm-2">@{{ device.alarm ? device.alarm.slug : 'Off' }}</div>
+						</div>
+					</div>
+					<div class="col-sm-4 col-sm-offset-4 text-center">
+						<button class="btn btn-clear text-primary"
+							v-if="paginated.current_page > 1"
+							@click="fetchPage(-1)" 
+						>
+							<span class="icon icon-chevron-left"></span>
+						</button>
+						<button class="btn btn-clear text-primary"
+							v-if="paginated.last_page > paginated.current_page"
+							@click="fetchPage(1)"
+						>
+							<span class="icon icon-chevron-right"></span>
+						</button>
 					</div>
 				</div>
-				<div class="col-sm-4 col-sm-offset-4 text-center">d</div>
 			</div>
-		</div>
+		</devices-table>
 	</div>
 
 @endsection
@@ -104,59 +117,54 @@
 <script>
 Vue.config.debug = true;
 
-Vue.mixin({
-  created: function () {
-    var sortKey = '';
-    var reverse = 1;
-  }
-})
-
 var vue = new Vue({
 		el: '#app',
 	
 		data: {
 
-			columns: [
-				{
-					name: 'address',
-					width: 'col-sm-6',
-					isSortable: false
-				},
-				{
-					name: 'rent_amount',
-					width: 'col-sm-2',
-					isSortable: true
-				},
-				{
-					name: 'status',
-					width: 'col-sm-2',
-					isSortable: true
-				},
-				{
-					name: 'alarm',
-					width: 'col-sm-2',
-					isSortable: true
-				}
-			],
+			sortKey: 'rent_amount',
+
+			reverse: -1,
+
+			// columns: [
+			// 	{
+			// 		name: 'address',
+			// 		label: 'address',
+			// 		width: 'col-sm-6',
+			// 		isSortable: false
+			// 	},
+			// 	{
+			// 		name: 'rent_amount',
+			// 		label: 'rent_amount',
+			// 		width: 'col-sm-2',
+			// 		isSortable: true
+			// 	},
+			// 	{
+			// 		name: 'status',
+			// 		label: 'status',
+			// 		width: 'col-sm-2',
+			// 		isSortable: true
+			// 	},
+			// 	{
+			// 		name: 'alarm_id',
+			// 		label: 'alarm',
+			// 		width: 'col-sm-2',
+			// 		isSortable: true
+			// 	}
+			// ],
 
 
-			devices: [],
-
-			paginated: null,
+			// devices: [],
 		},
 	
 		ready: function() {
-			this.fetchDevices();
+			//this.fetchDevices(1, this.sortKey, this.reverse);
 		},
 
 		methods: {
-			fetchDevices: function() {
-				// var include = ['property', 'alarm'].map(function(item) {
-				// 	return 'with[]=' + item;
-				// }).join('&');
-				var append = this.generateUrlVars({ with: ['property', 'alarm'], paginate: this.paginate, sort: this.sortKey});
+			fetchDevices: function(page, sortKey, reverse) {
+				var append = this.generateUrlVars({with: ['payable'], paginate: this.paginate, sort: sortKey, page: page, asc: reverse});
 
-				console.log();
 				this.$http.get('/landlord/device/all?' + append)
 				.success(function(result) {
 					for(var i = 0; i < result.data.length; i++)
@@ -165,7 +173,13 @@ var vue = new Vue({
 					}
 					this.devices = result.data;
 					this.paginated = result;
+					this.page = result.current_page;
 				});
+			},
+
+			refreshTable: function(sortKey, reverse)
+			{
+				this.fetchDevices(1, sortKey, reverse);
 			},
 		}
 	});

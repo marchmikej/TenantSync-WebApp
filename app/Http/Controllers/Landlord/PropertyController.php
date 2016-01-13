@@ -2,10 +2,11 @@
 
 use Gate;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
+use TenantSync\Models\Device;
 use App\Http\Utilities\State;
 use TenantSync\Models\Property;
-use TenantSync\Models\Device;
+use App\Http\Controllers\Controller;
+use TenantSync\Mutators\PropertyMutator;
 
 class PropertyController extends Controller {
 
@@ -31,33 +32,37 @@ class PropertyController extends Controller {
 
 	public function all()
 	{
-		if(isset($this->input['sortBy']))
+		$paginate = 15;
+		$query = Property::where(['user_id' => $this->user->id]);
+
+		if(isset($this->input['sort']) && ! empty($this->input['sort']))
 		{
-			if($this->input['sortBy'] == 'netIncome')
-			{
-				foreach($this->user->properties as $property)
-				{
-					$collection[$property->id] = $property->totalExpenses();
-				}
-				asort($collection, SORT_NUMERIC);
-				$collection = array_slice($collection, 0, 3, true);
-				$properties = array_keys($collection);
-				$properties = Property::whereIn('id', $properties)->get();
-				foreach($properties as $property)
-				{
-					$property->totalExpenses = $property->totalExpenses();
-					$property->netIncome = $property->netIncome();
-				}
-				return response()->json($properties->toArray());die();
-				return $properties->toArray();
-			}
+			$sort = $this->input['sort'];
+			$order = isset($this->input['asc']) && $this->input['asc'] != 1 ? 'desc' : 'asc';
+			$query = $query->orderBy($sort, $order);
+		}
+		
+		if(isset($this->input['paginate']))
+		{
+			$paginate = $this->input['paginate'];
+		}	
+		
+		if(isset($this->input['with']))
+		{
+			$with = $this->input['with'];
+			$query = $query->with($with);
 		}
 
-		return $this->user->properties->load('devices')->each(function($property) 
-			{	
-				$property->roi();
-			})
-		->keyBy('id');
+		//return Device::where(['user_id' => $this->user->id])->orderBy('rent_amount', 'desc')->with(['property', 'alarm'])->paginate(15);
+		$result = $query->paginate($paginate);
+
+		//$properties = $this->user->properties->load('devices')->keyBy('id');
+		$properties = PropertyMutator::set('netIncome', $result);
+		$properties = PropertyMutator::set('incomes', $result);
+		$properties = PropertyMutator::set('expenses', $result);
+		$properties = PropertyMutator::set('roi', $result);
+		$result->data = $properties;
+		return $result;
 	}
 
 	public function devices($id)

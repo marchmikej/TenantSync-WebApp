@@ -1,6 +1,7 @@
 <?php namespace TenantSync\Models;
 
 use TenantSync\Models\MaintenanceRequest;
+use TenantSync\Models\Message;
 use Illuminate\Database\Eloquent\Model;
 
 class Manager extends Model {
@@ -14,9 +15,16 @@ class Manager extends Model {
 		return $this->belongsTo('TenantSync\Models\User', 'landlord_id', 'id');
 	}
 
-	public function maintenanceRequests()
+	public function maintenanceRequests($relations)
 	{
-		return MaintenanceRequest::whereIn('device_id', $this->devices()->pluck('id')->toArray())->get();
+		$devices = array_map(function($device) {
+			return $device->id;
+		}, $this->devices());
+
+		if(! empty($relations)) {
+			return MaintenanceRequest::whereIn('device_id', $devices)->with($relations)->get();
+		}
+		return MaintenanceRequest::whereIn('device_id', $devices)->get();
 	}
 
 	public function properties()
@@ -29,4 +37,11 @@ class Manager extends Model {
 		return \DB::table('devices')->whereIn('property_id', $this->properties->keyBy('id')->keys()->toArray())->select('devices.*')->get();
 	}
 
+	public function messages()
+	{
+		$devices = array_map(function($device) {
+			return $device->id;
+		}, $this->devices());
+		return Message::whereIn('device_id', $devices)->with(['device', 'device.property'])->get();
+	}
 }

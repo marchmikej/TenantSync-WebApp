@@ -68,8 +68,9 @@
 		</div>
 	</div>
 
-	<div class="row card">
-		<div class="col-sm-12">
+	<portfolio-table inline-template>
+		<div class="row card">
+			<div class="col-sm-12">
 				<h4 class="card-header">
 					Properties<!-- <button  class=" btn btn-clear text-primary"><h4 class="m-a-0 icon icon-plus"></h4></button> -->
 				</h4>
@@ -80,9 +81,7 @@
 					<div class="col-sm-2">Value</div>
 					<div class="col-sm-1"></div>
 				</div> -->
-				<div class="table-heading row">
-					<div v-for="column in columns" @click="sortBy($index)" :class="[column.width, column.isSortable ? 'sortable' : '' ]">@{{ toTitleCase(column.name) }}<span :class="sortKeyClasses($index)"></span></div>
-				</div>
+				<table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers>
 
 				<div class="table-body table-striped">
 				
@@ -91,7 +90,7 @@
 							<div class="col-sm-2 text-success">@{{ numeral(property.roi).format('0.0 %') }}</div>
 							<div class="col-sm-2 text-danger">@{{ property.devices.length }}</div>
 							<div class="col-sm-2 text-primary">$@{{numeral(property.value).format('0,0.00')}}</div>
-							<div @click="showDevices(property.id)" class="col-sm-1 btn btn-clear icon icon-plus p-y-0"></div>
+							<div @click="showDetails($index)" class="col-sm-1 btn btn-clear icon icon-plus p-y-0"></div>
 
 							<div v-show="property.showDetails" class="sub-table bg-muted">
 								<div class="table-row p-t-md p-b-md">
@@ -103,7 +102,7 @@
 										<div class="col-sm-6 text-left">Closing Costs</div>
 										<div class="col-sm-6 text-right">@{{ property.closing_costs ? property.closing_costs : '-' }}</div>
 										<div class="col-sm-6 text-left">Expenses</div>
-										<div class="col-sm-6 text-right">@{{ property.expenses  ? property.expenses : '-'}}</div>
+										<div class="col-sm-6 text-right">@{{ property.expenses.length > 0  ? property.expenses : '-'}}</div>
 										<div class="col-sm-6 text-left">Taxes</div>
 										<div class="col-sm-6 text-right">@{{ property.taxes ? property.taxes : '-' }}</div>
 										<div class="col-sm-6 text-left">Insurance</div>
@@ -128,10 +127,9 @@
 						</div>
 
 				</div>
-
-
+			</div>
 		</div>
-	</div>
+	</portfolio-table>
 
 	
 </div>
@@ -150,76 +148,9 @@
 			el: '#portfolio',
 
 
-			data: {
+			// data: {
 
-				columns: [
-					{
-						name: 'address',
-						width: 'col-sm-5',
-						isSortable: false
-					},
-					{
-						name: 'roi',
-						width: 'col-sm-2',
-						isSortable: true
-					},
-					{
-						name: 'devices',
-						width: 'col-sm-2',
-						isSortable: true
-					},
-					{
-						name: 'value',
-						width: 'col-sm-2',
-						isSortable: true
-					},
-					{
-						name: '',
-						width: 'col-sm-1',
-						isSortable: false
-					}
-				],
-
-				properties: {
-					
-				},
-
-				numeral: window.numeral,
-
-			},
-
-
-			ready: function() {
-				this.fetchProperties();
-				var numeral = numeral;
-			},
-
-
-			methods: {
-
-				fetchProperties: function() {
-					this.$http.get('/landlord/properties/all')
-						.success( function(properties) {
-							this.properties = properties;
-						})
-						.error( function() {
-							console.log('Error fetching properties');
-						});
-				},
-
-				showDevices: function(id) {
-					if (typeof this.properties[id].showDetails === 'undefined')
-					{
-						this.$set('properties[' + id + '].showDetails', true);
-					}
-					else
-					{
-						this.properties[id].showDetails = !this.properties[id].showDetails;
-					}
-					
-				}
-			},
-
+				
 
 			// filters: {
 			// 	numeric: function(array, field, operator, value ) {

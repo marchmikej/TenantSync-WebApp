@@ -53,8 +53,9 @@
 			</div>
 		</div>
 	</div>
-
-	<div class="row card">
+	
+	<property-manager-table inline-template>
+		<div class="row card">
 			<div class="col-sm-12">
 				<h4 class="card-header">
 					Properties<a href="/landlord/properties/create"><button class=" btn btn-clear text-primary"><h4 class="m-a-0 icon icon-plus"></h4></button></a>
@@ -67,9 +68,10 @@
 					<div class="col-sm-1"></div>
 				</div> -->
 
-				<div class="table-heading row">
+				<!-- <div class="table-heading row">
 					<div v-for="column in columns" @click="sortBy($index)" :class="[column.width, column.isSortable ? 'sortable' : '' ]">@{{ toTitleCase(column.name) }}<span :class="sortKeyClasses($index)"></span></div>
-				</div>
+				</div> -->
+				<table-headers :columns="columns"></table-headers>
 			
 				<div class="table-body table-striped">
 							
@@ -77,7 +79,7 @@
 						<div class="col-sm-7"><a href="/landlord/properties/@{{ property.id }}">@{{property.address + ', ' + property.city + ' ' + property.state}}</a></div>
 						<div class="col-sm-2 text-danger">@{{ alarmsInProperty(property) }}</div>
 						<div class="col-sm-2 text-warning">@{{ inactiveDevicesInProperty(property) }}</div>
-						<div @click="showDevices(property.id)" class="col-sm-1 btn btn-clear icon icon-plus p-y-0"></div>
+						<div @click="showDevices($index)" class="col-sm-1 btn btn-clear icon icon-plus p-y-0"></div>
 
 						<div v-show="property.showDevices" class="sub-table">
 							<div class="table-heading row">
@@ -98,7 +100,8 @@
 					</div>
 				</div>
 			</div>
-	</div>
+		</div>
+	</property-manager-table>
 </div>
 
 
@@ -109,35 +112,14 @@
 
 	<script>
 
+		Vue.config.debug = true;
+
 		var vue = new Vue({
 			
 
 			el: '#properties',
 
-
 			data: {
-
-				columns: [
-					{
-						name: 'address',
-						width: 'col-sm-7',
-						isSortable: false
-					},
-					{
-						name: 'alarms',
-						width: 'col-sm-2',
-						isSortable: false
-					},
-					{
-						name: 'inactive',
-						width: 'col-sm-2',
-						isSortable: false
-					}
-				],
-
-				properties: {
-					
-				},
 
 				messages: {
 
@@ -153,7 +135,6 @@
 
 
 			ready: function() {
-				this.fetchProperties();
 				var numeral = numeral;
 				this.fetchMessages();
 				this.fetchMaintenance();
@@ -161,28 +142,6 @@
 
 
 			methods: {
-
-				fetchProperties: function() {
-					this.$http.get('/landlord/properties/all')
-						.success( function(properties) {
-							this.properties = properties;
-						})
-						.error( function() {
-							console.log('Error fetching properties');
-						});
-				},
-
-				showDevices: function(id) {
-					if (typeof this.properties[id].showDevices === 'undefined')
-					{
-						this.$set('properties[' + id + '].showDevices', true);
-					}
-					else
-					{
-						this.properties[id].showDevices = !this.properties[id].showDevices;
-					}
-					
-				},
 
 				fetchMessages: function() {
 					this.$http.get('/landlord/messages/all')
@@ -197,28 +156,7 @@
 						this.maintenanceRequests = maintenance;
 					});
 				},
-
-				alarmsInProperty: function(property) {
-					return _.filter(property.devices, function(device) { device.alarm_id != 0 ;}).length;
-				},
-
-				inactiveDevicesInProperty: function(property) {
-					return _.filter(property.devices, function(device) { device.status != 'active' ;}).length;
-				}
 			},
-
-
-			// filters: {
-			// 	numeric: function(array, field, operator, value ) {
-			// 		return array.filter(function(item) {
-			// 			console.log(item);
-			// 			if (item.$value)
-			// 			{
-			// 				return math[operator](item.$value[field], value)  ? item : null;
-			// 			}
-			// 		});
-			// 	}
-			// }
 		});
 	</script>
 

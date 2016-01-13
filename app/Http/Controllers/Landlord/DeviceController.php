@@ -31,7 +31,20 @@ class DeviceController extends Controller {
 	public function all()
 	{	
 		$paginate = 15;
-		$query = Device::where(['user_id' => $this->user->id]);
+		$query = Device::query(); 
+		$query = $query->where(['user_id' => $this->user->id]);
+
+		if(isset($this->input['sort']) && ! empty($this->input['sort']))
+		{
+			$sort = $this->input['sort'];
+			$order = isset($this->input['asc']) && $this->input['asc'] != 1 ? 'desc' : 'asc';
+			$query = $query->orderBy($sort, $order);
+		}
+		
+		if(isset($this->input['paginate']))
+		{
+			$paginate = $this->input['paginate'];
+		}	
 		
 		if(isset($this->input['with']))
 		{
@@ -39,17 +52,7 @@ class DeviceController extends Controller {
 			$query = $query->with($with);
 		}
 
-		if(isset($this->input['sort']) && ! empty($this->input['sort']))
-		{
-			$sort = $this->input['sort'];
-			$query->orderBy($sort);
-		}
-
-		if(isset($this->input['paginate']))
-		{
-			$paginate = $this->input['paginate'];
-		}
-
+		//return Device::where(['user_id' => $this->user->id])->orderBy('rent_amount', 'desc')->with(['property', 'alarm'])->paginate(15);
 		return $query->paginate($paginate);
 	}
 

@@ -1,6 +1,5 @@
-@extends('TenantSync::landlord/layout')
+@extends('TenantSync::manager/layout')
 @section('heading')
-<!-- Transactions -->
 @endsection
 
 @section('head')
@@ -9,129 +8,97 @@
 
 @section('content')
 
-<div id="container">
+<div id="properties">
 	
 	<div class="row">
-		<h4 class="text-primary"><strong>Dashboard</strong></h4>
-		<div class="col-sm-12 card">
-			<div class="col-sm-3">
-				<p class="text-center"><strong>Rent Paid</strong></p>
-				<div class="w-md m-x-auto">
-				  <canvas
-				    class="ex-graph"
-				    width="200" height="200"
-				    data-chart="doughnut"
-				    data-value="[{ value: 230, color: '#1ca8dd', label: 'Returning' }, { value: 130, color: '#1bc98e', label: 'New' }]"
-				    data-segment-stroke-color="#fff">
-				  </canvas>
+		<div class="col-sm-6 p-r-md">
+			<div class="card row">
+				<div class="col-sm-12">
+					<h3 class="card-header">
+						Recent Maintenance
+					</h3>
+					<div class="row table-heading">
+						<div class="col-sm-4">Unit</div>
+						<div class="col-sm-8">Request</div>
+					</div>
+					<div class="table-body table-striped">
+						<div v-for="maintenance in maintenanceRequests" class="table-row row">
+							<div class="col-sm-4">@{{ maintenance.device.property.address + ', ' + maintenance.device.location }}</div>
+							<div class="col-sm-8"><a href="/manager/maintenance/@{{ maintenance.id }}">@{{ maintenance.request }}</a></div>
+						</div>
+					</div>
 				</div>
 			</div>
-			<div class="col-sm-3">
-				<p class="text-center"><strong>Vacancies</strong></p>
-				<h3 class="text-primary text-center">5%</h3>
-			</div>
-			<div class="col-sm-3">
-				<p class="text-center"><strong>Something here</strong></p>
-				<h3 class="text-danger text-center">900</h3>
-			</div>
-			<div class="col-sm-3">
-				<p class="text-center"><strong>Something Else</strong></p>
-				<h3 class="text-warning text-center">30%</h3>
+		</div>
+
+
+			
+		<div class="col-sm-6 p-l-md">
+			<div class="card row">
+				<div class="col-sm-12">
+						<h3 class="card-header">
+							Recent Messages
+						</h3>
+						<div class="row table-heading">
+						<div class="col-sm-4">Unit</div>
+						<div class="col-sm-8">Message</div>
+					</div>
+					<div class="table-body table-striped">
+						<div v-for="message in messages" class="table-row row">
+							<div class="col-sm-4"><a href="/manager/device/@{{ message.device.id }}">@{{ message.device.property.address + ', ' + message.device.location }}</a></div>
+							<div class="col-sm-8">@{{ message.body }}</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="row">
-		<div class="col-sm-12 card">
-			<div class="col-sm-6">
-				<table class="table table-striped">
-					<h3 class="text-info m-t-0">
-						Properties
-					</h3>
-				
-					<thead>
-						<th>Location</th>
-						<th>Status</th>
-						<th>Alarm</th>
-						<th>More</th>
-						<th>ROI</th>
-						<!-- <th></th> -->
-					</thead>
-					<tbody>
-						<tr v-for="property in properties">
-							<td><a href="/manager/properties/@{{ property.id }}">@{{property.address + ', ' + property.city}}</a></td>
-							<td>@{{property.id }}</td>
-							<td>@{{property.id }}</td>
-							<td>@{{property.id }}</td>
-							<td>@{{property.id }}</td>
-							<!-- <td><button v-on="click: generateModal( transaction.id )" class="btn btn-clear"><span class="text-primary icon icon-edit"></span></button></td> -->
-							<!-- <td><button v-on="click: deleteTransaction( transaction.id )" class="btn btn-clear"><span class="text-danger icon icon-cross"></span></button></td> -->
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div class="col-sm-6">
-				<table class="table table-striped">
-					<h3 class="text-info m-t-0">
-						Maintenance<!-- <button v-on="click: generateModal(), click: modal.expense = false" class=" btn btn-clear text-primary"><h3 class="m-a-0 icon icon-plus"></h3></button> -->
-					</h3>
-				
-					<thead>
-						<th>Status</th>
-						<th>Request</th>
-						<th>Days</th>
-						<th>Attempts</th>
-						<!-- <th></th> -->
-					</thead>
-					<tbody>
-						<tr v-for="maintenance in maintenanceRequests">
-							<td><a href="/landlord/maintenance/@{{ maintenance.id }}">@{{maintenance.request}}</a></td>
-							<td>@{{maintenance.status.substr(0, 1).toUpperCase() + maintenance.status.substr(1)}}</td>
-							<td>@{{maintenance.status}}</td>
-							<td>@{{maintenance.status}}</td>
-							<!-- <td><button v-on="click: generateModal( transaction.id )" class="btn btn-clear"><span class="text-primary icon icon-edit"></span></button></td> -->
-							<!-- <td><button v-on="click: deleteTransaction( transaction.id )" class="btn btn-clear"><span class="text-danger icon icon-cross"></span></button></td> -->
-						</tr>
-					</tbody>
-				</table>
-			</div>
+	<property-manager-table user-role="manager" inline-template>
+		<div class="row card">
+			<div class="col-sm-12">
+				<h4 class="card-header">
+					Properties
+				</h4>
+				<!-- <div class="row table-heading">
+					<div class="col-sm-5">Address</div>
+					<div class="col-sm-2">ROI</div>
+					<div class="col-sm-2">Devices</div>
+					<div class="col-sm-2">Value</div>
+					<div class="col-sm-1"></div>
+				</div> -->
 
+				<table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers>
+			
+				<div class="table-body table-striped">
+							
+					<div v-for="property in properties | orderBy sortKey reverse" class="table-row row">
+						<div class="col-sm-7"><a :href="'/'+ userRole +'/properties/' + property.id">@{{property.address + ', ' + property.city + ' ' + property.state}}</a></div>
+						<div class="col-sm-2 text-danger">@{{ property.alarms }}</div>
+						<div class="col-sm-2 text-warning">@{{ property.inactives }}</div>
+						<div @click="showDevices($index)" class="col-sm-1 btn btn-clear icon icon-plus p-y-0"></div>
+
+						<div v-show="property.showDevices" class="sub-table">
+							<div class="table-heading row">
+								<div class="col-sm-1 text-right"></div>
+								<div class="col-sm-3">Location</div>
+								<div class="col-sm-2">Rent</div>
+								<div class="col-sm-2">Contact Name</div>
+								<div class="col-sm-2">Contact phone</div>
+							</div>
+							<div v-for="device in property.devices" class="table-row row">	
+									<div class="col-sm-1 text-right"><span class="fa fa-long-arrow-right"></span></div>
+									<div class="col-sm-3"><a :href="'/'+ userRole +'/device/' + device.id">@{{ device.location }}</a></div>
+									<div class="col-sm-2">$@{{ device.rent_amount }}</div>
+									<div class="col-sm-2">@{{ device.contact_name ? device.contact_name : '-' }}</div>
+									<div class="col-sm-2">@{{ device.contact_phone ? device.contact_phone : '-' }}</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-	</div>
-
-	<!--// MODAL -->
-	<div v-show="showModal" id="modal" class="vue-modal" style="display: none;">
-	  	<div class="modal-dialog">
-	    	<div class="modal-content">
-		      	<!-- <div class="modal-header">
-		        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		        	<h4 class="modal-title text-info">Edit Transaction</h4>
-		      	</div> -->
-		      	<form @keyup.enter=" submitTransaction" class="form form-horizontal">
-		      		<meta type="hidden" id="_token" value="{{ csrf_token() }}">
-		      		<div class="modal-body">
-		        		<div class="form-group">
-		        			<label class="control-label col-sm-3" for="amount">Amount</label>
-		        			<div class="col-sm-9">
-		        				<input id="modal-amount" class="form-control" type="text" name="amount" placeholder="Amount" v-model="modal.amount"/>
-		        			</div>
-		        		</div>
-		        		<div class="form-group">
-		        			<label class="control-label col-sm-3" for="description">Description</label>
-		        			<div class="col-sm-9">
-		        				<input class="form-control" type="text" name="description" placeholder="Description" v-model="modal.description"/>
-		        			</div>
-		        		</div>
-		      		</div>
-			      	<div class="modal-footer">
-			        	<button @click=" showModal = false" type="button" class="btn btn-default">Close</button>
-			        	<button  @click=" submitTransaction" type="button" class="btn btn-primary">Save changes</button>
-			      	</div>
-		      	</form>
-	    	</div><!-- /.modal-content -->
-	  	</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
-	<pre>@{{ $data | json }}</pre>
+	</property-manager-table>
 </div>
 
 
@@ -141,37 +108,55 @@
 @section('scripts')
 
 	<script>
-	var vue = new Vue({
-		el: '#container',
 
-		data: {
-			properties: [],
+	Vue.config.debug = true;
 
-			maintenanceRequests: [],
-		},
+		var vue = new Vue({
+			
 
-		ready: function(){
-			this.fetchProperties();
-			this.fetchMaintenance();
-		},
+			el: '#properties',
 
-		methods: {
-			fetchProperties: function(){
-				this.$http.get('/manager/properties/all')
-				.success(function(properties){
-					this.properties = properties;
-				});
+
+			data: {
+
+				messages: {
+
+				},
+
+				maintenanceRequests: {
+
+				},
+
+				numeral: window.numeral,
+
 			},
 
-			fetchMaintenance: function(){
-				this.$http.get('/manager/maintenance/all')
-				.success(function(maintenanceRequests){
-					this.maintenanceRequests = maintenanceRequests;
-				});
-			}
-		}
 
-	});
+			ready: function() {
+				var numeral = numeral;
+				this.fetchMessages();
+				this.fetchMaintenance();
+			},
+
+
+			methods: {
+
+				fetchMessages: function() {
+					this.$http.get('/manager/messages/all')
+					.success(function(messages) {
+						this.messages = messages;
+					});
+				},
+
+				fetchMaintenance: function() {
+					this.$http.get('/manager/maintenance/all')
+					.success(function(maintenance) {
+						this.maintenanceRequests = maintenance;
+					});
+				},
+
+			}
+		});
 	</script>
 
 
