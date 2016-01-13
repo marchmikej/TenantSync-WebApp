@@ -54,7 +54,7 @@
 		</div>
 	</div>
 	
-	<property-manager-table inline-template>
+	<property-manager-table  user-role="landlord" inline-template>
 		<div class="row card">
 			<div class="col-sm-12">
 				<h4 class="card-header">
@@ -77,8 +77,8 @@
 							
 					<div v-for="property in properties | orderBy sortKey reverse" class="table-row row">
 						<div class="col-sm-7"><a href="/landlord/properties/@{{ property.id }}">@{{property.address + ', ' + property.city + ' ' + property.state}}</a></div>
-						<div class="col-sm-2 text-danger">@{{ alarmsInProperty(property) }}</div>
-						<div class="col-sm-2 text-warning">@{{ inactiveDevicesInProperty(property) }}</div>
+						<div class="col-sm-2 text-danger">@{{ property.alarms }}</div>
+						<div class="col-sm-2 text-warning">@{{ property.inactives }}</div>
 						<div @click="showDevices($index)" class="col-sm-1 btn btn-clear icon icon-plus p-y-0"></div>
 
 						<div v-show="property.showDevices" class="sub-table">

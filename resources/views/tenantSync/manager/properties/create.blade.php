@@ -1,4 +1,4 @@
-@extends('TenantSync::landlord/layout')
+@extends('TenantSync::manager/layout')
 
 @section('content')
 

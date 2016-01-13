@@ -3,6 +3,7 @@
   "dependencies": {
     "bootstrap-sass": "^3.0.0",
     "browserify": "^1.0",
+    "eonasdan-bootstrap-datetimepicker": "^4.15.35",
     "fullcalendar": "^2.6.0",
     "gulp": "^3.8.8",
     "http-browserify": "^1.7.0",

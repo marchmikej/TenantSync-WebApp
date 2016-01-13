@@ -6,3 +6,5 @@ window.moment = require('moment');
 window._ = require('underscore');
 
 require('fullcalendar');
+
+require('../bower/datetimepicker/build/js/datetimepicker.min.js');
