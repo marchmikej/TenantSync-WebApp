@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\Inspire::class,
         \App\Console\Commands\UpdatePropertyValue::class,
+        \App\Console\Commands\RefreshDevice::class,
     ];
 
     /**

@@ -22,6 +22,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\DeviceMadeUpdate' => [
             'App\Listeners\SendUserMessageNotification',
         ],
+        'App\Events\DeviceRefresh' => [
+            'App\Listeners\RefreshDevice',
+        ],
     ];
 
     /**
