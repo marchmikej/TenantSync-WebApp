@@ -162,18 +162,24 @@ Route::group(['middleware' => ['auth']], function()
 		// 	Route::get('{id}', ['as' => 'manager.device.show', 'permission' => 'is_manager', 'uses' => 'DeviceController@show']);
 		// });
 		Route::get('device/all', 'DeviceController@all');
+		Route::post('device/message', 'MessageController@store');
 		Route::resource('device', 'DeviceController');
 
 		Route::get('properties/all', 'PropertyController@all');
 		Route::get('properties/{id}/devices', 'PropertyController@devices');
 		Route::resource('properties', 'PropertyController');
 
-		Route::group(['prefix' => 'maintenance'], function()
-		{
-			Route::get('/', ['as' => 'manager.maintenance.index', 'permission' => 'is_manager', 'uses' => 'MaintenanceController@index']);
-			Route::get('/all', ['as' => 'manager.maintenance.all', 'permission' => 'is_manager', 'uses' => 'MaintenanceController@all']);
-			Route::get('{id}', ['as' => 'manager.maintenance.show', 'permission' => 'is_manager', 'uses' => 'MaintenanceController@show']);
-		});
+		// Route::group(['prefix' => 'maintenance'], function()
+		// {
+		// 	Route::get('/', ['as' => 'manager.maintenance.index', 'permission' => 'is_manager', 'uses' => 'MaintenanceController@index']);
+		// 	Route::get('/all', ['as' => 'manager.maintenance.all', 'permission' => 'is_manager', 'uses' => 'MaintenanceController@all']);
+		// 	Route::get('{id}', ['as' => 'manager.maintenance.show', 'permission' => 'is_manager', 'uses' => 'MaintenanceController@show']);
+		// });
+
+		Route::get('maintenance/all', 'MaintenanceController@all');
+		Route::patch('maintenance/{id}', 'MaintenanceController@update');
+		Route::patch('maintenance/{id}/close', 'MaintenanceController@closeRequest');
+		Route::resource('maintenance', 'MaintenanceController');
 
 
 

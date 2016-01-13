@@ -39,6 +39,11 @@ class MaintenanceRequest extends Model {
 		return $this->belongsTo('TenantSync\Models\User');
 	}
 
+	public function transaction()
+	{
+		return $this->belongsTo('TenantSync\Models\Transaction');
+	}
+
 
 	public function device()
 	{

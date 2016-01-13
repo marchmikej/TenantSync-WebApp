@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Manager;
 
-
+use Gate;
 use App\Http\Requests;
+use TenantSync\Models\Device;
+use TenantSync\Models\Message;
+use App\Events\MessageCreatedByUser;
 use App\Http\Controllers\Controller;
 
 class MessageController extends Controller
@@ -45,9 +48,22 @@ class MessageController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store()
     {
-        //
+        $device = Device::find($this->input['device_id']);
+        
+        if(Gate::allows('has-device', $device))
+        {
+            Message::create([
+                'user_id' => $this->manager->landlord->id,
+                'device_id' => $this->input['device_id'],
+                'body' => $this->input['message'],
+                'hidden' => 0,
+                ]);
+            \Event::fire(new MessageCreatedByUser($this->input['device_id'], $this->input['message']));
+            return redirect()->back();
+        }
+        return abort(403, "Thats not yours!");
     }
 
     /**

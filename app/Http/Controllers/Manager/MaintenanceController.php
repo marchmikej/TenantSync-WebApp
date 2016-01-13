@@ -1,8 +1,12 @@
 <?php namespace App\Http\Controllers\Manager;
 
-use App\Http\Requests;
+use Gate;
+use TenantSync\Models\Device; 
 use TenantSync\Models\Manager;
+use TenantSync\Models\Transaction;
 use App\Http\Controllers\Controller;
+use TenantSync\Models\MaintenanceRequest;
+use App\Events\LandlordRespondedToMaintenance;
 
 
 class MaintenanceController extends Controller {
@@ -57,7 +61,14 @@ class MaintenanceController extends Controller {
 	 */
 	public function show($id)
 	{
-		//
+		$maintenanceRequest = MaintenanceRequest::find($id);
+
+		if(Gate::denies('has-device', $maintenanceRequest->device))
+		{
+			return abort(403, "Thats not yours!");
+		}
+		
+		return view('TenantSync::manager/maintenance/show', compact('maintenanceRequest'));
 	}
 
 	/**
@@ -79,7 +90,47 @@ class MaintenanceController extends Controller {
 	 */
 	public function update($id)
 	{
-		//
+		$maintenanceRequest = MaintenanceRequest::find($id);
+
+		if(Gate::denies('has-device', $maintenanceRequest->device))
+		{
+			return abort(403, "Thats not yours!");
+		}
+
+		$this->input['appointment_date'] = strtotime($this->input['appointment_date']);
+		$this->input['appointment_date'] = date('Y-m-d H:i:s', $this->input['appointment_date']);
+		
+		if(! empty($this->input['appointment_date']))
+		{
+			$maintenanceRequest->status = 'awaiting_approval';
+			$maintenanceRequest->appointment_date = $this->input['appointment_date'];
+			$maintenanceRequest->save();
+		}
+		
+
+		if(empty(Transaction::find($maintenanceRequest->transaction_id)))
+		{
+			$transaction = Transaction::create(['user_id' => $maintenanceRequest->user_id, 'description' => 'Maintenance Request '.$maintenanceRequest->id, 'payable_type' => 'device', 'payable_id' => $maintenanceRequest->device->id, 'date' => date('Y-m-d', time())]);
+			$maintenanceRequest->update(['transaction_id' => $transaction->id]);
+		}
+
+		if(isset($this->input['cost']))
+		{
+			$transaction = Transaction::find($maintenanceRequest->transaction_id);
+			$transaction->update(['amount' => $this->input['cost'], 'date' => date('Y-m-d', time())]);
+		}
+
+		\Event::fire(new LandlordRespondedToMaintenance($maintenanceRequest->device->id, 'Maintenance response received.'));
+
+		return redirect()->back();
+	}
+
+	public function closeRequest($id)
+	{
+		$maintenanceRequest = MaintenanceRequest::find($id);
+		$maintenanceRequest->status = 'closed';
+		$maintenanceRequest->save();
+		return $maintenanceRequest;
 	}
 
 	/**
