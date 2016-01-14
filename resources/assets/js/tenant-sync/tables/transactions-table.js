@@ -67,7 +67,7 @@ Vue.component('transactions-table', {
 				description: '',
 				transaction: null,
 				date: '',
-				billable: TenantSync.user,
+				billable: TenantSync.landlord,
 				recurring: false,
 				schedule: null,
 			},

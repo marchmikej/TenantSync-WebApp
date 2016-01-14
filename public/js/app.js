@@ -284,11 +284,14 @@ Vue.component('portfolio-table', {
 		},
 
 		showDetails: function showDetails(id) {
-			if (typeof this.properties[id].showDetails === 'undefined') {
-				console.log(id);
-				this.properties.$set(id, _.extend(this.properties[id], { 'showDetails': true }));
+			var property = _.where(this.properties, { id: id });
+			console.log(property);
+			if (!property.showDetails) {
+				property = $.extend({}, property, { showDetails: true });
+				//property.$set('showDetails', true);
+				console.log(property);
 			} else {
-				this.properties[id].showDetails = !this.properties[id].showDetails;
+				property.showDetails = !property.showDetails;
 			}
 		}
 	}
@@ -340,9 +343,11 @@ Vue.component('property-manager-table', {
 
 			properties: [],
 
-			messages: {},
+			messages: [],
 
-			maintenanceRequests: {},
+			maintenanceRequests: [],
+
+			showDevices: [],
 
 			numeral: window.numeral
 		};
@@ -368,8 +373,10 @@ Vue.component('property-manager-table', {
 		},
 
 		showDevices: function showDevices(id) {
-			if (typeof this.properties[id].showDevices === 'undefined') {
-				this.$set('properties[' + id + '].showDevices', true);
+			if (!_.find(this.showDevices, function (item) {
+				return item == id;
+			})) {
+				this.showDevices.push(id);
 			} else {
 				this.properties[id].showDevices = !this.properties[id].showDevices;
 			}
@@ -515,7 +522,7 @@ Vue.component('transactions-table', {
 				description: '',
 				transaction: null,
 				date: '',
-				billable: TenantSync.user,
+				billable: TenantSync.landlord,
 				recurring: false,
 				schedule: null
 			},

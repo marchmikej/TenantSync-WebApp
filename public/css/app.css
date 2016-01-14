@@ -12534,6 +12534,7 @@ td .form-control {
 }
 
 .table-heading {
+  clear: both;
   padding: 0px 8px;
 }
 
@@ -12741,13 +12742,28 @@ body {
   border-bottom: 1px solid #25aae1;
   padding-bottom: 21px;
   margin-bottom: 21px;
-  font-weight: 300;
   color: #aaaaaa;
-  font-size: 1.9em;
+  float: left;
+  width: 100%;
 }
 
 .card-header a {
   color: #aaaaaa !important;
+}
+
+.card-header h3,
+.card-header h4,
+.card-header h5 {
+  font-weight: 300;
+  font-size: 1.9em;
+}
+
+h2.card-header,
+h3.card-header,
+h4.card-header,
+h5.card-header {
+  font-weight: 300;
+  font-size: 1.9em;
 }
 
 .card-column {

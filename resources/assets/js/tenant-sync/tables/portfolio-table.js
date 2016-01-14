@@ -97,14 +97,17 @@ Vue.component('portfolio-table', {
 		},
 
 		showDetails: function(id) {
-			if (typeof this.properties[id].showDetails === 'undefined')
+			var property = _.where(this.properties, {id: id});
+			console.log(property);
+			if (! property.showDetails)
 			{
-				console.log(id)
-				this.properties.$set(id, _.extend(this.properties[id], {'showDetails': true}));
+				property = $.extend({}, property, {showDetails: true});
+				//property.$set('showDetails', true);
+				console.log(property);
 			}
 			else
 			{
-				this.properties[id].showDetails = !this.properties[id].showDetails;
+				property.showDetails = ! property.showDetails;
 			}
 			
 		}

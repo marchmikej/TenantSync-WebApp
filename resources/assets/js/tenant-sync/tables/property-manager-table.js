@@ -47,13 +47,17 @@ Vue.component('property-manager-table', {
 
 			],
 
-			messages: {
+			messages: [
+			
+			],
 
-			},
+			maintenanceRequests: [
+			
+			],
 
-			maintenanceRequests: {
+			showDevices: [
 
-			},
+			],
 
 			numeral: window.numeral,
 		};
@@ -82,9 +86,9 @@ Vue.component('property-manager-table', {
 		},
 
 		showDevices: function(id) {
-			if (typeof this.properties[id].showDevices === 'undefined')
+			if (! _.find(this.showDevices, function(item) { return item == id;}))
 			{
-				this.$set('properties[' + id + '].showDevices', true);
+				this.showDevices.push(id);
 			}
 			else
 			{

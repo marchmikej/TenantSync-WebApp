@@ -80,7 +80,9 @@
 	<most-expensive-property-table user-role="landlord" inline-template>
 		<div class="row card">
 			<div class="col-sm-12">
-				<h3 class="card-header m-t-0">Most Expensive</h3>
+				<div class="card-header">
+					<h3 class="m-t-0">Most Expensive</h3>
+				</div>
 
 				<table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers>
 
@@ -99,14 +101,14 @@
 	<transactions-table user-role="landlord" inline-template>
 		<div class="card row">
 			<div class="col-sm-12">
-				<h3 class="card-header">
-					<div>
+				<div class="card-header">
+					<h3 class="col-sm-6">
 						Transactions
-						<button @click="generateModal()" class=" btn btn-clear text-primary p-y-0"><h3 class="m-a-0 icon icon-plus"></h3></button>
-						<input type="text" class="col-sm-2 pull-right form-control" placeholder="search..." v-model='search'>
-						<input @change="fetchTransactions()" type="date" class="col-sm-2 pull-right form-control" v-model="range.from">
-					</div>
-				</h3>
+						<button @click="generateModal()" class="btn btn-clear text-primary p-y-0"><h3 class="m-a-0 icon icon-plus"></h3></button>
+					</h3>
+					<input type="text" class="col-sm-2 col-sm-offset-2 form-control" placeholder="search..." v-model='search'>
+					<input @change="fetchTransactions()" type="date" class="col-sm-2 form-control" v-model="range.from">
+				</div>
 
 				<table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers>
 
