@@ -27,12 +27,12 @@ class SendUserMessageNotification {
 	 */
 	public function handle(DeviceMadeUpdate $event)
     {
-        $deviceData = \DB::table('devices')
-        ->where('id', '=', $event->deviceId)
-        ->get();
+        //$deviceData = \DB::table('devices')
+        //->where('id', '=', $event->deviceId)
+        //->get();
 
         $users = DB::table('manager_property')
-            ->where('manager_property.property_id', '=', $deviceData[0]->property_id)
+            ->where('manager_property.property_id', '=', $event->propertyId)
             ->join('managers', 'manager_property.manager_id', '=', 'managers.id')
             ->join('landlord_devices', 'managers.user_id', '=', 'landlord_devices.user_id')
             ->join('properties', 'manager_property.property_id', '=', 'properties.id')
@@ -40,16 +40,28 @@ class SendUserMessageNotification {
             ->select('managers.user_id', 'landlord_devices.routing_id', 'landlord_devices.type', 'properties.address', 'users.email', 'managers.last_name', 'managers.first_name')
             ->get();
 
-        for ($x = 0; $x < count($users); $x++)
+        $emails = DB::table('manager_property')
+            ->where('manager_property.property_id', '=', $event->propertyId)
+            ->join('managers', 'manager_property.manager_id', '=', 'managers.id')
+            ->join('properties', 'manager_property.property_id', '=', 'properties.id')
+            ->join('users', 'managers.user_id', '=', 'users.id')
+            ->select('managers.user_id', 'properties.address', 'users.email', 'managers.last_name', 'managers.first_name')
+            ->get();
+
+        for ($y = 0; $y < count($emails); $y++)
         {   
-            $currentRow=$users[$x];
-            Mail::queue('emails.usersend', ['currentRow' => $currentRow, 'event' => $event], function ($m) use ($currentRow) {
-                $m->to($currentRow->email, $currentRow->last_name)->subject('Message from ' . $currentRow->address);
+            $currentRow=$emails[$y];
+            Mail::queue('emails.usersend', ['currentRow' => $currentRow, 'event' => $event], function ($m) use ($currentRow, $event) {
+                $m->to($currentRow->email, $currentRow->last_name)->subject('Message from ' . $event->deviceName . " " . $currentRow->address);
                 $m->from('admin@tenantsync.com', 'TenantSync');
             });
+        }
+
+        for ($x = 0; $x < count($users); $x++)
+        {   
             // This is the message sent to the device
-            $message = "MESSAGE: " . $event->message . " from " . $deviceData[0]->location . " " . $users[$x]->address . " ENDMESSAGE URL: " . $event->urlSend;
-            $iosMessage = $event->message . " from " . $deviceData[0]->location . " " . $users[$x]->address;
+            $message = "MESSAGE: " . $event->message . " from " . $event->deviceName . " " . $users[$x]->address . " ENDMESSAGE URL: " . $event->urlSend;
+            $iosMessage = $event->message . " from " . $event->deviceName . " " . $users[$x]->address;
 
             // If type == 0 it is an iphone
             // If type == 1 it is an android
