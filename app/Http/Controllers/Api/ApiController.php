@@ -196,9 +196,8 @@ class ApiController extends Controller {
 			{
 				$payment = Transaction::create(['amount' => $this->input['amount'], 'user_id' => $this->device->owner->id, 'payable_type' => 'device', 'payable_id' => $this->device->id, 'description' => 'Rent Payment', 'date' => date('Y-m-d', time()), 'reference_number' => $response->RefNum]);
 				(new RentPaymentGateway($this->device))->processPayment($payment->amount, $payment);
-				return json_encode($response->Result);
 			}
-			return json_encode($response);
+			return json_encode(['RefNum' => $response->RefNum, 'Error' => $response->Error, 'Result' => $response->Result]);
 		}
 		return json_encode(['errors', ['The device is not valid...']]);
 	}
