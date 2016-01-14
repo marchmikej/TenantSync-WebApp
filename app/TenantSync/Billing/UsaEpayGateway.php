@@ -30,22 +30,22 @@ class UsaEpayGateway {
 
 		try 
 		{
-			$res = $this->gateway->runTransaction($this->billable->createToken(true), (new TransactionRequest($amount, $options))->build());
+			return $this->gateway->runTransaction($this->billable->createToken(true), (new TransactionRequest($amount, $options))->build());
 			// if($toLandlord)
 			// {
 			// 	Transaction::create(['user_id' => $this->owner->id, 'reference_number' => $res->RefNum, 'amount' => $amount]);
 			// }
-			return $res;
 		} 
 		catch (\SoapFault $e) 
 		{
-			return abort(500, $e->getMessage());
+			//return abort(500, $e->getMessage());
+			return $e;
 		}
 	}
 
 	public function chargeBillable($amount, $options)
 	{
-		debug((new CustomerTransactionRequest($amount, $options))->build());
+		//debug((new CustomerTransactionRequest($amount, $options))->build());
 		if (! $this->billable->hasCustomerId())
 		{
 			throw new \InvalidArgumentException('No payment info provided or no customer Id.');

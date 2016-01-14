@@ -8,7 +8,7 @@
 
 @section('content')
 
-<div id="properties">
+<div id="properties" v-cloak>
 	
 	<div class="row">
 		<div class="col-sm-6 p-r-md">
@@ -80,8 +80,8 @@
 
 						<div v-show="property.showDevices" class="sub-table">
 							<div class="table-heading row">
-								<div class="col-sm-1 text-right"></div>
-								<div class="col-sm-3">Location</div>
+								<!-- <div class="col-sm-1 text-right">&nbsp;-</div> -->
+								<div class="col-sm-3 col-sm-offset-1">Location</div>
 								<div class="col-sm-2">Rent</div>
 								<div class="col-sm-2">Contact Name</div>
 								<div class="col-sm-2">Contact phone</div>

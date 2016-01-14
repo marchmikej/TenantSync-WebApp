@@ -28,7 +28,7 @@
 						</div>
 						<div class="col-sm-3">
 							<p class="text-center p-x-0">Cost</p>
-							<h4 class="text-warning text-center">${{ $maintenanceRequest->transaction   }}</h4>
+							<h4 class="text-warning text-center">${{count($maintenanceRequest->transaction) ? $maintenanceRequest->transaction->amount : ''}}</h4>
 						</div>
 						
 						<div class="col-sm-3">
@@ -68,7 +68,7 @@
 				
 						<div class="form-group">
 							<label for="cost" class="control-label">Cost</label>
-							<input class="form-control" type="text" value="{{ $maintenanceRequest->cost() }}" name="cost" placeholder="Cost $0.00">
+							<input class="form-control" type="text" value="${{ count($maintenanceRequest->transaction) ? $maintenanceRequest->transaction->amount : '' }}" name="cost" placeholder="Cost $0.00">
 						</div>
 				
 				

@@ -181,16 +181,19 @@ Route::group(['middleware' => ['auth']], function()
 		Route::patch('maintenance/{id}/close', 'MaintenanceController@closeRequest');
 		Route::resource('maintenance', 'MaintenanceController');
 
+		Route::get('transaction/all', 'TransactionController@all');
+		Route::patch('transaction/{id}','TransactionController@update');
+		Route::delete('{id}','TransactionController@destroy');
+		Route::resource('transaction', 'TransactionController');
 
-
-		Route::group(['prefix' => 'transaction'], function ()
-		{
-			Route::get('/',['as' => 'landlord.transaction.index', 'uses' => 'TransactionController@index']);
-			Route::get('/all',['as' => 'landlord.transaction.all', 'uses' => 'TransactionController@all']);
-			Route::post('/',['as' => 'landlord.transaction.store', 'uses' => 'TransactionController@store']);
-			Route::patch('{id}',['as' => 'landlord.transaction.update', 'uses' => 'TransactionController@update']);
-			Route::delete('{id}',['as' => 'landlord.transaction.delete', 'uses' => 'TransactionController@destroy']);
-		});
+		// Route::group(['prefix' => 'transaction'], function ()
+		// {
+		// 	Route::get('/',['as' => 'landlord.transaction.index', 'uses' => 'TransactionController@index']);
+		// 	Route::get('/all',['as' => 'landlord.transaction.all', 'uses' => 'TransactionController@all']);
+		// 	Route::post('/',['as' => 'landlord.transaction.store', 'uses' => 'TransactionController@store']);
+		// 	Route::patch('{id}',['as' => 'landlord.transaction.update', 'uses' => 'TransactionController@update']);
+		// 	Route::delete('{id}',['as' => 'landlord.transaction.delete', 'uses' => 'TransactionController@destroy']);
+		// });
 	});
 });
 

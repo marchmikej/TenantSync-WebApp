@@ -16,7 +16,13 @@ trait AuthorizesUser {
 
 	public function hasTransaction($transaction)
 	{
-		# code...
+		$id = $transaction->id;
+
+		$result = array_filter($this->manager->transactions(), function($transaction) use ($id) {
+			return $transaction->id == $id;
+		});
+
+		return !! $result;
 	}
 
 	public function hasProperty($property)
@@ -29,7 +35,7 @@ trait AuthorizesUser {
 		$id = $device->id;
 		// var_export($this->manager->devices());die();
 		$result = array_filter($this->manager->devices(), function($device) use ($id) {
-			return $device->id = $id;
+			return $device->id == $id;
 		});
 		return !! $result;
 	}

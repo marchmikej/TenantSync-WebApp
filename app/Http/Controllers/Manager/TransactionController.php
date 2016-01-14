@@ -36,9 +36,12 @@ class TransactionController extends Controller {
 
 	public function all()
 	{
+		$transactions = array_map(function($transaction) {
+			return $transaction->id;
+		}, $this->manager->transactions());
+
 		$paginate = 15;
-		$query = Transaction::query(); 
-		$query = $query->where(['user_id' => $this->manager->landlord->id]);
+		$query = Transaction::whereIn('id', $transactions);
 
 		if(isset($this->input['sort']) && ! empty($this->input['sort']))
 		{

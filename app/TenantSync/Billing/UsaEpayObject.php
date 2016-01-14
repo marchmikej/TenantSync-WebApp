@@ -50,6 +50,10 @@ abstract class UsaEpayObject {
 				$this->properties[$value] = $result;
 				continue;
 			}
+			if(in_array($key, $this->required) && !isset($this->required[$key]))
+			{
+				return abort(500, 'Missing variable '.$key);
+			}
 		}
 		return $this->properties;
 	}

@@ -37,7 +37,7 @@ class PropertyController extends Controller
     public function all()
     {
         $paginate = 15;
-        $query = Property::where(['user_id' => $this->manager->landlord->id]);
+        $query = Property::whereIn('id', $this->manager->properties->keyBy('id')->keys()->toArray());
 
         if(isset($this->input['sort']) && ! empty($this->input['sort']))
         {

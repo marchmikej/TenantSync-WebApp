@@ -333,7 +333,7 @@ Vue.component('property-manager-table', {
 				isSortable: false
 			}, {
 				name: 'inactive',
-				label: 'Inactice',
+				label: 'Inactive',
 				width: 'col-sm-2',
 				isSortable: false
 			}],

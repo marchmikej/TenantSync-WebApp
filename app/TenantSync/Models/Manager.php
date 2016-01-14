@@ -45,4 +45,25 @@ class Manager extends Model {
 		}, $this->devices());
 		return Message::whereIn('device_id', $devices)->with(['device', 'device.property'])->get();
 	}
+
+	public function transactions()
+	{
+		$devices = array_map(function($device) {
+			return $device->id;
+		}, $this->devices());
+
+		return $transactions = \DB::table('transactions')
+			->where(function($queryContainer) use ($devices) {
+				$queryContainer
+				->where(function($query) {
+					$query->where(['payable_type' => 'property'])
+						->whereIn('payable_id', $this->properties->keyBy('id')->keys()->toArray());
+				})
+				->orWhere(function($query) use ($devices) {
+					$query->where(['payable_type' => 'device'])
+						->whereIn('payable_id', $devices);
+				});
+			})
+			->get();
+	}
 }
