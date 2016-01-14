@@ -1,7 +1,9 @@
 window.numeral = require('numeral');
 
 window.moment = require('moment');
-// moment().format();
+
+//bootstrap theme stuff
+require('../theme/dist/toolkit.min.js',);
 
 window._ = require('underscore');
 
