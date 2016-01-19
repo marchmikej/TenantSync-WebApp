@@ -29,6 +29,7 @@ class TransactionController extends Controller {
 		foreach($landlord->properties as $property)
 		{
 			$netIncomes[] = $property->netIncome();
+
 		}
 		$netIncome = array_sum($netIncomes);
 		return view('TenantSync::landlord.transactions.index', compact('landlord', 'netIncome'));
