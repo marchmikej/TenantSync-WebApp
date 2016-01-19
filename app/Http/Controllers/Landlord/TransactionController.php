@@ -2,9 +2,11 @@
 
 use Gate;
 use App\Http\Requests;
+use TenantSync\Models\Device;
 use TenantSync\Models\Property;
 use TenantSync\Models\Transaction;
 use App\Http\Controllers\Controller;
+use TenantSync\Billing\RentPaymentGateway;
 use TenantSync\Mutators\TransactionMutator;
 use TenantSync\Models\RecurringTransaction;
 
@@ -93,14 +95,18 @@ class TransactionController extends Controller {
 	{
 		$this->input['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $this->input['date'])));
 		$transaction = Transaction::create($this->input);
-		if($this->input['recurring'])
-		{
-			RecurringTransaction::create([
-				'transaction_id' => $transaction->id, 
-				'schedule' => $this->input['schedule'], 
-				'next_date' => date('Y-m-d', strtotime($transaction->date) + (60*60*24*$this->input['schedule']))
-			]);
+		if($this->input['is_rent']) {
+			$device = Device::find($this->input['payable_id']);
+			(new RentPaymentGateway($device))->processPayment($transaction->amount, $transaction);
 		}
+		// if($this->input['recurring'])
+		// {
+		// 	RecurringTransaction::create([
+		// 		'transaction_id' => $transaction->id, 
+		// 		'schedule' => $this->input['schedule'], 
+		// 		'next_date' => date('Y-m-d', strtotime($transaction->date) + (60*60*24*$this->input['schedule']))
+		// 	]);
+		// }
 		return $transaction;
 	}
 

@@ -39,6 +39,7 @@ class TransactionRequest extends UsaEpayObject {
  	
 	public function build()
 	{
+		//var_export($this->properties($this->options));die();
 		return $this->properties($this->options);
 	}
 	
@@ -46,6 +47,9 @@ class TransactionRequest extends UsaEpayObject {
 	{       
         if (empty($this->options['command'])) 
         {
+        	if($this->options['payment_type'] == 'check') {
+        		return 'check';
+        	}
         	return 'Sale';
         }
         return ucfirst($this->options['command']);

@@ -85,17 +85,6 @@ Vue.component('property-manager-table', {
 				});
 		},
 
-		showDevices: function(id) {
-			if (! _.find(this.showDevices, function(item) { return item == id;}))
-			{
-				this.showDevices.push(id);
-			}
-			else
-			{
-				this.properties[id].showDevices = !this.properties[id].showDevices;
-			}
-		},
-
 		alarmsInProperty: function(property) {
 			var alarms = _.filter(property.devices, function(device) { device.alarm_id != 0 ;}).length;
 			property = _.extend(property, {alarms: alarms});
@@ -106,7 +95,11 @@ Vue.component('property-manager-table', {
 			var inactives = _.filter(property.devices, function(device) { device.status != 'active' ;}).length;
 			property = _.extend(property, {inactives: inactives});
 			return property;
-		}
+		},
+
+		toggleDevices: function(id) {
+			$('[data-property-id='+ id +']').toggle();
+		},
 	},
 
 });

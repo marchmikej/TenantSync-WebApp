@@ -8,6 +8,11 @@ class Manager extends Model {
 
 	protected $fillable = [
 		'landlord_id',
+		'first_name',
+		'last_name',
+		'position',
+		'email',
+		'phone',
 		];
 
 	public function landlord()

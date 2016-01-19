@@ -30,5 +30,46 @@
 
 .nav > li > a 
 {
+	cursor: pointer;
 	padding-left: 60px;
 }
+
+.top-nav 
+{
+	width: auto;
+	.nav-dropdown 
+	{
+		padding-left: 0;
+		a
+		{
+			color: #555 !important;
+		}
+	}
+}
+
+@media (max-height: 991px) 
+{
+	.top-nav {
+		width: 100%;
+		margin: auto;
+	}
+
+	.nav-dropdown 
+	{
+		margin: auto;
+		padding-left: 50px;
+		text-align: center;
+		a 
+		{
+			color: #bbb !important;
+		}
+		.divider 
+	    {
+	     	padding-left: 50px;
+	    	text-align: center;
+	    	width: 25%;
+	    	margin: auto;
+	    }
+	}
+}
+

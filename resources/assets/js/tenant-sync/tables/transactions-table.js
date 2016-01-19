@@ -67,14 +67,19 @@ Vue.component('transactions-table', {
 				description: '',
 				transaction: null,
 				date: '',
-				billable: TenantSync.landlord,
+				payable: {
+					id: TenantSync.landlord,
+					type: 'user',
+					search: null,
+					selected: 'General',
+				},
 				recurring: false,
 				schedule: null,
 			},
 
-			transactions: [
+			transactions: [],
 
-			],
+			properties: [],
 		}
 	},
 
@@ -88,7 +93,8 @@ Vue.component('transactions-table', {
 	},
 
 	ready: function() {
-		this.fetchTransactions(1, this.sortKey, this.reverse);
+		this.fetchTransactions();
+		this.fetchProperties();
 	},
 
 	events: {
@@ -122,6 +128,18 @@ Vue.component('transactions-table', {
 				});
 		},
 
+		fetchProperties: function() {
+			var append = this.generateUrlVars({
+				with: ['devices'],
+			});
+
+			this.$http.get('/'+ this.userRole +'/properties/all?' + append)
+				.success( function(result) {
+					this.properties = result.data;
+					//console.log(result);
+				});
+		},
+
 		generateModal: function(id) {
 			if(id + 1 > 0)
 			{
@@ -129,7 +147,11 @@ Vue.component('transactions-table', {
 				this.modal.transaction = this.transactions[id];
 				this.modal.description = (this.transactions[id].description) ? this.transactions[id].description : '';
 				this.modal.date = this.transactions[id].date;
-				this.modal.billable = this.transactions[id].payable_id;
+				this.modal.payable = {
+					id: this.transactions[id].payable_id,
+					type: this.getTransactionPayable(this.transactions[id]),
+					selected: this.transactions[id].address,
+				};
 				this.modal.schedule = this.transactions[id].recurring ? this.transactions[id].recurring.schedule : null;
 				this.modal.recurring = this.transactions[id].recurring ? true : false;
 			}
@@ -142,7 +164,12 @@ Vue.component('transactions-table', {
 				description: '',
 				transaction: null,
 				date: '',
-				billable: TenantSync.user,
+				payable: {
+					id: TenantSync.landlord,
+					type: 'user',
+					search: null,
+					selected: 'General',
+				},
 				recurring: false,
 				schedule: null,
 			};
@@ -153,8 +180,9 @@ Vue.component('transactions-table', {
 			var data = {
 				amount: this.modal.amount,
 				description: this.modal.description,
-				payable_id: this.modal.billable,
-				payable_type: $('#billable option:selected').data('type'),
+				payable_id: this.modal.payable.id,
+				payable_type: this.modal.payable.type,
+				is_rent: this.modal.is_rent,
 				date: this.modal.date,
 				recurring: this.modal.recurring,
 				schedule: this.modal.schedule
@@ -166,9 +194,23 @@ Vue.component('transactions-table', {
 			}
 			else
 			{
-				data.user_id = TenantSync.user;
+				data.user_id = TenantSync.landlord;
 				this.createTransaction(data);
 			}
+		},
+
+		setPayable: function(type, id, string) {
+			this.modal.is_rent == false;
+			this.modal.payable.type = type;
+			if(type == 'user') {
+				this.modal.payable.selected = 'General';
+				this.modal.payable.id = TenantSync.landlord;
+				return true;
+			}
+
+			this.modal.payable.selected = string;
+			this.modal.payable.id = id;
+			return true;
 		},
 
 		createTransaction: function(data) {
@@ -204,16 +246,31 @@ Vue.component('transactions-table', {
 				
 			switch (transaction.payable_type) {
 				case 'TenantSync\\Models\\Property':
-					return transaction.payable.address;
+					return 'property';
 					break;
 				case 'TenantSync\\Models\\Device':
-					return transaction.payable.location + ', ' + transaction.property.address;
+					return 'device';
 					break;
 				case 'TenantSync\\Models\\User':
-					return 'General';
+					return 'user';
 					break;
 			}
-		}
+		},
+
+		// getTransactionPayable: function(transaction) {
+				
+		// 	switch (transaction.payable_type) {
+		// 		case 'TenantSync\\Models\\Property':
+		// 			return transaction.payable.address;
+		// 			break;
+		// 		case 'TenantSync\\Models\\Device':
+		// 			return transaction.payable.location + ', ' + transaction.property.address;
+		// 			break;
+		// 		case 'TenantSync\\Models\\User':
+		// 			return 'General';
+		// 			break;
+		// 	}
+		// }
 	},
 
 });

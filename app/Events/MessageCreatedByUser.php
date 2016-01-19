@@ -19,6 +19,10 @@ class MessageCreatedByUser extends Event {
     public function __construct($deviceId, $message)
     {
         $this->route = Device::where(['id' => $deviceId])->first()->routing_id;
+        // if(is_array($deviceId)) {
+        //     $this->route = Device::whereIn('id', $deviceId)->get()->pluck('routing_id')->toArray();
+        // }
+
         $this->message = "NEWMESSAGE: " . $message;
     }
 

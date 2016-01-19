@@ -12,6 +12,7 @@
 */
 // Route::get('test', 'HomeController@test');
 
+
 Route::get('api/maintenance', 'Api\ApiController@allRequests');
 Route::post('api/maintenance/{id?}', 'Api\ApiController@storeRequest');
 Route::get('api/device', 'Api\ApiController@showDevice');
@@ -130,9 +131,16 @@ Route::group(['middleware' => ['auth']], function()
 		Route::resource('gateway', 'GatewayController');
 		Route::resource('payment', 'PaymentController');
 
+		Route::post('profile/password', 'ProfileController@password');
 		Route::resource('profile', 'ProfileController');
 
 		Route::get('messages/all', 'MessageController@all');
+		
+		Route::get('managers/all', 'ManagerController@all');
+		Route::patch('managers/properties', 'ManagerController@addProperties');
+		Route::delete('managers/properties', 'ManagerController@removeProperties');
+		Route::resource('managers', 'ManagerController');
+		
 
 		Route::group(['prefix' => 'transaction'], function ()
 		{

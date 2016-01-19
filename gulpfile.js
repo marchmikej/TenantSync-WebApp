@@ -16,31 +16,18 @@ var elixir = require('laravel-elixir');
 
 elixir(function(mix) {
     mix		
-		.less(['app.less'])
+		.less([
+			'app.less', 
+			'../sweetalert2/dist/sweetalert2.css', 
+			'../select2/dist/css/select2.css', 
+			'../select2/dist/css/select2-bootstrap.css', 
+		])
 		.styles([
 			'fullcalendar.min.css'
 		], 'public/css/fullcalendar.min.css', 'resources/assets/fullcalendar')
 		.styles([
 			'app.css',
 		], 'public/css', 'public/css')
-		//.scripts([
-		// 	'../../../node-modules/jquery/dist/jquery.min.js',
-		// 	'../theme/dist/toolkit.min.js',
-		// 	'../../../node_modules/vue/dist/vue.js', 
-		// 	'../../../node_modules/vue-resource/dist/vue-resource.min.js'
-		// ], 
-		// 	'public/js/core.js'
-		// )
-		// .scripts([
-		// 	// '../bower/moment/min/moment.min.js',
-		// 	// '../bower/moment-timezone/builds/moment-timezone.min.js',
-		// 	// '../bower/datetimepicker/build/js/datetimepicker.min.js',
-		// 	'../../../node_modules/numeral/numeral.js',
-		// 	//'../fullcalendar/fullcalendar.min.js',
-		// 	'../../../node_modules/underscore/underscore.js'
-		// ],
-		// 	'public/js/plugins.js'
-		// )
 		.browserify([
 			'core.js',
 			'plugins.js'

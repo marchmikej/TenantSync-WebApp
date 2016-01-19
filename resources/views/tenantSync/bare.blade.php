@@ -39,26 +39,27 @@
 
 				</div>
 				<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<div class="collapse navbar-collapse top-nav text-center" id="bs-example-navbar-collapse-1">
 
 					@if(\Auth::check())
 					<ul class="nav navbar-nav navbar-right p-r">
+						@yield('topmenu')
 						<li class="dropdown">
-							<a href="/logout" class="">
-						  		<span class="fa fa-circle-o-notch"></span>
+							<a class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" style="background-color: transparent !important;">
+						  		<span class="icon icon-menu" style="font-size: 1.2em;"></span>
 							</a>
-						  <!-- <ul class="dropdown-menu" role="menu">
-						    <li><a href="#">Action</a></li>
-						    <li><a href="#">Another action</a></li>
-						    <li><a href="#">Something else here</a></li>
-						    <li class="divider"></li>
-						    <li><a href="#">Separated link</a></li>
-						  </ul> -->
+						  	<ul class="dropdown-menu nav-dropdown" aria-labelledby="dropdownMenu1">
+							    @if(Auth::user()->role == 'landlord')
+							    	<li><a href="/{{Auth::user()->role}}/profile">Profile</a></li>
+							    	<li><a href="/landlord/managers">Managers</a></li>
+							    @endif
+							    <li role="separator" class="divider"></li>
+							    <li><a href="/logout">Logout</a></li>
+							</ul>
 						</li>
+
 					</ul>
 					@endif
-
-					@yield('topmenu')
 				
 				</div><!-- /.navbar-collapse -->
 			</div><!-- /.container-fluid -->
@@ -117,6 +118,8 @@
 	<script src="/js/core.js"></script>
 	<script src="/js/app.js"></script>
 
+	<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
+	<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
 	@yield('scripts')
 
 </body>

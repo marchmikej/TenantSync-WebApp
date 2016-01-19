@@ -277,7 +277,9 @@ Vue.component('portfolio-table', {
 			//var append = this.generateUrlVars({paginate: this.paginate, sort: sortKey, page: page, asc: reverse});
 
 			this.$http.get('/landlord/properties/all?').success(function (result) {
-				this.properties = result.data;
+				this.properties = _.map(result.data, (function (property) {
+					return this.setTotalExpenses(property);
+				}).bind(this));
 				this.paginated = result;
 				this.currentPage = result.current_page;
 			});
@@ -285,14 +287,16 @@ Vue.component('portfolio-table', {
 
 		showDetails: function showDetails(id) {
 			var property = _.where(this.properties, { id: id });
-			console.log(property);
-			if (!property.showDetails) {
-				property = $.extend({}, property, { showDetails: true });
-				//property.$set('showDetails', true);
-				console.log(property);
-			} else {
-				property.showDetails = !property.showDetails;
-			}
+
+			$('[data-property-id=' + id + ']').toggle();
+		},
+
+		setTotalExpenses: function setTotalExpenses(property) {
+			var totalExpenses = _.reduce(property.expenses, function (memo, current) {
+				return Number(memo) + Number(current.amount) * -1;
+			}, 0);
+			property = _.extend(property, { totalExpenses: totalExpenses });
+			return property;
 		}
 	}
 });
@@ -372,16 +376,6 @@ Vue.component('property-manager-table', {
 			});
 		},
 
-		showDevices: function showDevices(id) {
-			if (!_.find(this.showDevices, function (item) {
-				return item == id;
-			})) {
-				this.showDevices.push(id);
-			} else {
-				this.properties[id].showDevices = !this.properties[id].showDevices;
-			}
-		},
-
 		alarmsInProperty: function alarmsInProperty(property) {
 			var alarms = _.filter(property.devices, function (device) {
 				device.alarm_id != 0;
@@ -396,6 +390,10 @@ Vue.component('property-manager-table', {
 			}).length;
 			property = _.extend(property, { inactives: inactives });
 			return property;
+		},
+
+		toggleDevices: function toggleDevices(id) {
+			$('[data-property-id=' + id + ']').toggle();
 		}
 	}
 
@@ -522,12 +520,19 @@ Vue.component('transactions-table', {
 				description: '',
 				transaction: null,
 				date: '',
-				billable: TenantSync.landlord,
+				payable: {
+					id: TenantSync.landlord,
+					type: 'user',
+					search: null,
+					selected: 'General'
+				},
 				recurring: false,
 				schedule: null
 			},
 
-			transactions: []
+			transactions: [],
+
+			properties: []
 		};
 	},
 
@@ -541,7 +546,8 @@ Vue.component('transactions-table', {
 	},
 
 	ready: function ready() {
-		this.fetchTransactions(1, this.sortKey, this.reverse);
+		this.fetchTransactions();
+		this.fetchProperties();
 	},
 
 	events: {
@@ -576,13 +582,28 @@ Vue.component('transactions-table', {
 			});
 		},
 
+		fetchProperties: function fetchProperties() {
+			var append = this.generateUrlVars({
+				'with': ['devices']
+			});
+
+			this.$http.get('/' + this.userRole + '/properties/all?' + append).success(function (result) {
+				this.properties = result.data;
+				//console.log(result);
+			});
+		},
+
 		generateModal: function generateModal(id) {
 			if (id + 1 > 0) {
 				this.modal.amount = this.transactions[id].amount;
 				this.modal.transaction = this.transactions[id];
 				this.modal.description = this.transactions[id].description ? this.transactions[id].description : '';
 				this.modal.date = this.transactions[id].date;
-				this.modal.billable = this.transactions[id].payable_id;
+				this.modal.payable = {
+					id: this.transactions[id].payable_id,
+					type: this.getTransactionPayable(this.transactions[id]),
+					selected: this.transactions[id].address
+				};
 				this.modal.schedule = this.transactions[id].recurring ? this.transactions[id].recurring.schedule : null;
 				this.modal.recurring = this.transactions[id].recurring ? true : false;
 			}
@@ -595,7 +616,12 @@ Vue.component('transactions-table', {
 				description: '',
 				transaction: null,
 				date: '',
-				billable: TenantSync.user,
+				payable: {
+					id: TenantSync.landlord,
+					type: 'user',
+					search: null,
+					selected: 'General'
+				},
 				recurring: false,
 				schedule: null
 			};
@@ -606,8 +632,9 @@ Vue.component('transactions-table', {
 			var data = {
 				amount: this.modal.amount,
 				description: this.modal.description,
-				payable_id: this.modal.billable,
-				payable_type: $('#billable option:selected').data('type'),
+				payable_id: this.modal.payable.id,
+				payable_type: this.modal.payable.type,
+				is_rent: this.modal.is_rent,
 				date: this.modal.date,
 				recurring: this.modal.recurring,
 				schedule: this.modal.schedule
@@ -616,9 +643,23 @@ Vue.component('transactions-table', {
 			if (this.modal.transaction) {
 				this.updateTransaction(data);
 			} else {
-				data.user_id = TenantSync.user;
+				data.user_id = TenantSync.landlord;
 				this.createTransaction(data);
 			}
+		},
+
+		setPayable: function setPayable(type, id, string) {
+			this.modal.is_rent == false;
+			this.modal.payable.type = type;
+			if (type == 'user') {
+				this.modal.payable.selected = 'General';
+				this.modal.payable.id = TenantSync.landlord;
+				return true;
+			}
+
+			this.modal.payable.selected = string;
+			this.modal.payable.id = id;
+			return true;
 		},
 
 		createTransaction: function createTransaction(data) {
@@ -649,19 +690,34 @@ Vue.component('transactions-table', {
 
 			switch (transaction.payable_type) {
 				case 'TenantSync\\Models\\Property':
-					return transaction.payable.address;
+					return 'property';
 					break;
 				case 'TenantSync\\Models\\Device':
-					return transaction.payable.location + ', ' + transaction.property.address;
+					return 'device';
 					break;
 				case 'TenantSync\\Models\\User':
-					return 'General';
+					return 'user';
 					break;
 			}
 		}
+
 	}
 
 });
+// getTransactionPayable: function(transaction) {
+
+// 	switch (transaction.payable_type) {
+// 		case 'TenantSync\\Models\\Property':
+// 			return transaction.payable.address;
+// 			break;
+// 		case 'TenantSync\\Models\\Device':
+// 			return transaction.payable.location + ', ' + transaction.property.address;
+// 			break;
+// 		case 'TenantSync\\Models\\User':
+// 			return 'General';
+// 			break;
+// 	}
+// }
 
 },{"./table-headers":5}],7:[function(require,module,exports){
 'use strict';
@@ -707,14 +763,24 @@ Vue.filter('search', function (list, string) {
 		return list;
 	}
 
-	return _.filter(list, (function (item) {
-		return _.find(item, (function (property) {
+	return _.filter(list, (function (object) {
+		return _.find(object, (function (property) {
 			if (typeof property === 'string') {
-				return property.toLowerCase().includes(string.toLowerCase());
+				return property.toLowerCase().includes(string.trim().toLowerCase());
 			}
 			return false;
 		}).bind(string));
 	}).bind(string));
+});
+
+Vue.filter('whereNotIn', function (list, sourceList, property) {
+	if (!sourceList || !property) {
+		return list;
+	}
+
+	return _.filter(list, function (object) {
+		return !_.size(_.where(sourceList, { 'id': object[property] }));
+	});
 });
 
 },{}]},{},[7,6,4,2,1,3]);

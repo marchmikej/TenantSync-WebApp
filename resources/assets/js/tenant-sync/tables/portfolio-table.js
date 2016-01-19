@@ -90,7 +90,9 @@ Vue.component('portfolio-table', {
 
 			this.$http.get('/landlord/properties/all?')
 				.success( function(result) {
-					this.properties = result.data;
+					this.properties = _.map(result.data, function(property) {
+						return this.setTotalExpenses(property);
+					}.bind(this));
 					this.paginated = result;
 					this.currentPage = result.current_page;
 				});
@@ -98,18 +100,15 @@ Vue.component('portfolio-table', {
 
 		showDetails: function(id) {
 			var property = _.where(this.properties, {id: id});
-			console.log(property);
-			if (! property.showDetails)
-			{
-				property = $.extend({}, property, {showDetails: true});
-				//property.$set('showDetails', true);
-				console.log(property);
-			}
-			else
-			{
-				property.showDetails = ! property.showDetails;
-			}
+
+			$('[data-property-id='+ id +']').toggle();
 			
-		}
+		},
+
+		setTotalExpenses: function(property) {
+			var totalExpenses = _.reduce(property.expenses, function(memo , current) { return Number(memo) + Number(current.amount) * -1; }, 0);
+			property = _.extend(property, {totalExpenses: totalExpenses});
+			return property;
+		},
 	},
 });

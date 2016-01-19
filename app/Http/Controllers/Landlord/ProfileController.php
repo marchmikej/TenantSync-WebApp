@@ -29,6 +29,20 @@ class ProfileController extends Controller
         //
     }
 
+    //Change password
+    public function password()
+    {
+        if($this->user->password != bcrypt($this->input['current_password'])) {
+            return redirect()->back()->withErrors("Current password doesn't match");
+        }
+        $this->validate($this->input, [
+            'password' => 'required|confirmed|min:6',
+        ]);
+
+        $this->user->password = bcrypt($this->input['password']);
+        return 'success';
+    }
+
     /**
      * Store a newly created resource in storage.
      *

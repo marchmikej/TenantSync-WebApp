@@ -5,8 +5,19 @@
 	<div id="profile" class="row card">
 		<div class="col-sm-6">
 			<div class="card-header">
-				Billing Info
+				<h4>Billing Info</h4>
 			</div>
+
+			<div class="form form-horizontal">
+				<div class="form-group">
+					<label class="control-label col-sm-3">Payment Method</label>
+					<div class="col-sm-9">
+						<input class="col-sm-10 form-control" type="text"  placeholder="" value="{{ ($landlord->paymentMethods()->exists()) ? $landlord->paymentMethods()->orderBy('created_at', 'desc')->first()->name : ''}}" disabled readonly/>
+						<button @click.prevent="showModal = true" class="btn btn-clear col-sm-2"><span class="icon icon-edit"></span></button>
+					</div>
+				</div>
+			</div>
+
 			<form class="form form-horizontal" action="/landlord/profile/{{ $landlord->id }}" method="POST">
 				<input type="hidden" name="_token" value="{{ csrf_token() }}">
 				<input type="hidden" name="_method" value="PATCH">
@@ -68,24 +79,8 @@
 				<button class="btn btn-primary col-sm-3 col-sm-offset-9 form-control">Save</button>
 			</form>
 
-				<div class="card-header m-t">
-					Payment Method
-				</div>
-
-				<div class="form form-horizontal">
-					<div class="form-group">
-						<label class="control-label col-sm-3">Current Method</label>
-						<div class="col-sm-9">
-							<input class="col-sm-10 form-control" type="text"  placeholder="" value="{{ ($landlord->paymentMethods()->exists()) ? $landlord->paymentMethods()->orderBy('created_at', 'desc')->first()->name : ''}}" disabled readonly/>
-							<button @click.prevent="showModal = true" class="btn btn-clear col-sm-2"><span class="icon icon-edit"></span></button>
-						</div>
-					</div>
-				</div>
-				
-		</div>
-		<div class="col-sm-6">
 			<div class="card-header">
-				Receiving Info
+				<h4>Receiving Info</h4>
 			</div>
 			<form class="form form-horizontal" action="/landlord/gateway/{{ $landlord->gateway->id }}" method="POST">
 				<input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -107,6 +102,38 @@
 				
 				<button class="btn btn-primary col-sm-3 col-sm-offset-9 form-control">Save</button>
 			</form>
+				
+		</div>
+		<div class="col-sm-6">
+			<div>
+				<div class="card-header">
+						<h4>Password Reset</h4>
+					</div>
+				<form class="form form-horizontal" action="/landlord/profile/password" method="POST">
+					<input type="hidden" name="_token" value="{{ csrf_token() }}">
+					
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="current_password">Current Password</label>
+						<div class="col-sm-9">
+							<input class="form-control" type="text" name="current_password" placeholder="Current Password" value="{{ old('current_password') }}"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="password">Password</label>
+						<div class="col-sm-9">
+							<input class="form-control" type="text" name="password" placeholder="Password" value="{{ old('password') }}"/>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="password_confirmation">Comfirm</label>
+						<div class="col-sm-9">
+							<input class="form-control" type="text" name="password_confirmation" placeholder="Comfirm" value="{{ old('password_confirmation') }}"/>
+						</div>
+					</div>
+
+				</form>
+			</div>
 		</div>
 
 		<!--// MODAL -->

@@ -33,12 +33,27 @@ Vue.filter('search', function (list, string) {
 		return list;
 	}
 
-  	return _.filter(list, function(item) {
-  		return _.find(item, function(property) {
+  	return _.filter(list, function(object) {
+  		return _.find(object, function(property) {
   			if(typeof property === 'string') {
-  				return property.toLowerCase().includes(string.toLowerCase());
+  				return property.toLowerCase().includes(string.trim().toLowerCase());
 	  		}
 	  		return false;
 	  	}.bind(string));
   	}.bind(string));
-})
+});
+
+Vue.filter('whereNotIn', function (list, sourceList, property) {
+	if(! sourceList || ! property) {
+		return list;
+	}
+
+  	return _.filter(list, function(object) {
+  		return ! _.size(_.where(sourceList, {'id': object[property]}));
+  	});
+});
+
+
+
+
+
