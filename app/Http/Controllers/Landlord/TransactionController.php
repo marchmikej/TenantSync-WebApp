@@ -96,7 +96,7 @@ class TransactionController extends Controller {
 	{
 		$this->input['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $this->input['date'])));
 		$transaction = Transaction::create($this->input);
-		if($this->input['is_rent']) {
+		if(isset($this->input['is_rent'])) {
 			$device = Device::find($this->input['payable_id']);
 			(new RentPaymentGateway($device))->processPayment($transaction->amount, $transaction);
 		}
