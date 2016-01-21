@@ -39,7 +39,7 @@ Route::get('auth/login/{routing_id?}', 'HomeController@index');
 //Route::get('applogin/{routing_id?}', '\App\Http\Controllers\Auth\AuthController@getAppLogin');
 Route::post('auth/login/{routing_id?}', '\App\Http\Controllers\Auth\AuthController@postLogin');
 Route::get('logout', '\App\Http\Controllers\Auth\AuthController@getLogout');
-Route::group(['middleware' => ['auth']], function()
+Route::group(['middleware' => ['auth', 'sales']], function()
 {
 	Route::get('sales/register', ['as' => 'landlord.register', 'uses' => function() {
 			return view('auth.register');
@@ -55,8 +55,8 @@ Route::group(['middleware' => ['auth']], function()
 	// Phone App Notification Routes
 	Route::post('api/phoneverify/{id}', 'Api\PhoneAppController@phoneverify');
 	Route::get('api/managenotifications/{id}', 'Api\PhoneAppController@manageNotifications');
-	// Sales Rep Routes
-	Route::group(['prefix' => 'sales', 'namespace' => 'Sales'], function()
+
+	Route::group(['prefix' => 'sales', 'namespace' => 'Sales', 'middleware' => ['sales']], function()
 	{
 		Route::get('/', '\App\Http\Controllers\HomeController@index');
 		Route::get('/registration/pay',['as' => 'sales.registration.getPay', 'permission' => 'is_sales_rep', 'uses' => 'PaymentController@getPayRegistration']);
@@ -104,7 +104,7 @@ Route::group(['middleware' => ['auth']], function()
 
 
 	// Landlord Routes
-	Route::group(['prefix' => 'landlord', 'namespace' => 'Landlord'], function()
+	Route::group(['prefix' => 'landlord', 'namespace' => 'Landlord', 'middleware' => ['landlord']], function()
 	{
 		Route::get('/',['as' => 'landlord.index', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\HomeController@index']);
 		Route::get('calendar', ['as' => 'landlord.calendar', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\CalendarController@index']);
@@ -152,7 +152,7 @@ Route::group(['middleware' => ['auth']], function()
 		});
 	});
 
-	Route::group(['prefix' => 'manager', 'namespace' => 'Manager'], function()
+	Route::group(['prefix' => 'manager', 'namespace' => 'Manager', 'middleware' => ['manager']], function()
 	{
 		Route::get('/', ['as' => 'manager.index', 'permission' => 'is_manager', 'uses' => 'DeviceController@index']);
 		Route::get('calculator', ['as' => 'landlord.calculator', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Manager\CalculatorController@index']);

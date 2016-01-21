@@ -128,6 +128,12 @@ class MaintenanceController extends Controller {
 	public function closeRequest($id)
 	{
 		$maintenanceRequest = MaintenanceRequest::find($id);
+		if(Gate::denies('has-device', $maintenanceRequest->device))
+		{
+			return abort(403, "Thats not yours!");
+		}
+
+		$maintenanceRequest = MaintenanceRequest::find($id);
 		$maintenanceRequest->status = 'closed';
 		$maintenanceRequest->save();
 		return $maintenanceRequest;

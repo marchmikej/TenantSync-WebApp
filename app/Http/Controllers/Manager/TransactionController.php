@@ -189,7 +189,7 @@ class TransactionController extends Controller {
 	public function destroy($id)
 	{
 		$transaction = Transaction::find($id);
-		if(Gate::denies('accessible-by-user', $transaction))
+		if(Gate::denies('has-transaction', $transaction))
 		{
 			return abort(403, "Thats not yours!");
 		}

@@ -36,9 +36,11 @@
 		<div class="col-sm-6 p-l-md">
 			<div class="card row">
 				<div class="col-sm-12">
-						<h3 class="card-header">
-							Recent Messages
-						</h3>
+
+						<div class="card-header">
+							<h3 class="col-sm-8">Recent Messages</h3><span class="fa fa-edit text-primary col-sm-1 col-sm-offset-3"></span>
+						</div>
+						
 						<div class="row table-heading">
 						<div class="col-sm-4">Unit</div>
 						<div class="col-sm-8">Message</div>
@@ -55,7 +57,7 @@
 	</div>
 	
 	@include('TenantSync::includes.tables.property-manager-table')
-	
+
 </div>
 
 

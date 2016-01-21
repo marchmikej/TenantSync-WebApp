@@ -136,7 +136,13 @@ class MaintenanceController extends Controller {
 	}
 
 	public function closeRequest($id)
-	{
+	{	
+		$maintenanceRequest = MaintenanceRequest::find($id);
+
+		if(Gate::denies('owned-by-user', $maintenanceRequest))
+		{
+			return abort(403, "Thats not yours!");
+		}
 		$maintenanceRequest = MaintenanceRequest::find($id);
 		$maintenanceRequest->status = 'closed';
 		$maintenanceRequest->save();
