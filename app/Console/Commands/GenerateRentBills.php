@@ -1,40 +1,46 @@
 <?php
 
-namespace App\Console;
+namespace App\Console\Commands;
 
+use Illuminate\Console\Command;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
+use TenantSync\Models\Property;
 use TenantSync\Models\Device;
 use TenantSync\Models\Invoice;
-use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
-class Kernel extends ConsoleKernel
+class GenerateRentBills extends Command
 {
     /**
-     * The Artisan commands provided by your application.
+     * The name and signature of the console command.
      *
-     * @var array
+     * @var string
      */
-    protected $commands = [
-        \App\Console\Commands\Inspire::class,
-        \App\Console\Commands\UpdatePropertyValue::class,
-        \App\Console\Commands\RefreshDevice::class,
-        \App\Console\Commands\ChimeDevice::class,
-        \App\Console\Commands\GenerateRentBills::class,
-    ];
+    protected $signature = 'command:GenerateRentBills';
 
     /**
-     * Define the application's command schedule.
+     * The console command description.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @var string
+     */
+    protected $description = 'This command generates the billing cycle for the day';
+
+    /**
+     * Create a new command instance.
+     *
      * @return void
      */
-    protected function schedule(Schedule $schedule)
+    public function __construct()
     {
-        $schedule->command('command:GenerateRentBills')->daily();
-        $schedule->command('command:UpdatePropertyValue')->dailyAt('01:15');
+        parent::__construct();
     }
 
-    public function generateRentBills()
+    /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
     {
         $devices = Device::all();
         $devicesToBill = $devices->filter(function($device) 
