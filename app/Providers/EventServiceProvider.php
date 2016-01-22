@@ -25,6 +25,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\DeviceRefresh' => [
             'App\Listeners\RefreshDevice',
         ],
+        'App\Events\DeviceChime' => [
+            'App\Listeners\SendDeviceChimeNotification',
+        ],
     ];
 
     /**
