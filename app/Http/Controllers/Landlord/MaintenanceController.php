@@ -5,6 +5,7 @@ use App\Http\Requests;
 use TenantSync\Models\Device; 
 use TenantSync\Models\Transaction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateMaintenanceRequest;
 use TenantSync\Models\MaintenanceRequest;
 use App\Events\LandlordRespondedToMaintenance;
 use App\Http\Controllers\Traits\AuthorizesUsers;
@@ -98,7 +99,7 @@ class MaintenanceController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(UpdateMaintenanceRequest $request, $id)
 	{
 		$maintenanceRequest = MaintenanceRequest::find($id);
 

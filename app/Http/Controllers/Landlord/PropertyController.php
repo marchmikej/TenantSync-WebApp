@@ -5,6 +5,7 @@ use App\Http\Requests;
 use TenantSync\Models\Device;
 use App\Http\Utilities\State;
 use TenantSync\Models\Property;
+use App\Http\Requests\CreatePropertyRequest;
 use App\Http\Controllers\Controller;
 use TenantSync\Mutators\PropertyMutator;
 
@@ -86,7 +87,7 @@ class PropertyController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store(CreatePropertyRequest $request)
 	{
 		$this->input['user_id'] = $this->user->id;
 		$property = Property::create($this->input);
@@ -129,7 +130,7 @@ class PropertyController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(CreatePropertyRequest $request, $id)
 	{
 		$property = Property::find($id);
 		if(Gate::denies('owned-by-user', $property))

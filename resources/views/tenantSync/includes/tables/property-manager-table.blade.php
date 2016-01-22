@@ -2,7 +2,7 @@
 		<div class="row card">
 			<div class="col-sm-12">
 				<h4 class="card-header">
-					Properties
+					Properties<button class=" btn btn-clear p-y-0"><a href="/landlord/properties/create"><h3 class="m-a-0 text-primary icon icon-plus"></h3></a></button>
 				</h4>
 				<!-- <div class="row table-heading">
 					<div class="col-sm-5">Address</div>

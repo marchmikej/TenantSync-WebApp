@@ -40,7 +40,7 @@
 									</div>
 									<div class="col-sm-6">
 										<div class="col-sm-6 text-left">Mortgage Rate</div>
-										<div class="col-sm-6 text-right">@{{ property.rent_due ? property.rent_due : '-' }}</div>
+										<div class="col-sm-6 text-right">@{{ property.mortgage_rate ? property.mortgage_rate : '-' }}</div>
 										<div class="col-sm-6 text-left">Mortgagae Payment</div>
 										<div class="col-sm-6 text-right">@{{ property.mortgage_payment ? property.mortgage_payment : '-' }}</div>
 										<div class="col-sm-6 text-left">Purchase Date</div>

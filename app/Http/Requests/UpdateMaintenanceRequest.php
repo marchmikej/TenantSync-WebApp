@@ -2,7 +2,7 @@
 
 use App\Http\Requests\Request;
 
-class TransactionCreatedRequest extends Request {
+class UpdateMaintenanceRequest extends Request {
 
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -22,8 +22,8 @@ class TransactionCreatedRequest extends Request {
 	public function rules()
 	{
 		return [
-			'amount' => 'required|numeric',
-			'description' => 'required'
+			'cost' => 'numeric',
+			'appointment_date' => 'required|date|after:now'
 		];
 	}
 

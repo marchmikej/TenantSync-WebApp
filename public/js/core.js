@@ -39011,6 +39011,8 @@ require('../sweetalert2/dist/sweetalert2.min.js');
 
 require('../select2/dist/js/select2.js');
 
+// require('vue-strap');
+
 },{"../bower/datetimepicker/build/js/datetimepicker.min.js":27,"../select2/dist/js/select2.js":30,"../sweetalert2/dist/sweetalert2.min.js":31,"../theme/dist/toolkit.min.js":32,"fullcalendar":1,"moment":3,"numeral":4,"underscore":6}],30:[function(require,module,exports){
 /*!
  * Select2 4.0.1

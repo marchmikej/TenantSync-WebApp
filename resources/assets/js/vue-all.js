@@ -18,6 +18,9 @@ var toTitleCase = function(string)
 }
 
 Vue.prototype.toTitleCase = toTitleCase;
+Vue.prototype.numeral = window.numeral;
+Vue.prototype.moment = window.moment;
+Vue.prototype._ = window._;
 
 Vue.mixin({
 	methods: {

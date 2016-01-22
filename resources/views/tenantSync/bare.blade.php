@@ -44,20 +44,6 @@
 					@if(\Auth::check())
 					<ul class="nav navbar-nav navbar-right p-r">
 						@yield('topmenu')
-						<li class="dropdown">
-							<a class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" style="background-color: transparent !important;">
-						  		<span class="icon icon-menu" style="font-size: 1.2em;"></span>
-							</a>
-						  	<ul class="dropdown-menu nav-dropdown" aria-labelledby="dropdownMenu1">
-							    @if(Auth::user()->role == 'landlord')
-							    	<li><a href="/{{Auth::user()->role}}/profile">Profile</a></li>
-							    	<li><a href="/landlord/managers">Managers</a></li>
-							    @endif
-							    <li role="separator" class="divider"></li>
-							    <li><a href="/logout">Logout</a></li>
-							</ul>
-						</li>
-
 					</ul>
 					@endif
 				
@@ -117,9 +103,6 @@
 	<!-- <script src="/js/plugins.js"></script> -->
 	<script src="/js/core.js"></script>
 	<script src="/js/app.js"></script>
-
-	<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
-	<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
 	@yield('scripts')
 
 </body>

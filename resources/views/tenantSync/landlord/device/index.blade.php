@@ -37,9 +37,12 @@
 			<div class="card row">
 				<div class="col-sm-12">
 
-						<div class="card-header">
-							<h3 class="col-sm-8">Recent Messages</h3><span class="fa fa-edit text-primary col-sm-1 col-sm-offset-3"></span>
-						</div>
+						<h3 class="card-header">
+							<div>
+								Recent Messages
+								<button @click="newMessage" class=" btn btn-clear p-y-0"><h3 class="m-a-0 text-primary icon icon-plus"></h3></button>
+							</div>
+						</h3>
 						
 						<div class="row table-heading">
 						<div class="col-sm-4">Unit</div>

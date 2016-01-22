@@ -5,15 +5,15 @@
 <div class="row card" id="managers" v-cloak>
 	<div class="col-sm-12">
 			<h4 class="card-header">
-				Managers
+				Managers<button @click="" class="btn btn-clear p-y-0"><h3 class="icon icon-plus text-primary m-a-0"></h3></button>
 			</h4>
 		<!-- <table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers> -->
 
 		<div class="table-body table-striped">
 			<div v-for="manager in managers" class="table-row row">
-				<div class="col-sm-5 text-primary">@{{ manager.first_name + ' ' + manager.last_name}}</div>
+				<div class="col-sm-5">@{{ manager.first_name + ' ' + manager.last_name}}</div>
 				<div class="col-sm-2">@{{ manager.position ? manager.position : '-' }}</div>
-				<div class="col-sm-2">@{{ manager.email ? manager.email : '-' }}</div>
+				<div class="col-sm-2">@{{ manager.user.email ? manager.user.email : '-' }}</div>
 				<div class="col-sm-1">@{{ manager.phone ? manager.phone : '-' }}</div>
 				<div @click="toggleProperties(manager.id)" class="col-sm-1 col-sm-offset-1 text-right btn icon icon-plus text-primary p-a-0"></div>
 
@@ -151,6 +151,31 @@
 // 		},
 // 	}
 // });
+Vue.component('modal', {
+	data: function() {
+		return {
+			show: false,
+
+			form: {},
+
+			title: '',
+		};
+	},
+
+	methods: {
+		hide: function() {
+			this.clearForm();
+			this.show = false;
+		},
+
+		clearForm: function() {
+			return _.each(this.form.inputs, function(input) {
+				return input = null;
+			});
+		},
+	},
+});
+
 
 Vue.config.debug = true;
 
@@ -228,7 +253,7 @@ var vue = new Vue({
 	methods: {
 		fetchManagers: function() {
 			var append = this.generateUrlVars({
-				with: ['properties', 'properties.devices'],
+				with: ['properties', 'properties.devices', 'user'],
 				paginate: this.paginate, 
 				page: this.currentPage,
 				sort: this.sortKey, 

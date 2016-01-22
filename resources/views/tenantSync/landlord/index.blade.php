@@ -9,13 +9,13 @@
 				<div class="col-sm-3 card-column">
 					<p class="text-center">Revenue</p>
 					<div class="w-md m-x-auto">
-					  <canvas
+					  <!-- <canvas
 					    class="ex-graph"
 					    width="200" height="200"
 					    data-chart="doughnut"
 					    data-value="[{ value: 230, color: '#1ca8dd', label: 'Returning' }, { value: 130, color: '#1bc98e', label: 'New' }]"
 					    data-segment-stroke-color="#fff">
-					  </canvas>
+					  </canvas> -->
 					</div>
 				</div>
 		

@@ -41,7 +41,7 @@
 				<p class="stat text-danger text-center">
 				{{ 
 					round(array_sum(
-					$manager->landlord->transactions
+					collect($manager->transactions())
 					->filter(function($transaction) {
 						if($transaction->amount > 0)
 						{
@@ -60,7 +60,7 @@
 				<p class="stat text-warning text-center">
 				{{ 
 					round(array_sum(
-					$manager->landlord->transactions
+					collect($manager->transactions())
 					->filter(function($transaction) {
 						if($transaction->amount < 0)
 						{

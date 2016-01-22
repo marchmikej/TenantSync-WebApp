@@ -4,7 +4,7 @@
 
 	<div id="maintenance">
 		<div class="row">
-			<h4 class="m-t-0 text-primary">{{ $maintenanceRequest->device->property->address . ', ' . $maintenanceRequest->device->location }}</h4>
+			<h4 class="m-t-0 text-primary"><a href="/landlord/maintenance/{{ $maintenanceRequest->id }}"> {{ $maintenanceRequest->device->property->address . ', ' . $maintenanceRequest->device->location }}</a></h4>
 			<div class="col-sm-12 card">
 				<div class="col-sm-6">
 					<h3 class="text-info m-t-0">Request</h3>

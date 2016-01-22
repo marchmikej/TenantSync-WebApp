@@ -177,6 +177,10 @@ Route::group(['middleware' => ['auth']], function()
 		Route::get('properties/{id}/devices', 'PropertyController@devices');
 		Route::resource('properties', 'PropertyController');
 
+
+		Route::post('profile/email', 'ProfileController@email');
+		Route::post('profile/password', 'ProfileController@password');
+		Route::resource('profile', 'ProfileController');
 		// Route::group(['prefix' => 'maintenance'], function()
 		// {
 		// 	Route::get('/', ['as' => 'manager.maintenance.index', 'permission' => 'is_manager', 'uses' => 'MaintenanceController@index']);

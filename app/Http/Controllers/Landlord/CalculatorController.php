@@ -30,12 +30,13 @@ class CalculatorController extends Controller {
 		return $roi;
 	}
 
-	public function calculatePayments($rate, $months, $principal) 
+	public function calculatePayments($principal, $downPayment, $term, $rate) 
 	{
-		$loan = $principal;// - $down;
-		$payment = floor(($loan*$rate/(1-pow(1+$rate,(-1*$months))))*100)/100;
-		return $payment;
-		//return number_format($rate * $principal * pow((1 + $rate), $months) / (1 - pow((1 + $rate), $months)));
+		return $this->roiCalculator->mortgagePayment($principal, $downPayment, $term, $rate);
+
+		// $loan = $principal;// - $down;
+		// $payment = floor(($loan*$rate/(1-pow(1+$rate,(-1*$months))))*100)/100;
+		// return $payment;
 	}
 
 	/**

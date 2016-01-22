@@ -6,6 +6,7 @@ use TenantSync\Models\Device;
 use TenantSync\Models\Property;
 use TenantSync\Models\Transaction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateTransactionRequest;
 use TenantSync\Billing\RentPaymentGateway;
 use TenantSync\Mutators\TransactionMutator;
 use TenantSync\Models\RecurringTransaction;
@@ -92,7 +93,7 @@ class TransactionController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store(Requests\TransactionCreatedRequest $request)
+	public function store(CreateTransactionRequest $request)
 	{
 		$this->input['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $this->input['date'])));
 		$transaction = Transaction::create($this->input);
@@ -139,7 +140,7 @@ class TransactionController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(CreateTransactionRequest $request, $id)
 	{
 		$transaction = Transaction::find($id);
 		if(Gate::denies('owned-by-user', $transaction))

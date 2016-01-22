@@ -1,12 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Landlord;
+namespace App\Http\Controllers\Manager;
 
+use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Http\Utilities\State;
 
 class ProfileController extends Controller
 {
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->manager = $this->user->manager;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,22 +20,10 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        $landlord = $this->user;
-        $states = State::all();
-        return view('TenantSync::landlord/profile/show', compact('landlord', 'states'));
+        $manager = $this->manager;
+        return view('TenantSync::manager/profile/index', compact('manager'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    //Change password
     public function password()
     {
         if(! \Hash::check($this->input['current_password'], $this->user->password)) {
@@ -42,6 +36,26 @@ class ProfileController extends Controller
         $this->user->password = \Hash::make($this->input['password']);
         $this->user->save();
         return redirect()->back();
+    }
+
+    public function email()
+    {
+        $this->validate($this->request, [
+                'email' => 'required|email|unique:users,email',
+            ]);
+        $this->user->email = $this->input['email'];
+        $this->user->save();
+        return redirect()->back();
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
     }
 
     /**
@@ -84,10 +98,9 @@ class ProfileController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update($id)
+    public function update(Request $request, $id)
     {
-        $this->user->profile->update($this->input);
-        return redirect()->back();
+        //
     }
 
     /**

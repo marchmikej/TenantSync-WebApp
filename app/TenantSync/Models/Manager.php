@@ -1,8 +1,9 @@
 <?php namespace TenantSync\Models;
 
-use TenantSync\Models\MaintenanceRequest;
 use TenantSync\Models\Message;
+use TenantSync\Models\RentBill;
 use Illuminate\Database\Eloquent\Model;
+use TenantSync\Models\MaintenanceRequest;
 
 class Manager extends Model {
 
@@ -14,6 +15,11 @@ class Manager extends Model {
 		'email',
 		'phone',
 		];
+
+	public function user()
+	{
+		return $this->belongsTo('TenantSync\Models\User');
+	}
 
 	public function landlord()
 	{
@@ -70,5 +76,26 @@ class Manager extends Model {
 				});
 			})
 			->get();
+	}
+
+	public function rentBills()
+	{
+		$devices = array_map(function($device) {
+			return $device->id;
+		}, $this->devices());
+
+		return RentBIll::where(['user_id' => $this->landlord->id])->whereIn('device_id', $devices)->get();
+	}
+
+	public function rentPayments()
+	{
+		if(! $this->rentBills()) {
+			return false;
+		}
+
+		$rentBills = array_map(function($rentBill) {
+			return $rentBill['id'];
+		}, $this->rentBills()->toArray());
+		return collect(\DB::table('rent_payments')->whereIn('rent_bill_id', $rentBills)->get());
 	}
 }

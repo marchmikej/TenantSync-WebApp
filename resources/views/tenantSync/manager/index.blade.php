@@ -20,11 +20,11 @@
 				</div>
 		
 				<div class="col-sm-3 card-column">
-					<p class="text-center">Rent Paid MTD</p>
+					<p class="text-center">Rent Paid MTD </p>
 					<p class="stat text-success text-center">
-					@if($manager->landlord->rentPayments())
+					@if($manager->rentPayments())
 					{{
-						array_sum($manager->landlord->rentPayments()->filter(function($rentPayment) 
+						array_sum($manager->rentPayments()->filter(function($rentPayment) 
 							{
 								return date('m', strtotime($rentPayment->created_at)) == date('m', time());
 							})
@@ -37,9 +37,9 @@
 				<div class="col-sm-3 card-column">
 					<p class="text-center">Deliquent Rent MTD</p>
 					<p class="stat text-warning text-center">
-					@if($manager->landlord->rentBills->count() && $manager->landlord->rentPayments())
+					@if($manager->rentBills()->count() && $manager->rentPayments())
 					{{ 
-						array_sum($manager->landlord->rentBills->filter(function($rentBill) 
+						array_sum($manager->rentBills()->filter(function($rentBill) 
 							{
 								if($rentBill->vacant == 1)
 								{
@@ -47,7 +47,7 @@
 								}
 								return date('m', strtotime($rentBill->rent_month)) == date('m', time());
 							})
-						->pluck('bill_amount')->toArray()) - array_sum($manager->landlord->rentPayments()->filter(function($rentPayment) 
+						->pluck('bill_amount')->toArray()) - array_sum($manager->rentPayments()->filter(function($rentPayment) 
 							{
 								return date('m', strtotime($rentPayment->created_at)) == date('m', time());
 							})
@@ -60,9 +60,9 @@
 				<div class="col-sm-3 card-column">
 					<p class="text-center">Vacant Rent MTD</p>
 					<p class="stat text-danger text-center">
-					@if($manager->landlord->rentBills->count())
+					@if($manager->rentBills()->count())
 					{{
-						array_sum($manager->landlord->rentBills->filter(function($rentBill) 
+						array_sum($manager->rentBills()->filter(function($rentBill) 
 						{
 							if($rentBill->vacant == 0)
 							{

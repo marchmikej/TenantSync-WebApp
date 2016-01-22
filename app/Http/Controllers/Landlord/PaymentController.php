@@ -70,7 +70,7 @@ class PaymentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PaymentMethodRequest $request, $id)
     {
         return $this->user->updatePaymentMethod($this->input);
     }

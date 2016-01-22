@@ -115,20 +115,20 @@
 					<div class="form-group">
 						<label class="control-label col-sm-3" for="current_password">Current Password</label>
 						<div class="col-sm-9">
-							<input class="form-control" type="text" name="current_password" placeholder="Current Password" value="{{ old('current_password') }}"/>
+							<input class="form-control" type="password" name="current_password" placeholder="Current Password" value="{{ old('current_password') }}"/>
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="control-label col-sm-3" for="password">Password</label>
 						<div class="col-sm-9">
-							<input class="form-control" type="text" name="password" placeholder="Password" value="{{ old('password') }}"/>
+							<input class="form-control" type="password" name="password" placeholder="Password" value="{{ old('password') }}"/>
 						</div>
 					</div>
 
 					<div class="form-group">
 						<label class="control-label col-sm-3" for="password_confirmation">Comfirm</label>
 						<div class="col-sm-9">
-							<input class="form-control" type="text" name="password_confirmation" placeholder="Comfirm" value="{{ old('password_confirmation') }}"/>
+							<input class="form-control" type="password" name="password_confirmation" placeholder="Comfirm" value="{{ old('password_confirmation') }}"/>
 						</div>
 					</div>
 
