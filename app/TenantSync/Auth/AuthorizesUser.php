@@ -11,7 +11,10 @@ trait AuthorizesUser {
 
 	public function owns($model)
 	{
-		return $this->id == $model->user_id;
+		if($this->id == $model->user_id || $this->id == $model->landlord_id) {
+			return true;
+		}
+		return false;
 	}
 
 	public function hasTransaction($transaction)

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Landlord;
 
-
+use Gate;
 use App\Http\Requests;
 use TenantSync\Models\User;
 use TenantSync\Models\Manager;
@@ -86,7 +86,13 @@ class ManagerController extends Controller
 
     public function addProperties()
     {
+
         $manager = Manager::find($this->input['manager_id']);
+        if(Gate::denies('owned-by-user', $manager))
+        {
+            return abort(403, "Thats not yours!");
+        }
+
         $manager->properties()->attach($this->input['properties']);
         return $manager->with('properties')->get();
 
@@ -95,6 +101,11 @@ class ManagerController extends Controller
     public function removeProperties()
     {
         $manager = Manager::find($this->input['manager_id']);
+        if(Gate::denies('owned-by-user', $manager))
+        {
+            return abort(403, "Thats not yours!");
+        }
+
         $manager->properties()->detach($this->input['properties']);
         return $manager->with('properties')->get();
 
@@ -143,6 +154,10 @@ class ManagerController extends Controller
     public function destroy($id)
     {
         $manager = Manager::find($id);
+        if(Gate::denies('owned-by-user', $manager))
+        {
+            return abort(403, "Thats not yours!");
+        }
 
         $manager->user->delete();
         $manager->properties()->detach();
