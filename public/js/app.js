@@ -681,12 +681,9 @@ Vue.component('transactions-table', {
 		},
 
 		deleteTransaction: function deleteTransaction(id) {
-
-			if (confirm('Are you sure you want to delete this transaction?')) {
-				this.$http['delete']('/' + this.userRole + '/transaction/' + id).success(function () {
-					this.fetchTransactions(1, this.sortKey, this.reverse);
-				});
-			}
+			this.$http['delete']('/' + this.userRole + '/transaction/' + id).success(function () {
+				this.fetchTransactions(1, this.sortKey, this.reverse);
+			});
 		},
 
 		getTransactionPayable: function getTransactionPayable(transaction) {
@@ -703,29 +700,16 @@ Vue.component('transactions-table', {
 					break;
 			}
 		}
-
 	}
 
 });
-// getTransactionPayable: function(transaction) {
-
-// 	switch (transaction.payable_type) {
-// 		case 'TenantSync\\Models\\Property':
-// 			return transaction.payable.address;
-// 			break;
-// 		case 'TenantSync\\Models\\Device':
-// 			return transaction.payable.location + ', ' + transaction.property.address;
-// 			break;
-// 		case 'TenantSync\\Models\\User':
-// 			return 'General';
-// 			break;
-// 	}
-// }
 
 },{"./table-headers":5}],7:[function(require,module,exports){
 'use strict';
 
 Vue.http.headers.common['X-CSRF-TOKEN'] = document.getElementById('_token').getAttribute('value');
+
+Vue.config.debug = true;
 
 var math = {
 	'+': function _(a, b) {
@@ -742,15 +726,6 @@ var math = {
 	}
 };
 
-var toTitleCase = function toTitleCase(string) {
-	var strings = string.replace('_', ' ').split(' ');
-	for (var i = 0; i < strings.length; i++) {
-		strings[i] = strings[i].charAt(0).toUpperCase() + strings[i].slice(1);
-	}
-	return strings.join(' ');
-};
-
-Vue.prototype.toTitleCase = toTitleCase;
 Vue.prototype.numeral = window.numeral;
 Vue.prototype.moment = window.moment;
 Vue.prototype._ = window._;
@@ -760,6 +735,28 @@ Vue.mixin({
 		generateUrlVars: function generateUrlVars(includes) {
 			var include = $.param(includes);
 			return include;
+		},
+
+		toTitleCase: function toTitleCase(string) {
+			var strings = string.replace('_', ' ').split(' ');
+			for (var i = 0; i < strings.length; i++) {
+				strings[i] = strings[i].charAt(0).toUpperCase() + strings[i].slice(1);
+			}
+			return strings.join(' ');
+		},
+
+		confirm: function confirm(action, object, id) {
+			swal({
+				title: 'Just Checking',
+				text: 'Are you sure you want to ' + action + ' this ' + object.toLowerCase() + '?',
+				type: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Yes',
+				closeOnConfirm: true }, (function (confirmed) {
+				return confirmed ? this[action + object](id) : false;
+			}).bind(this));
 		}
 	}
 });
@@ -788,6 +785,9 @@ Vue.filter('whereNotIn', function (list, sourceList, property) {
 		return !_.size(_.where(sourceList, { 'id': object[property] }));
 	});
 });
+
+/* TenantSync Initializing */
+window.TS = {};
 
 },{}]},{},[7,6,4,2,1,3]);
 

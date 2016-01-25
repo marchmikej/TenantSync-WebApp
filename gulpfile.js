@@ -35,11 +35,11 @@ elixir(function(mix) {
 		'public/js/core.js', null)
 		.browserify([
 			'vue-all.js',			
-			'tenant-sync/tables/transactions-table.js',
-			'tenant-sync/tables/property-manager-table.js',
-			'tenant-sync/tables/most-expensive-property.js',
-			'tenant-sync/tables/devices-table.js',
-			'tenant-sync/tables/portfolio-table.js'
+			'tables/transactions-table.js',
+			'tables/property-manager-table.js',
+			'tables/most-expensive-property.js',
+			'tables/devices-table.js',
+			'tables/portfolio-table.js'
 		], 
 		'public/js/app.js', null)
 });

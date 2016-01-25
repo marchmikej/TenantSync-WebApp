@@ -44,6 +44,10 @@ class MaintenanceRequest extends Model {
 		return $this->belongsTo('TenantSync\Models\Transaction');
 	}
 
+	public function setAppointmentDateAttribute($date)
+	{
+		$this->attributes['appointment_date'] = date('Y-m-d H:i:s', strtotime($date));
+	}
 
 	public function device()
 	{

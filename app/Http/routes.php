@@ -113,6 +113,7 @@ Route::group(['middleware' => ['auth']], function()
 		Route::get('calculator/estimate_roi', ['as' => 'landlord.calculator.estimate_roi', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\CalculatorController@estimateRoi']);
 
 		Route::get('maintenance/all', 'MaintenanceController@all');
+		Route::get('api/maintenance/{id}', 'MaintenanceController@get');
 		Route::patch('maintenance/{id}', 'MaintenanceController@update');
 		Route::patch('maintenance/{id}/close', 'MaintenanceController@closeRequest');
 		Route::resource('maintenance', 'MaintenanceController');
@@ -136,9 +137,10 @@ Route::group(['middleware' => ['auth']], function()
 
 		Route::get('messages/all', 'MessageController@all');
 		
-		Route::get('managers/all', 'ManagerController@all');
-		Route::patch('managers/properties', 'ManagerController@addProperties');
 		Route::delete('managers/properties', 'ManagerController@removeProperties');
+		Route::patch('managers/properties', 'ManagerController@addProperties');
+		Route::get('managers/all', 'ManagerController@all');
+		Route::delete('managers/{id}', 'ManagerController@destroy');
 		Route::resource('managers', 'ManagerController');
 		
 

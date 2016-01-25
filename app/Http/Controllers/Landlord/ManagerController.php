@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Landlord;
 
 
 use App\Http\Requests;
+use TenantSync\Models\User;
 use TenantSync\Models\Manager;
+use App\Events\ManagerCreated;
 use App\Http\Controllers\Controller;
 
 class ManagerController extends Controller
@@ -59,7 +61,8 @@ class ManagerController extends Controller
      */
     public function create()
     {
-        //
+        $landlord = $this->user;
+        return view('TenantSync::landlord.managers.create', compact('landlord'));
     }
 
     /**
@@ -68,9 +71,17 @@ class ManagerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store()
     {
-        //
+        $this->input['role'] = 'manager';
+        $this->input['landlord_id'] = $this->user->id;
+        $userAccount = User::create($this->input);
+        $userAccount->manager()->create($this->input);
+
+        //fire off password reset email to the manager
+        //Event::fire(new ManagerCreated($userAccount));
+
+        return redirect()->route('landlord.managers.index');
     }
 
     public function addProperties()
@@ -131,6 +142,11 @@ class ManagerController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $manager = Manager::find($id);
+
+        $manager->user->delete();
+        $manager->properties()->detach();
+        $manager->delete();
+        return $this->user->managers;
     }
 }

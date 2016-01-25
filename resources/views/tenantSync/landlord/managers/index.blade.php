@@ -5,17 +5,18 @@
 <div class="row card" id="managers" v-cloak>
 	<div class="col-sm-12">
 			<h4 class="card-header">
-				Managers<button @click="" class="btn btn-clear p-y-0"><h3 class="icon icon-plus text-primary m-a-0"></h3></button>
+				Managers<button @click="" class="btn btn-clear p-y-0"><a href="/landlord/managers/create"><h3 class="icon icon-plus text-primary m-a-0"></h3></a></button>
 			</h4>
 		<!-- <table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers> -->
 
 		<div class="table-body table-striped">
 			<div v-for="manager in managers" class="table-row row">
-				<div class="col-sm-5">@{{ manager.first_name + ' ' + manager.last_name}}</div>
+				<div @click="confirm('delete', 'Manager', manager.id)" class="col-sm-1 text-left btn icon icon-minus text-danger p-a-0"></div>
+				<div class="col-sm-4">@{{ manager.first_name + ' ' + manager.last_name}}</div>
 				<div class="col-sm-2">@{{ manager.position ? manager.position : '-' }}</div>
-				<div class="col-sm-2">@{{ manager.user.email ? manager.user.email : '-' }}</div>
+				<div class="col-sm-3">@{{ manager.email ? manager.email : '-' }}</div>
 				<div class="col-sm-1">@{{ manager.phone ? manager.phone : '-' }}</div>
-				<div @click="toggleProperties(manager.id)" class="col-sm-1 col-sm-offset-1 text-right btn icon icon-plus text-primary p-a-0"></div>
+				<div @click="toggleProperties(manager.id)" class="col-sm-1 text-right btn icon icon-plus text-primary p-a-0"></div>
 
 				<div :data-manager-id="manager.id" class="sub-table col-sm-12" style="display: none;">
 					<div class="table-row">
@@ -72,86 +73,9 @@
 
 <script>
 
-// Vue.component('manager-table', {
-// 	components: {
-// 		'table-headers': ('./table-headers'),
-// 	},
-
-// 	data: function() {
-// 		return {
-// 			sortKey: 'rent_amount',
-
-// 			reverse: -1,
-
-// 			currentPage: 1,
-
-// 			paginated: {},
-
-// 			search: null,
-
-// 			// range: {
-// 			// 	from: moment().subtract(1, 'month').format('YYYY-MM-DD'),
-// 			// },
-
-// 			columns: [
-// 				{
-// 					name: 'name',
-// 					label: 'Name',
-// 					width: 'col-sm-6',
-// 					isSortable: false
-// 				},
-// 				{
-// 					name: 'position',
-// 					label: 'Position',
-// 					width: 'col-sm-2',
-// 					isSortable: true
-// 				},
-// 				{
-// 					name: 'email',
-// 					label: 'Email',
-// 					width: 'col-sm-2',
-// 					isSortable: true
-// 				},
-// 				{
-// 					name: 'phone',
-// 					label: 'Phone',
-// 					width: 'col-sm-2',
-// 					isSortable: true
-// 				}
-// 			],
-
-// 			managers: [],
-// 		};
-// 	},
-
-// 	ready: function() {
-// 		this.fetchManagers();
-// 	},
-
-// 	methods: {
-// 		fetchManagers: function() {
-// 			var append = this.generateUrlVars({
-// 				with: ['properties'],
-// 				paginate: this.paginate, 
-// 				page: this.currentPage,
-// 				sort: this.sortKey, 
-// 				asc: this.reverse, 
-// 				// dates: {
-// 				// 	from: this.dates.from, 
-// 				// 	to: this.dates.to
-// 				// }
-// 			});
-
-// 			this.$http('/landlord/managers/all?' + append)
-// 			.success(function(result) {
-// 				this.managers = result.data;
-// 				this.paginated = result;
-// 				this.currentPage = result.current_page;
-// 			});
-// 		},
-// 	}
-// });
 Vue.component('modal', {
+	props: ['title', 'form'],
+
 	data: function() {
 		return {
 			show: false,
@@ -327,6 +251,20 @@ var vue = new Vue({
 					manager.properties.$remove(property);
 					this.hideModal();
 				});
+		},
+
+
+
+		deleteManager: function(id) {
+
+			var manager = _.find(this.managers, function(manager) {
+				return manager.id == id;
+			});
+
+			this.$http.delete('/landlord/managers/'+ id)
+			.success(function(managers) {
+					this.managers.$remove(manager);
+			});	
 		},
 
 		toggleProperties: function(id) {

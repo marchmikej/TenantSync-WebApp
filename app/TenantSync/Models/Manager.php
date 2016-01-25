@@ -4,8 +4,19 @@ use TenantSync\Models\Message;
 use TenantSync\Models\RentBill;
 use Illuminate\Database\Eloquent\Model;
 use TenantSync\Models\MaintenanceRequest;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Manager extends Model {
+
+	use SoftDeletes;
+
+	/**
+     * The attributes that should be mutated to dates.
+     * Used for the soft delete.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
 
 	protected $fillable = [
 		'landlord_id',

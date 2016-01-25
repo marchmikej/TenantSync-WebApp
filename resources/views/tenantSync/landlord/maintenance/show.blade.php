@@ -12,7 +12,8 @@
 				</div>
 				<div class="col-sm-4 col-sm-offset-2">
 					<p class="text-center">Status</p>
-					<h3 class="text-primary text-center m-y-0">{{ ucfirst(str_replace('_', ' ', $maintenanceRequest->status)) }}</h3>
+					<!-- <h3 class="text-primary text-center m-y-0">@{{ ucfirst(str_replace('_', ' ', $maintenanceRequest->status)) }}</h3> -->
+					<h3 class="text-primary text-center m-y-0" v-text="maintenanceRequest.status"></h3>
 				</div>
 			</div>
 		</div>
@@ -58,23 +59,23 @@
 						<input type="hidden" name="_method" value="PATCH">
 				
 						<div class="text-gray form-group" id="datetimepicker1">
-							<input type="hidden" name="appointment_date" value="{{ $maintenanceRequest->appointment_date }}" v-model="appointmentDate">
+							<input v-model="maintenanceRequest.appointment_date" type="hidden" name="appointment_date" :value="maintenanceRequest.appointment_date">
 						</div>
 				
 						<div class="form-group">
 							<label for="response" class="control-label">Additional response</label>
-							<textarea class="form-control" name="response"  placeholder="Type your response here..." cols="30" rows="3">{{ $maintenanceRequest->response }}</textarea>
+							<textarea v-model="maintenanceRequest.response" class="form-control" name="response"  placeholder="Type your response here..." cols="30" rows="3">{{ $maintenanceRequest->response }}</textarea>
 						</div>
 				
 						<div class="form-group">
 							<label for="cost" class="control-label">Cost</label>
-							<input class="form-control" type="text" value="{{ $maintenanceRequest->cost() }}" name="cost" placeholder="Cost $0.00">
+							<input v-model="maintenanceRequest.cost" class="form-control" type="text"  name="cost" placeholder="Cost $0.00">
 						</div>
 				
 				
 						<!--  <div class="form-group">
 							<label for="status" class="control-label">Status</label>
-							<select name="status" class="form-control" >
+							<select name="status" class="form-control">
 								<option disabled selected>-- Status --</option>
 								<option value="open">Open</option>
 								<option value="pending">Pending</option>
@@ -83,7 +84,7 @@
 						</div> -->
 				
 				
-						<button class="col-sm-3 btn btn-primary">Respond</button>
+						<button @click.prevent="submitRequest" class="col-sm-3 btn btn-primary">Respond</button>
 						<button @click.prevent="closeRequest" class="col-sm-3 btn btn-muted col-sm-offset-6">Close</button>
 					</form>
 				</div>
@@ -95,37 +96,65 @@
 
 @section('scripts')
 
-	<script type="text/javascript">
-        $(function () {
-            $('#datetimepicker1').datetimepicker({
-            	showClear: true,
-            	sideBySide: true,
-            	format: 'YYYY/MM/DD h:mm a',
-            	inline: true,
-            });
-            $("[data-action = 'togglePeriod']").removeClass('btn-primary');
-        });
-    </script>
-
     <script>
+
         vue = new Vue({
         	el: '#maintenance',
 
         	data: {
-        		appointmentDate: '',
+        		userRole: TenantSync.user.role,
+        		maintenanceRequest: {
+        		},
+        	},
+
+        	ready: function() {
+        		this.maintenanceRequest.id = new URI(document.URL).segment(2);
+        		this.fetchMaintenanceRequest();
+
         	},
 
         	methods: {
+        		fetchMaintenanceRequest: function() {
+        			this.$http.get('/'+ this.userRole +'/api/maintenance/'+ this.maintenanceRequest.id)
+        			.success(function(result) {
+        				this.maintenanceRequest =  result;
+        				this.maintenanceRequest.status = this.toTitleCase(this.maintenanceRequest.status);
+        			})
+        			.then(function () {
+        				this.loadDatepicker();
+        			});
+        		},
+
+        		submitRequest: function() {
+        			this.maintenanceRequest.appointment_date = $('#datetimepicker1>input').val()
+        			this.$http.patch('/'+ this.userRole +'/maintenance/'+ this.maintenanceRequest.id, this.maintenanceRequest)
+        			.success(function(result) {
+        				this.fetchMaintenanceRequest();
+        			});
+        		},
+
         		closeRequest: function() {
 
         			this.$http.patch('/landlord/maintenance/' + {{ $maintenanceRequest->id }} + '/close')
         			.success(function(response) {
-        				console.log(response);
+        				this.fetchMaintenanceRequest();
         			})
         			.error(function(response) {
         				console.log(response);
         			});
-        		}
+        		},
+
+        		loadDatepicker: function() {
+        			$(function () {
+			            $('#datetimepicker1').datetimepicker({
+			            	showClear: true,
+			            	sideBySide: true,
+			            	format: 'YYYY/MM/DD h:mm a',
+			            	inline: true,
+			            });
+			            $("[data-action = 'togglePeriod']").removeClass('btn-primary');
+			        });
+        		},
         	},
         })
     </script>

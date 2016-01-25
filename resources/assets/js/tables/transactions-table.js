@@ -232,14 +232,10 @@ Vue.component('transactions-table', {
 		},
 
 		deleteTransaction: function(id) {
-			
-			if(confirm('Are you sure you want to delete this transaction?'))
-			{
-				this.$http.delete('/'+ this.userRole +'/transaction/' + id)
-					.success( function() {
-						this.fetchTransactions(1, this.sortKey, this.reverse);
-					});
-			}
+			this.$http.delete('/'+ this.userRole +'/transaction/' + id)
+				.success( function() {
+					this.fetchTransactions(1, this.sortKey, this.reverse);
+				});
 		},
 
 		getTransactionPayable: function(transaction) {
@@ -256,21 +252,6 @@ Vue.component('transactions-table', {
 					break;
 			}
 		},
-
-		// getTransactionPayable: function(transaction) {
-				
-		// 	switch (transaction.payable_type) {
-		// 		case 'TenantSync\\Models\\Property':
-		// 			return transaction.payable.address;
-		// 			break;
-		// 		case 'TenantSync\\Models\\Device':
-		// 			return transaction.payable.location + ', ' + transaction.property.address;
-		// 			break;
-		// 		case 'TenantSync\\Models\\User':
-		// 			return 'General';
-		// 			break;
-		// 	}
-		// }
 	},
 
 });
