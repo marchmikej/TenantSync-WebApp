@@ -21,6 +21,8 @@ Route::get('api/message', 'Api\ApiController@getMessages');
 Route::post('api/message', 'Api\ApiController@createMessage');
 Route::post('api/pay', 'Api\ApiController@payRent');
 Route::post('api/rent-status', 'Api\ApiController@rentStatus');
+Route::post('api/receivingnotifications', 'Api\PhoneAppController@receivingNotifications');
+Route::post('api/loginapp', 'Api\PhoneAppController@isUser');
 
 Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index');
