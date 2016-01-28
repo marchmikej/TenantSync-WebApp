@@ -84,23 +84,13 @@ class Property extends Model {
 		return $roi;
 	}
 
-	public function netIncome($fromDate = null)
+	public function netIncome($fromDate = '-1 month')
 	{
-		$fromDate = !empty($fromDate) ? strtotime($fromDate) : strtotime('-1 month');
 		$amounts = array();
 		$transactions = collect(array_merge($this->incomes()->toArray(), $this->expenses()->toArray()));
-		$transactions->filter(function($transaction) use ($fromDate) {
+		$transactions = $transactions->filter(function($transaction) use ($fromDate) {
 				return strtotime($transaction->date) >= strtotime($fromDate);
-			});
-		// foreach($this->incomes() as $income)
-		// {
-		// 	$amounts[] = $income->amount;
-		// }
-
-		// foreach($this->expenses() as $expense)
-		// {
-		// 	$amounts[] = $expense->amount;
-		// }
+		});
 		foreach($transactions as $transaction)
 		{
 			$amounts[] = $transaction->amount;

@@ -1,9 +1,9 @@
 Vue.component('most-expensive-property-table', {
 	props: ['userRole'],
 
-	components: {
-		'table-headers': require('./table-headers')
-	},
+	// components: {
+	// 	'table-headers': require('./table-headers')
+	// },
 
 	data: function() {
 		return {

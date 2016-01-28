@@ -1,4 +1,4 @@
-module.exports = {
+Vue.component('table-headers', {
 
 	props: ['columns', 'sortKey', 'reverse'],
 
@@ -56,4 +56,4 @@ module.exports = {
 			return classes;
 		},
 	}
-}
+});

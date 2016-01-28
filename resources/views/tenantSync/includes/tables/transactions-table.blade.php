@@ -10,7 +10,8 @@
 					</div>
 				</h3>
 
-				<table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers>
+				<!-- <table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers> -->
+				@include('TenantSync::includes.tables.table-headers')
 
 				<div class="table-body table-striped">
 					<div v-for="transaction in transactions | orderBy sortKey reverse | search search" class="table-row row">
@@ -44,74 +45,68 @@
 		</div>
 
 		<!--// MODAL -->
-		<div v-show="showModal" id="modal" class="vue-modal" style="display: none;">
-		  	<div class="modal-dialog">
-		    	<div class="modal-content">
-			      	<!-- <div class="modal-header">
-			        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			        	<h4 class="modal-title text-info">Edit Transaction</h4>
-			      	</div> -->
-			      	<form @keyup.enter=" submitTransaction" class="form form-horizontal">
-			      		<meta type="hidden" id="_token" value="{{ csrf_token() }}">
-			      		<div class="modal-body">
-							
-							<div class="form-group">
-								<label class="control-label col-sm-3" for="payable">Apply To</label>
-								<div class="col-sm-9">
-									<input v-model="modal.payable.selected" class="form-control col-sm-8" type="text" style="border: none;" readonly />
-									<input v-model="modal.payable.search" class="form-control col-sm-4" type="text" name="payable" placeholder="Search..."/>
-								</div>
-							</div>
-
-							<div v-show="modal.payable.search" class="well col-sm-9 col-sm-offset-3" style="max-height: 150px; overflow-y: scroll;">
-								<ul class="list-select">
-									<li @click.stop="setPayable('user')"><strong>General</strong></li>
-									<li @click.stop="setPayable('property', property.id, property.address)" v-for="(key, property) in properties | search modal.payable.search" class="col-sm-12">
-										<strong>@{{ property.address }}</strong>
-										<ul>
-											<li @click.stop="setPayable('device', device.id, property.address + ', ' + device.location)" v-for="device in property.devices" >
-												@{{ device.location }}
-											</li>
-										</ul>
+		<modal>
+			<div slot="one" class="">
+				<form role="form" class="form form-horizontal">
+					<div class="form-group">
+						<label class="control-label col-sm-3" for="payable">Apply To</label>
+						<div class="col-sm-9">
+							<input v-model="forms.transaction.payable_selected" class="form-control col-sm-8" type="text" style="border: none;" readonly/>
+							<input v-model="forms.transaction.payable_search" class="form-control col-sm-4" type="text" name="payable" placeholder="Search..."/>
+						</div>
+					</div>
+				
+					<div v-show="forms.transaction.payable_search" class="well col-sm-9 col-sm-offset-3" style="max-height: 150px; overflow-y: scroll;">
+						<ul class="list-select">
+							<li @click.stop="setPayable('user')"><strong>General</strong></li>
+							<li @click.stop="setPayable('property', property.id, property.address)" v-for="(key, property) in properties | search forms.transaction.payable_search" class="col-sm-12">
+								<strong>@{{ property.address }}</strong>
+								<ul>
+									<li @click.stop="setPayable('device', device.id, property.address + ', ' + device.location)" v-for="device in property.devices" >
+										@{{ device.location }}
 									</li>
 								</ul>
-							</div>
+							</li>
+						</ul>
+					</div>
 
-							<div v-if="modal.payable.type == 'device'" class="form-group">
-								<label class="control-label col-sm-3" for="is_rent">Rent Payment</label>
-								<div class="col-sm-9">
-									<input v-model="modal.is_rent" class="form-control" type="checkbox" name="is_rent" value=""/>
-								</div>
-							</div>
+					<ts-checkbox
+						:name="'is_rent'"
+						:display="'Rent Payment'"
+						:form="forms.transaction"
+						:input.sync="forms.transaction.is_rent"
+						:show="forms.transaction.payable_type == 'device'"
+					>
+					</ts-checkbox>
 
-			        		<div class="form-group">
-			        			<label class="control-label col-sm-3" for="amount">Amount</label>
-			        			<div class="col-sm-9">
-			        				<input id="modal-amount" class="form-control" type="text" name="amount" placeholder="Amount" v-model="modal.amount"/>
-			        			</div>
-			        		</div>
+					<ts-text
+						:name="'amount'"
+						:display="'Amount'"
+						:form="forms.transaction"
+						:input.sync="forms.transaction.amount"
+					>
+					</ts-text>
 
-			        		<div class="form-group">
-			        			<label class="control-label col-sm-3" for="description">Description</label>
-			        			<div class="col-sm-9">
-			        				<input class="form-control" type="text" name="description" placeholder="Description" v-model="modal.description"/>
-			        			</div>
-			        		</div>
+					<ts-text
+						:name="'description'"
+						:display="'Description'"
+						:form="forms.transaction"
+						:input.sync="forms.transaction.description"
+					>
+					</ts-text>
 
-			        		<div class="form-group">
-			        			<label class="control-label col-sm-3" for="date">Date</label>
-			        			<div class="col-sm-9">
-			        				<input class="form-control" type="date" name="date" placeholder="mm/dd/yyyy" v-model="modal.date" />
-			        			</div>
-			        		</div>
+					<ts-date
+						:name="'date'"
+						:display="'Date'"
+						:form="forms.transaction"
+						:input.sync="forms.transaction.date"
+					>
+					</ts-date>
 
-			      		</div>
-				      	<div class="modal-footer">
-				        	<button @click="hideModal" type="button" class="btn btn-default">Close</button>
-				        	<button  @click="submitTransaction" type="button" class="btn btn-primary">Save changes</button>
-				      	</div>
-			      	</form>
-		    	</div><!-- /.modal-content -->
-		  	</div><!-- /.modal-dialog -->
-		</div><!-- /.modal -->
+					<button @click.prevent="submitTransaction" class="btn btn-primary form-control col-md-3 col-md-offset-9">Submit</button>
+				</form>
+			</div>
+		</modal><!-- /.modal -->
 	</transactions-table>
+
+

@@ -1,13 +1,468 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+// Get all the random stuff in the vue-all file
+'use strict';
+
+require('./vue-all.js');
+
+// Get all the table components
+require('./tables/table-headers.js');
+
+// Get all the form components
+require('./forms/bootstrap.js');
+require('./forms/transaction-form.js');
+
+// Get all the table instances
+require('./tables/devices-table.js');
+require('./tables/most-expensive-property-table.js');
+require('./tables/portfolio-table.js');
+require('./tables/property-manager-table.js');
+require('./tables/transactions-table.js');
+
+// Get modal stuff
+require('./components/modal.js');
+
+},{"./components/modal.js":2,"./forms/bootstrap.js":3,"./forms/transaction-form.js":8,"./tables/devices-table.js":9,"./tables/most-expensive-property-table.js":10,"./tables/portfolio-table.js":11,"./tables/property-manager-table.js":12,"./tables/table-headers.js":13,"./tables/transactions-table.js":14,"./vue-all.js":15}],2:[function(require,module,exports){
+'use strict';
+
+Vue.component('modal', {
+	props: ['title'],
+
+	template: '<div v-if="visible" class="vue-modal row">\
+	<div id="modal" class="modal-dialog">\
+		<div class="modal-content col-sm-12 p-b">\
+			<div class="modal-header row">\
+	        	<button @click="hide" class="col-sm-1 icon icon-cross btn btn-clear" :class="{\'col-sm-offset-11\' : !title}"></button>\
+	        	<h4 v-if="title" class="modal-title">{{ title}}</h4>\
+	      	</div>\
+		  	<div class="modal-body">\
+		  		<slot name="one"></slot>\
+		  	</div>\
+		</div><!-- /.modal-content -->\
+	</div><!-- /.modal-dialog -->\
+</div>',
+
+	data: function data() {
+		return {
+			visible: false
+		};
+	},
+
+	events: {
+		'show-modal': function showModal() {
+			this.show();
+		},
+
+		'hide-modal': function hideModal() {
+			this.hide();
+		}
+	},
+
+	methods: {
+		show: function show() {
+			this.visible = true;
+		},
+
+		hide: function hide() {
+			//reset the content to empty
+
+			// hide modal
+			this.visible = false;
+			this.$dispatch('modal-hidden');
+		}
+	}
+
+});
+
+},{}],3:[function(require,module,exports){
+/**
+ * Initialize the Spark form extension points.
+ */
+'use strict';
+
+TS.forms = {
+  transaction: {},
+  updateProfileBasics: {},
+  updateTeamOwnerBasics: {}
+};
+
+/**
+ * Load the SparkForm helper class.
+ */
+require('./instance');
+
+/**
+ * Define the form error collection class.
+ */
+require('./errors');
+
+/**
+ * Add additional form helpers to the Spark object.
+ */
+$.extend(TS, require('./http'));
+
+/**
+ * Define the Spark form input components.
+ */
+require('./components');
+
+},{"./components":4,"./errors":5,"./http":6,"./instance":7}],4:[function(require,module,exports){
+/**
+ * Text field input component for Bootstrap.
+ */
+'use strict';
+
+Vue.component('ts-text', {
+    props: ['display', 'form', 'name', 'input', 'show'],
+
+    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    <label class="col-md-3 control-label">{{ display }}</label>\
+    <div class="col-md-9">\
+        <input type="text" class="form-control" v-model="input">\
+        <span class="help-block" v-show="form.errors.has(name)">\
+            <strong>{{ form.errors.get(name) }}</strong>\
+        </span>\
+    </div>\
+</div>'
+});
+
+/**
+ * Date field input component for Bootstrap.
+ */
+Vue.component('ts-date', {
+    props: ['display', 'form', 'name', 'input', 'show'],
+
+    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    <label class="col-md-3 control-label">{{ display }}</label>\
+    <div class="col-md-9">\
+        <input type="date" class="form-control" v-model="input">\
+        <span class="help-block" v-show="form.errors.has(name)">\
+            <strong>{{ form.errors.get(name) }}</strong>\
+        </span>\
+    </div>\
+</div>'
+});
+
+/**
+ * E-mail field input component for Bootstrap.
+ */
+Vue.component('ts-email', {
+    props: ['display', 'form', 'name', 'input', 'show'],
+
+    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    <label class="col-md-3 control-label">{{ display }}</label>\
+    <div class="col-md-9">\
+        <input type="email" class="form-control" v-model="input">\
+        <span class="help-block" v-show="form.errors.has(name)">\
+            <strong>{{ form.errors.get(name) }}</strong>\
+        </span>\
+    </div>\
+</div>'
+});
+
+/**
+ * Password field input component for Bootstrap.
+ */
+Vue.component('ts-password', {
+    props: ['display', 'form', 'name', 'input', 'show'],
+
+    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    <label class="col-md-3 control-label">{{ display }}</label>\
+    <div class="col-md-9">\
+        <input type="password" class="form-control" v-model="input">\
+        <span class="help-block" v-show="form.errors.has(name)">\
+            <strong>{{ form.errors.get(name) }}</strong>\
+        </span>\
+    </div>\
+</div>'
+});
+
+/**
+ * Checkbox field input component for Bootstrap.
+ */
+Vue.component('ts-checkbox', {
+    props: ['display', 'form', 'name', 'input', 'show'],
+
+    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    <label class="col-md-3 control-label">{{ display }}</label>\
+    <div class="col-md-9">\
+        <input type="checkbox" class="form-control" v-model="input">\
+        <span class="help-block" v-show="form.errors.has(name)">\
+            <strong>{{ form.errors.get(name) }}</strong>\
+        </span>\
+    </div>\
+</div>'
+});
+
+/**
+ * Select input component for Bootstrap.
+ */
+Vue.component('ts-select', {
+    props: ['display', 'form', 'name', 'items', 'input', 'show'],
+
+    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    <label class="col-md-3 control-label">{{ display }}</label>\
+    <div class="col-md-8">\
+        <select class="form-control" v-model="input">\
+            <option v-for="item in items" :value="item.value">\
+                {{ item.text }}\
+            </option>\
+        </select>\
+        <span class="help-block" v-show="form.errors.has(name)">\
+            <strong>{{ form.errors.get(name) }}</strong>\
+        </span>\
+    </div>\
+</div>'
+});
+
+},{}],5:[function(require,module,exports){
+/**
+ * Spark form error collection class.
+ */
+'use strict';
+
+window.TSFormErrors = function () {
+    this.errors = {};
+
+    /**
+     * Determine if the collection has any errors.
+     */
+    this.hasErrors = function () {
+        return !_.isEmpty(this.errors);
+    };
+
+    /**
+     * Determine if the collection has errors for a given field.
+     */
+    this.has = function (field) {
+        return _.indexOf(_.keys(this.errors), field) > -1;
+    };
+
+    /**
+     * Get all of the raw errors for the collection.
+     */
+    this.all = function () {
+        return this.errors;
+    };
+
+    /**
+     * Get all of the errors for the collection in a flat array.
+     */
+    this.flatten = function () {
+        return _.flatten(_.toArray(this.errors));
+    };
+
+    /**
+     * Get the first error message for a given field.
+     */
+    this.get = function (field) {
+        if (this.has(field)) {
+            return this.errors[field][0];
+        }
+    };
+
+    /**
+     * Set the raw errors for the collection.
+     */
+    this.set = function (errors) {
+        if (typeof errors === 'object') {
+            this.errors = errors;
+        } else {
+            this.errors = { 'field': ['Something went wrong. Please try again.'] };
+        }
+    };
+
+    /**
+     * Forget all of the errors currently in the collection.
+     */
+    this.forget = function () {
+        this.errors = {};
+    };
+};
+
+},{}],6:[function(require,module,exports){
+'use strict';
+
+module.exports = {
+    /**
+     * A few helper methods for making HTTP requests and doing common form actions.
+     */
+    post: function post(uri, form) {
+        return TS.sendForm('post', uri, form);
+    },
+
+    put: function put(uri, form) {
+        return TS.sendForm('put', uri, form);
+    },
+
+    patch: function patch(uri, form) {
+        return TS.sendForm('patch', uri, form);
+    },
+
+    'delete': function _delete(uri, form) {
+        return TS.sendForm('delete', uri, form);
+    },
+
+    /**
+     * Send the form to the back-end server. Perform common form tasks.
+     *
+     * This function will automatically clear old errors, update "busy" status, etc.
+     */
+    sendForm: function sendForm(method, uri, form) {
+        return new Promise(function (resolve, reject) {
+            form.startProcessing();
+
+            Vue.http[method](uri, form).success(function (response) {
+                form.finishProcessing();
+
+                resolve(response);
+            }).error(function (errors) {
+                form.errors.set(errors);
+                form.busy = false;
+
+                reject(errors);
+            });
+        });
+    }
+};
+
+},{}],7:[function(require,module,exports){
+/**
+ * SparkForm helper class. Used to set common properties on all forms.
+ */
+"use strict";
+
+window.TSForm = function (data) {
+    var form = this;
+
+    $.extend(this, data);
+
+    this.errors = new TSFormErrors();
+    this.busy = false;
+    this.successful = false;
+
+    this.startProcessing = function () {
+        form.errors.forget();
+        form.busy = true;
+        form.successful = false;
+    };
+
+    this.finishProcessing = function () {
+        form.busy = false;
+        form.successful = true;
+    };
+};
+
+},{}],8:[function(require,module,exports){
+'use strict';
+
+Vue.component('transaction-form', {
+
+	components: require('./components.js'),
+
+	data: function data() {
+		return {
+			amount: '',
+			description: '',
+			transaction: null,
+			date: '',
+			payable: {
+				id: TenantSync.landlord,
+				type: 'user',
+				search: null,
+				selected: 'General'
+			},
+			recurring: false,
+			schedule: null
+		};
+	},
+
+	ready: function ready() {},
+
+	events: {},
+
+	methods: {
+		submitTransaction: function submitTransaction() {
+			var payload = {
+				amount: this.amount,
+				description: this.description,
+				payable_id: this.payable.id,
+				payable_type: this.payable.type,
+				is_rent: this.is_rent,
+				date: this.date,
+				recurring: this.recurring,
+				schedule: this.schedule
+			};
+
+			if (this.transaction) {
+				this.updateTransaction(payload);
+			} else {
+				payload.user_id = TenantSync.landlord;
+				this.createTransaction(payload);
+			}
+		},
+
+		setPayable: function setPayable(type, id, string) {
+			this.is_rent = false;
+			this.payable.type = type;
+			if (type == 'user') {
+				this.payable.selected = 'General';
+				this.payable.id = TenantSync.landlord;
+				return true;
+			}
+
+			this.payable.selected = string;
+			this.payable.id = id;
+			return true;
+		},
+
+		createTransaction: function createTransaction(payload) {
+			this.$http.post('/' + TenantSync.user.role + '/transaction', payload).success(function (transaction) {
+				this.hideModal();
+				this.fetchTransactions(1, this.sortKey, this.reverse);
+			});
+		},
+
+		updateTransaction: function updateTransaction(payload) {
+			this.$http.patch('/' + TenantSync.user.role + '/transaction/' + this.transaction.id, payload).success(function (transaction) {
+				this.hideModal();
+				this.fetchTransactions(1, this.sortKey, this.reverse);
+			});
+		},
+
+		deleteTransaction: function deleteTransaction(id) {
+			this.$http['delete']('/' + TenantSync.user.role + '/transaction/' + id).success(function () {
+				this.fetchTransactions(1, this.sortKey, this.reverse);
+			});
+		},
+
+		getTransactionPayable: function getTransactionPayable(transaction) {
+
+			switch (transaction.payable_type) {
+				case 'TenantSync\\Models\\Property':
+					return 'property';
+					break;
+				case 'TenantSync\\Models\\Device':
+					return 'device';
+					break;
+				case 'TenantSync\\Models\\User':
+					return 'user';
+					break;
+			}
+		}
+	}
+
+});
+
+},{"./components.js":4}],9:[function(require,module,exports){
 'use strict';
 
 Vue.component('devices-table', {
 
 	props: ['userRole'],
 
-	components: {
-		'table-headers': require('./table-headers')
-	},
+	// components: {
+	// 	'table-headers': require('./table-headers'),
+	// },
 
 	data: function data() {
 		return {
@@ -128,15 +583,15 @@ Vue.component('devices-table', {
 
 });
 
-},{"./table-headers":5}],2:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 Vue.component('most-expensive-property-table', {
 	props: ['userRole'],
 
-	components: {
-		'table-headers': require('./table-headers')
-	},
+	// components: {
+	// 	'table-headers': require('./table-headers')
+	// },
 
 	data: function data() {
 		return {
@@ -198,14 +653,14 @@ Vue.component('most-expensive-property-table', {
 
 });
 
-},{"./table-headers":5}],3:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 Vue.component('portfolio-table', {
 
-	components: {
-		'table-headers': require('./table-headers')
-	},
+	// components: {
+	// 	'table-headers': require('./table-headers'),
+	// },
 
 	data: function data() {
 		return {
@@ -304,16 +759,16 @@ Vue.component('portfolio-table', {
 	}
 });
 
-},{"./table-headers":5}],4:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 Vue.component('property-manager-table', {
 
 	props: ['userRole'],
 
-	components: {
-		'table-headers': require('./table-headers')
-	},
+	// components: {
+	// 	'table-headers': require('./table-headers'),
+	// },
 
 	data: function data() {
 		return {
@@ -402,10 +857,10 @@ Vue.component('property-manager-table', {
 
 });
 
-},{"./table-headers":5}],5:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
-module.exports = {
+Vue.component('table-headers', {
 
 	props: ['columns', 'sortKey', 'reverse'],
 
@@ -456,17 +911,17 @@ module.exports = {
 			return classes;
 		}
 	}
-};
+});
 
-},{}],6:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 Vue.component('transactions-table', {
 	props: ['userRole'],
 
-	components: {
-		'table-headers': require('./table-headers')
-	},
+	// components: {
+	// 	'table-headers': require('./table-headers'),
+	// },
 
 	data: function data() {
 		return {
@@ -516,21 +971,8 @@ Vue.component('transactions-table', {
 				isSortable: false
 			}],
 
-			showModal: false,
-
-			modal: {
-				amount: '',
-				description: '',
-				transaction: null,
-				date: '',
-				payable: {
-					id: TenantSync.landlord,
-					type: 'user',
-					search: null,
-					selected: 'General'
-				},
-				recurring: false,
-				schedule: null
+			forms: {
+				transaction: {}
 			},
 
 			transactions: [],
@@ -551,6 +993,7 @@ Vue.component('transactions-table', {
 	ready: function ready() {
 		this.fetchTransactions();
 		this.fetchProperties();
+		this.initializeForm();
 	},
 
 	events: {
@@ -559,12 +1002,16 @@ Vue.component('transactions-table', {
 			this.reverse = this.sortKey == sortKey ? this.reverse * -1 : 1;
 			this.currentPage = 1;
 			this.fetchTransactions();
+		},
+
+		'modal-hidden': function modalHidden() {
+			this.refreshForm();
 		}
 	},
 
 	methods: {
 		fetchTransactions: function fetchTransactions() {
-			var append = this.generateUrlVars({
+			var append = {
 				paginate: this.paginate,
 				sort: this.sortKey,
 				page: this.page,
@@ -573,9 +1020,9 @@ Vue.component('transactions-table', {
 					from: this.dates.from,
 					to: this.dates.to
 				}
-			});
+			};
 
-			this.$http.get('/' + this.userRole + '/transaction/all?' + append).success(function (result) {
+			this.$http.get('/' + this.userRole + '/transaction/all', append).success(function (result) {
 				_.each(result.data, function (transaction) {
 					transaction.amount = Number(transaction.amount);
 				});
@@ -596,92 +1043,90 @@ Vue.component('transactions-table', {
 			});
 		},
 
-		generateModal: function generateModal(id) {
-			if (id + 1 > 0) {
-				this.modal.amount = this.transactions[id].amount;
-				this.modal.transaction = this.transactions[id];
-				this.modal.description = this.transactions[id].description ? this.transactions[id].description : '';
-				this.modal.date = this.transactions[id].date;
-				this.modal.payable = {
-					id: this.transactions[id].payable_id,
-					type: this.getTransactionPayable(this.transactions[id]),
-					selected: this.transactions[id].address
-				};
-				this.modal.schedule = this.transactions[id].recurring ? this.transactions[id].recurring.schedule : null;
-				this.modal.recurring = this.transactions[id].recurring ? true : false;
+		generateModal: function generateModal(transactionId) {
+			if (typeof transactionId !== 'undefined') {
+				this.populateForm(transactionId);
 			}
-			this.showModal = true;
+			this.showModal();
 		},
 
-		hideModal: function hideModal() {
-			this.modal = {
+		populateForm: function populateForm(transactionId) {
+			this.forms.transaction.amount = this.transactions[transactionId].amount;
+			this.forms.transaction.transaction = this.transactions[transactionId];
+			this.forms.transaction.description = this.transactions[transactionId].description ? this.transactions[transactionId].description : '';
+			this.forms.transaction.date = this.transactions[transactionId].date;
+			this.forms.transaction.payable_id = this.transactions[transactionId].payable_id, this.forms.transaction.payable_type = this.getTransactionPayable(this.transactions[transactionId]), this.forms.transaction.payable_selected = this.transactions[transactionId].address, this.forms.transaction.schedule = this.transactions[transactionId].recurring ? this.transactions[transactionId].recurring.schedule : null;
+			this.forms.transaction.recurring = this.transactions[transactionId].recurring ? true : false;
+			return this.forms.transaction;
+		},
+
+		initializeForm: function initializeForm() {
+			this.forms.transaction = new TSForm({
 				amount: '',
 				description: '',
 				transaction: null,
 				date: '',
-				payable: {
-					id: TenantSync.landlord,
-					type: 'user',
-					search: null,
-					selected: 'General'
-				},
+				payable_id: TenantSync.landlord,
+				payable_type: 'user',
+				payable_search: null,
+				payable_selected: 'General',
 				recurring: false,
 				schedule: null
-			};
-			this.showModal = false;
+			});
+		},
+
+		refreshForm: function refreshForm() {
+			this.initializeForm();
+		},
+
+		showModal: function showModal() {
+			this.$broadcast('show-modal');
 		},
 
 		submitTransaction: function submitTransaction() {
-			var data = {
-				amount: this.modal.amount,
-				description: this.modal.description,
-				payable_id: this.modal.payable.id,
-				payable_type: this.modal.payable.type,
-				is_rent: this.modal.is_rent,
-				date: this.modal.date,
-				recurring: this.modal.recurring,
-				schedule: this.modal.schedule
-			};
-
-			if (this.modal.transaction) {
-				this.updateTransaction(data);
+			if (this.forms.transaction.transaction) {
+				this.updateTransaction();
 			} else {
-				data.user_id = TenantSync.landlord;
-				this.createTransaction(data);
+				this.createTransaction();
 			}
 		},
 
 		setPayable: function setPayable(type, id, string) {
-			this.modal.is_rent == false;
-			this.modal.payable.type = type;
+			this.forms.transaction.is_rent == false;
+			this.forms.transaction.payable_type = type;
 			if (type == 'user') {
-				this.modal.payable.selected = 'General';
-				this.modal.payable.id = TenantSync.landlord;
+				this.forms.transaction.payable_selected = 'General';
+				this.forms.transaction.payable_id = TenantSync.landlord;
 				return true;
 			}
 
-			this.modal.payable.selected = string;
-			this.modal.payable.id = id;
+			this.forms.transaction.payable_selected = string;
+			this.forms.transaction.payable_id = id;
 			return true;
 		},
 
-		createTransaction: function createTransaction(data) {
-			this.$http.post('/' + this.userRole + '/transaction', data).success(function (transaction) {
-				this.hideModal();
-				this.fetchTransactions(1, this.sortKey, this.reverse);
+		createTransaction: function createTransaction() {
+			var self = this;
+
+			TS.post('/' + this.userRole + '/transaction', this.forms.transaction).then(function (transaction) {
+				self.$broadcast('hide-modal');
+				self.refreshForm();
+				self.fetchTransactions(1, self.sortKey, self.reverse);
 			});
 		},
 
-		updateTransaction: function updateTransaction(data) {
+		updateTransaction: function updateTransaction() {
+			var self = this;
 
-			this.$http.patch('/' + this.userRole + '/transaction/' + this.modal.transaction.id, data).success(function (transaction) {
-				this.hideModal();
-				this.fetchTransactions(1, this.sortKey, this.reverse);
+			TS.patch('/' + this.userRole + '/transaction/' + this.forms.transaction.transaction.id, this.forms.transaction).then(function (transaction) {
+				self.$broadcast('hide-modal');
+				self.refreshForm();
+				self.fetchTransactions(1, self.sortKey, self.reverse);
 			});
 		},
 
 		deleteTransaction: function deleteTransaction(id) {
-			this.$http['delete']('/' + this.userRole + '/transaction/' + id).success(function () {
+			TS['delete']('/' + this.userRole + '/transaction/' + id).then(function () {
 				this.fetchTransactions(1, this.sortKey, this.reverse);
 			});
 		},
@@ -704,7 +1149,7 @@ Vue.component('transactions-table', {
 
 });
 
-},{"./table-headers":5}],7:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 Vue.http.headers.common['X-CSRF-TOKEN'] = document.getElementById('_token').getAttribute('value');
@@ -789,6 +1234,6 @@ Vue.filter('whereNotIn', function (list, sourceList, property) {
 /* TenantSync Initializing */
 window.TS = {};
 
-},{}]},{},[7,6,4,2,1,3]);
+},{}]},{},[1]);
 
 //# sourceMappingURL=app.js.map

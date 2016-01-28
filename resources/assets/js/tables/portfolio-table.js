@@ -1,8 +1,8 @@
 Vue.component('portfolio-table', {		
 
-	components: {
-		'table-headers': require('./table-headers'),
-	},
+	// components: {
+	// 	'table-headers': require('./table-headers'),
+	// },
 
 	data: function() {
 		return {
