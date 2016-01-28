@@ -44,6 +44,7 @@
 						})
 					->pluck('amount')->toArray())
 				}}
+				@else {{ 0 }}
 				@endif
 				</p>
 			</div>
@@ -62,6 +63,7 @@
 					})
 					->pluck('bill_amount')->toArray())
 				}}
+				@else {{ 0 }}
 				@endif
 				</p>
 			</div>

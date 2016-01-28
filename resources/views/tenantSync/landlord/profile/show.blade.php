@@ -2,7 +2,7 @@
 
 @section('content')
 
-	<div id="profile" class="row card">
+	<div id="profile" class="row card" v-cloak>
 		<div class="col-sm-6">
 			<div class="card-header">
 				<h4>Billing Info</h4>
@@ -12,7 +12,7 @@
 				<div class="form-group">
 					<label class="control-label col-sm-3">Payment Method</label>
 					<div class="col-sm-9">
-						<input class="col-sm-10 form-control" type="text"  placeholder="" value="{{ ($landlord->paymentMethods()->exists()) ? $landlord->paymentMethods()->orderBy('created_at', 'desc')->first()->name : ''}}" disabled readonly/>
+						<input :value="paymentMethods.hasOwnProperty(0) ? paymentMethods[0].MethodName : 'Loading...'" class="col-sm-10 form-control" type="text"  placeholder="" disabled readonly/>
 						<button @click.prevent="showModal = true" class="btn btn-clear col-sm-2"><span class="icon icon-edit"></span></button>
 					</div>
 				</div>
@@ -153,7 +153,7 @@
 								<div class="col-sm-9">
 									<select @change="setMethodDetails" class="form-control" v-model="payment.object">
 										<option :value="null" number>New Payment Method</option>
-										<option v-for="paymentMethod in paymentMethods" :value="paymentMethod" number>@{{ paymentMethod.CardNumber }}</option>
+										<option v-for="paymentMethod in paymentMethods" :value="paymentMethod" number>@{{ paymentMethod.MethodName }}</option>
 									</select>
 								</div>
 							</div>
@@ -271,7 +271,7 @@ vue = new Vue({
 
 	methods: {
 		fetchPaymentMethods: function() {
-			this.$http.get('/landlord/payment/' + {{ $landlord->id }})
+			this.$http.get('/landlord/payment/' + TenantSync.landlord)
 			.success(function(paymentMethods) {
 				this.paymentMethods = paymentMethods;
 			});

@@ -61,5 +61,6 @@ class GenerateRentBills extends Command
 
             $device->save();
         }
+        return 'Finished';
     }
 }

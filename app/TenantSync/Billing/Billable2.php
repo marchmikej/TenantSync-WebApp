@@ -30,8 +30,8 @@ trait Billable2 {
 
 	public function createToken($toLandlord = false)
 	{
-		//$sourcekey = '_w0QMP432PiyAlbfXYC88Ehc3k7xP48F';
-		//$pin = '4321';
+		$sourcekey = '_w0QMP432PiyAlbfXYC88Ehc3k7xP48F';
+		$pin = '4321';
 
 		if($toLandlord == true)
 		{

@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers\Landlord;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
+use App\Http\Requests\PaymentMethodRequest;
 use App\Http\Controllers\Controller;
 
 class PaymentController extends Controller
