@@ -18,9 +18,9 @@ elixir(function(mix) {
     mix		
 		.less([
 			'app.less', 
-			'../sweetalert2/dist/sweetalert2.css', 
-			'../select2/dist/css/select2.css', 
-			'../select2/dist/css/select2-bootstrap.css', 
+			'../js/sweetalert2/dist/sweetalert2.css', 
+			'../js/select2/dist/css/select2.css', 
+			'../js/select2/dist/css/select2-bootstrap.css', 
 		])
 		.styles([
 			'fullcalendar.min.css'

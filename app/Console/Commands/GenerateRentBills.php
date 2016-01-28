@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
+use TenantSync\Models\Device;
+use TenantSync\Models\RentBill;
+use TenantSync\Models\Property;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
-use TenantSync\Models\Property;
-use TenantSync\Models\Device;
-use TenantSync\Models\Invoice;
 
 class GenerateRentBills extends Command
 {
@@ -45,23 +45,20 @@ class GenerateRentBills extends Command
         $devices = Device::all();
         $devicesToBill = $devices->filter(function($device) 
         {
-            return date('m-d', strtotime($device->rent_due_date)) == date('m-d', time());
+            if($device->rent_due != '0000-00-00') {
+                return date('Y-m-d', strtotime($device->rent_due)) == date('Y-m-d', time());
+            }
+            return false;
         });
         foreach($devicesToBill as $device)
         {
-            $bill = Invoice::create(['user_id' => $device->owner->id, 'device_id' => $device->id, 'billing_month' => date('m', time()), 'billing_year' => date('Y', time()), 'amount' => $device->rent_amount]);
-            
-            if($device->vacant)
-            {
-                $bill->vacant = 1;
-                $bill->save();
-            } 
+            $bill = RentBill::create(['user_id' => $device->owner->id, 'device_id' => $device->id, 'rent_month' => date('Y-m-d', time()), 'bill_amount' => $device->rent_amount, 'balance_due' => $device->rent_amount, 'paid' => 0, 'vacant' => $device->vacant]);
+            $device->rent_due = date('Y-m-d', strtotime($device->rent_due. ' +1 month'));
+            // if(date('m', strtotime($device->rent_due) + strtotime('+1 month')) !== date('m', strtotime($device->rent_due)))
+            // {
+            //     $device->rent_due = date('Y-m-d', strtotime($device->rent_due) + strtotime('last day of +1 month'));
+            // }
 
-            $device->rent_due_date = date('Y-m-d', strtotime($device->rent_due_date) + strtotime('+30 days'));
-            if(! date('m', strtotime($device->rent_due_date) + strtotime('+1 month')) == date('m', strtotime($device->rent_due_date)))
-            {
-                $device->rent_due_date = date('Y-m-d', strtotime($device->rent_due_date) + strtotime('last day of +1 month'));
-            }
             $device->save();
         }
     }

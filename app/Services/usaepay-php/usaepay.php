@@ -247,7 +247,12 @@ class umTransaction {
 
 
 	// Constructor
-	function umTransaction()
+	public function __construct()
+	{
+		$this->umTransaction();
+	}
+
+	protected function umTransaction()
 	{
 		// Set default values.
 		$this->command="sale";

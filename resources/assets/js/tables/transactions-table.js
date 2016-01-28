@@ -156,6 +156,7 @@ Vue.component('transactions-table', {
 		initializeForm: function() {
 			this.forms.transaction = 
 			new TSForm({
+				user_id: TenantSync.landlord,
 				amount: '',
 				description: '',
 				transaction: null,
@@ -225,9 +226,10 @@ Vue.component('transactions-table', {
 		},
 
 		deleteTransaction: function(id) {
-			TS.delete('/'+ this.userRole +'/transaction/' + id)
+			var self = this;
+			TS.delete('/'+ this.userRole +'/transaction/' + id, this.forms.transaction)
 				.then( function() {
-					this.fetchTransactions(1, this.sortKey, this.reverse);
+					self.fetchTransactions(1, self.sortKey, self.reverse);
 				});
 		},
 
