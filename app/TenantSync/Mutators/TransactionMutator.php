@@ -11,7 +11,7 @@ class TransactionMutator {
 	public function set($field, $data)
 	{
 		if(count($data) < 2) {
-			$data->{$field}();
+			$data->{$field} = $this->{'set'.ucfirst($field)}($item);
 			return $data; 
 		}	
 
