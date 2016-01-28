@@ -8,7 +8,7 @@
 
 @section('content')
 
-<div id="properties">
+<div id="properties" v-cloak>
 	
 	<div class="row">
 		<div class="col-sm-6 p-r-md">

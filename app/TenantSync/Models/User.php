@@ -144,6 +144,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasMany('TenantSync\Models\Order');
 	}
 
+	public function netIncome($fromDate)
+	{
+		return array_sum(
+			$this->transactions
+			->filter(function($transaction) use ($fromDate) {
+				return strtotime($transaction->date) >= strtotime($fromDate);
+			})
+			->pluck('amount')
+			->toArray()
+		);
+	}
+
 	public function recurringAmount()
 	{
 		$numberCurrentlyFinanced = 0;

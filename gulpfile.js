@@ -34,12 +34,7 @@ elixir(function(mix) {
 		], 
 		'public/js/core.js', null)
 		.browserify([
-			'vue-all.js',			
-			'tables/transactions-table.js',
-			'tables/property-manager-table.js',
-			'tables/most-expensive-property.js',
-			'tables/devices-table.js',
-			'tables/portfolio-table.js'
+			'bootstrap.js'
 		], 
 		'public/js/app.js', null)
 });

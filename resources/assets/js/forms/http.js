@@ -12,9 +12,15 @@ module.exports = {
     },
 
 
+    patch: function (uri, form) {
+        return TS.sendForm('patch', uri, form);
+    },
+
     delete: function (uri, form) {
         return TS.sendForm('delete', uri, form);
     },
+
+
 
 
     /**

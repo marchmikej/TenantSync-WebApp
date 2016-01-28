@@ -3,7 +3,12 @@
 			<div class="col-sm-12">
 				<h3 class="card-header m-t-0">Most Expensive</h3>
 
-				<table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers>
+				<table-headers 
+					:columns="columns" 
+					:sort-key.sync="sortKey" 
+					:reverse.sync="reverse"
+				>
+				</table-headers>
 
 				<div class="table-body table-striped">
 					<div v-if="$index < 3" v-for="property in properties | orderBy 'totalExpenses' -1" class="table-row row">

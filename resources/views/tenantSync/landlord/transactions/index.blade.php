@@ -92,41 +92,40 @@
 <script>
 Vue.config.debug =true;
 
-	Vue.filter('numeric', function (item, field, operator, value) {
-	  console.log(item);
-	})
+	// Vue.filter('numeric', function (item, field, operator, value) {
+	//   console.log(item);
+	// })
 
 	var vue = new Vue({
 
 		el: '#ledger',
 
+	// 	data: {
 
-		data: {
+	// 		properties: [
 
-			properties: [
+	// 		],
 
-			],
-
-			numeral: window.numeral,
-		},
-
-
-		ready: function() {
-			// this.fetchTransactions(1, this.sortKey, this.reverse);
-			// this.fetchProperties();
-		},
+	// 		numeral: window.numeral,
+	// 	},
 
 
-		methods: {
+	// 	ready: function() {
+	// 		// this.fetchTransactions(1, this.sortKey, this.reverse);
+	// 		// this.fetchProperties();
+	// 	},
 
-			fetchProperties: function() {
 
-				this.$http.get('/landlord/properties/all')
-				.success(function(result) {
-					this.properties = result;
-				});
-			},
-		},
+	// 	methods: {
+
+	// 		fetchProperties: function() {
+
+	// 			this.$http.get('/landlord/properties/all')
+	// 			.success(function(result) {
+	// 				this.properties = result;
+	// 			});
+	// 		},
+	// 	},
 
 
 		// filters: {

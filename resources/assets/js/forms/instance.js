@@ -1,12 +1,12 @@
 /**
  * SparkForm helper class. Used to set common properties on all forms.
  */
-window.SparkForm = function (data) {
+window.TSForm = function (data) {
     var form = this;
 
     $.extend(this, data);
 
-    this.errors = new SparkFormErrors();
+    this.errors = new TSFormErrors();
     this.busy = false;
     this.successful = false;
 

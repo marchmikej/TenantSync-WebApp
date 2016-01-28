@@ -2,7 +2,7 @@
  * Initialize the Spark form extension points.
  */
 TS.forms = {
-    registration: {},
+    transaction: {},
     updateProfileBasics: {},
     updateTeamOwnerBasics: {}
 };

@@ -1,9 +1,9 @@
 Vue.component('transactions-table', {
 	props: ['userRole'],
 
-	components: {
-		'table-headers': require('./table-headers'),
-	},
+	// components: {
+	// 	'table-headers': require('./table-headers'),
+	// },
 
 	data: function() {
 		return {
@@ -60,21 +60,8 @@ Vue.component('transactions-table', {
 				}
 			],
 
-			showModal: false,
-
-			modal: {
-				amount: '',
-				description: '',
-				transaction: null,
-				date: '',
-				payable: {
-					id: TenantSync.landlord,
-					type: 'user',
-					search: null,
-					selected: 'General',
-				},
-				recurring: false,
-				schedule: null,
+			forms : {
+				transaction: {},
 			},
 
 			transactions: [],
@@ -95,6 +82,7 @@ Vue.component('transactions-table', {
 	ready: function() {
 		this.fetchTransactions();
 		this.fetchProperties();
+		this.initializeForm();
 	},
 
 	events: {
@@ -103,12 +91,16 @@ Vue.component('transactions-table', {
 			this.reverse = (this.sortKey == sortKey) ? this.reverse * -1 : 1;
 			this.currentPage = 1;
 			this.fetchTransactions();
-		}
+		},
+
+		'modal-hidden': function() {
+			this.refreshForm();
+		},
 	},
 
 	methods: {
 		fetchTransactions: function() {
-			var append = this.generateUrlVars({
+			var append = {
 				paginate: this.paginate, 
 				sort: this.sortKey, 
 				page: this.page, 
@@ -117,9 +109,9 @@ Vue.component('transactions-table', {
 					from: this.dates.from, 
 					to: this.dates.to
 				}
-			});
+			};
 
-			this.$http.get('/'+ this.userRole +'/transaction/all?' + append)
+			this.$http.get('/'+ this.userRole +'/transaction/all', append)
 				.success( function(result) {
 					_.each(result.data, function(transaction) { transaction.amount = Number(transaction.amount); });
 					this.transactions = result.data;
@@ -140,100 +132,101 @@ Vue.component('transactions-table', {
 				});
 		},
 
-		generateModal: function(id) {
-			if(id + 1 > 0)
+		generateModal: function(transactionId) {
+			if(typeof transactionId !== 'undefined')
 			{
-				this.modal.amount = this.transactions[id].amount;
-				this.modal.transaction = this.transactions[id];
-				this.modal.description = (this.transactions[id].description) ? this.transactions[id].description : '';
-				this.modal.date = this.transactions[id].date;
-				this.modal.payable = {
-					id: this.transactions[id].payable_id,
-					type: this.getTransactionPayable(this.transactions[id]),
-					selected: this.transactions[id].address,
-				};
-				this.modal.schedule = this.transactions[id].recurring ? this.transactions[id].recurring.schedule : null;
-				this.modal.recurring = this.transactions[id].recurring ? true : false;
+				this.populateForm(transactionId);
 			}
-			this.showModal = true;
+			this.showModal();
 		},
 
-		hideModal: function() {
-			this.modal = {
+		populateForm: function(transactionId) {
+			this.forms.transaction.amount = this.transactions[transactionId].amount;
+			this.forms.transaction.transaction = this.transactions[transactionId];
+			this.forms.transaction.description = (this.transactions[transactionId].description) ? this.transactions[transactionId].description : '';
+			this.forms.transaction.date = this.transactions[transactionId].date;
+			this.forms.transaction.payable_id = this.transactions[transactionId].payable_id,
+			this.forms.transaction.payable_type = this.getTransactionPayable(this.transactions[transactionId]),
+			this.forms.transaction.payable_selected = this.transactions[transactionId].address,
+			this.forms.transaction.schedule = this.transactions[transactionId].recurring ? this.transactions[transactionId].recurring.schedule : null;
+			this.forms.transaction.recurring = this.transactions[transactionId].recurring ? true : false;
+			return this.forms.transaction;
+		},
+
+		initializeForm: function() {
+			this.forms.transaction = 
+			new TSForm({
 				amount: '',
 				description: '',
 				transaction: null,
 				date: '',
-				payable: {
-					id: TenantSync.landlord,
-					type: 'user',
-					search: null,
-					selected: 'General',
-				},
+				payable_id: TenantSync.landlord,
+				payable_type: 'user',
+				payable_search: null,
+				payable_selected: 'General',
 				recurring: false,
 				schedule: null,
-			};
-			this.showModal = false;
+			});
+		},
+
+		refreshForm: function() {
+			this.initializeForm();
+		},
+
+		showModal: function() {
+			this.$broadcast('show-modal');
 		},
 
 		submitTransaction: function() {
-			var data = {
-				amount: this.modal.amount,
-				description: this.modal.description,
-				payable_id: this.modal.payable.id,
-				payable_type: this.modal.payable.type,
-				is_rent: this.modal.is_rent,
-				date: this.modal.date,
-				recurring: this.modal.recurring,
-				schedule: this.modal.schedule
-			};
-
-			if(this.modal.transaction)
+			if(this.forms.transaction.transaction)
 			{
-				this.updateTransaction(data);
+				this.updateTransaction();
 			}
 			else
 			{
-				data.user_id = TenantSync.landlord;
-				this.createTransaction(data);
+				this.createTransaction();
 			}
 		},
 
 		setPayable: function(type, id, string) {
-			this.modal.is_rent == false;
-			this.modal.payable.type = type;
+			this.forms.transaction.is_rent == false;
+			this.forms.transaction.payable_type = type;
 			if(type == 'user') {
-				this.modal.payable.selected = 'General';
-				this.modal.payable.id = TenantSync.landlord;
+				this.forms.transaction.payable_selected = 'General';
+				this.forms.transaction.payable_id = TenantSync.landlord;
 				return true;
 			}
 
-			this.modal.payable.selected = string;
-			this.modal.payable.id = id;
+			this.forms.transaction.payable_selected = string;
+			this.forms.transaction.payable_id = id;
 			return true;
 		},
 
-		createTransaction: function(data) {
-			this.$http.post('/'+ this.userRole +'/transaction', data)
-				.success( function(transaction){
-					this.hideModal();
-					this.fetchTransactions(1, this.sortKey, this.reverse);
+		createTransaction: function() {
+			var self = this;
+
+			TS.post('/'+ this.userRole +'/transaction', this.forms.transaction)
+				.then( function(transaction){
+					self.$broadcast('hide-modal');
+					self.refreshForm();
+					self.fetchTransactions(1, self.sortKey, self.reverse);
 				});
 		},
 
-		updateTransaction: function(data) {
-
+		updateTransaction: function() {
+			var self = this;
 		
-			this.$http.patch('/'+ this.userRole +'/transaction/' + this.modal.transaction.id, data)
-				.success( function(transaction) {
-					this.hideModal();
-					this.fetchTransactions(1, this.sortKey, this.reverse);
+			TS.patch('/'+ this.userRole +'/transaction/' + this.forms.transaction.transaction.id, this.forms.transaction)
+				.then( function(transaction) {
+					self.$broadcast('hide-modal');
+					self.refreshForm();
+					self.fetchTransactions(1, self.sortKey, self.reverse);
 				});
 		},
 
 		deleteTransaction: function(id) {
-			this.$http.delete('/'+ this.userRole +'/transaction/' + id)
-				.success( function() {
+			TS.delete('/'+ this.userRole +'/transaction/' + id)
+				.then( function() {
 					this.fetchTransactions(1, this.sortKey, this.reverse);
 				});
 		},
