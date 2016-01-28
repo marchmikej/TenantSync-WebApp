@@ -10,7 +10,7 @@ class TransactionMutator {
 	
 	public function set($field, $data)
 	{
-		if(count($data) < 2) {
+		if(is_a($data, 'TenantSync\Models\Transaction')) {
 			$data->{$field} = $this->{'set'.ucfirst($field)}($data);
 			return $data; 
 		}	
