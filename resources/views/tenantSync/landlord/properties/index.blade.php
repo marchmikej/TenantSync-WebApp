@@ -22,6 +22,7 @@
 				) 
 				->pluck('amount')->toArray())
 				}}
+				@else {{ 0 }}
 				@endif
 				</p>
 			</div>

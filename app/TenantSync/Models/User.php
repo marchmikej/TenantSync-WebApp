@@ -175,13 +175,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 			)->count();
 		}
 
-		$numberOfDevices = 0;
+		$monthlyCostOfDevices = 0;
 		if($this->devices)
 		{
-			$numberOfDevices = $this->devices->count();
+			//$numberOfDevices = $this->devices->count();
+			$this->devices->each(function($device) {
+				$monthlyCostOfDevices += $device->monthly_cost;
+			});
 		}
 
-		return $numberOfDevices + $numberCurrentlyFinanced;
+		return $monthlyCostOfDevices + ($numberCurrentlyFinanced * 2.50);
 		//calculate recurring amount based on rates of each device and financing of each device
 	}
 

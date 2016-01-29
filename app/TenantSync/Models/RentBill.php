@@ -12,6 +12,8 @@ class RentBill extends Model
     	'rent_month',
     	'bill_amount',
     	'balance_due',
+        'paid',
+        'vacant'
     ];
 
 
