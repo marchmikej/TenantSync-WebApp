@@ -186,6 +186,24 @@ trait Billable2 {
 		}
 	}
 
+	public function addPaymentMethod($landlord, $options)
+	{
+		$tran = new \SoapClient($this->soapUrl);
+		$token = $this->createToken();
+
+		try 
+		{ 
+			$tran->addCustomerPaymentMethod($token, $landlord->customer_id, (new PaymentMethod)->properties($options), true);
+			return 1;
+		}
+	  	catch (\SoapFault $e) 
+	  	{
+			echo $tran->__getLastRequest();
+			echo $tran->__getLastResponse();
+			return abort(500, $e->getMessage());
+		}
+	}
+
 	public function getCustomer()
 	{
 		$tran = new \SoapClient($this->soapUrl);

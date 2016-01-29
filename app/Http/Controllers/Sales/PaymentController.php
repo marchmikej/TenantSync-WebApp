@@ -30,6 +30,7 @@ class PaymentController extends SalesController {
 	 */
 	public function create()
 	{
+		$landlord = User::find($this->input['user_id']);
 		$paymentMethods = $landlord->getPaymentMethods();
 		return view('TenantSync::sales.payment.create', compact('landlord', 'paymentMethods'));
 	}
@@ -64,8 +65,12 @@ class PaymentController extends SalesController {
 
 	public function update($id)
 	{
-		$landlord = $this->user;
-		return response()->json($landlord->updatePaymentMethod($this->input));
+		$landlord = User::find($id);
+		if(!empty($this->input['id'])) {
+			return response()->json($landlord->updatePaymentMethod($this->input));
+		}
+
+		return response()->json($landlord->addPaymentMethod($landlord, $this->input));
 	}
 
 

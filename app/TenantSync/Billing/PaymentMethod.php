@@ -15,7 +15,6 @@ class PaymentMethod extends UsaEpayObject {
 	];
 
 	protected $required = [
-		'id',
 		'method_name',
 		'sort_order',
 	];
