@@ -1,8 +1,11 @@
 <?php namespace App\Http\Controllers\Sales;
 
 use TenantSync\Models\User;
+use TenantSync\Models\Order;
 use TenantSync\Models\Device;
 use TenantSync\Models\Property;
+use App\Http\Utilities\State;
+use App\Http\Requests\CreateDeviceRequest;
 use App\Http\Controllers\Sales\BaseController;
 
 class DeviceController extends SalesController {
@@ -21,21 +24,26 @@ class DeviceController extends SalesController {
 	public function create()
 	{
 		$landlord = User::find($this->input['user_id']);
-		return view('TenantSync::sales.device.create', compact('landlord'));
+		$states = State::all();
+		return view('TenantSync::sales.device.create', compact('landlord', 'states'));
 	}
 
-	public function store()
+	public function store(CreateDeviceRequest $request)
 	{
-		$this->input['token'] = \Token::create();
-		$device = Device::create($this->input);
+		\DB::transaction(function() {
+			$this->input['token'] = \Token::create();
+			$this->input['rent_due'] = \Carbon\Carbon::parse('first day of next month');
+			$this->input['monthly_cost'] = 10;
+			$this->input['status'] = 'active';
+			$device = Device::create($this->input);
 
-		//$device->owner->addDevice($device); 
-		//get customer, specifically their next reacurring charge date
-		//subtract todays date from that date
-		//get the percentage of the month left
-		//charge that percentage of the cost of the device per month
-		
-		//return view('TenantSync::sales.device.show', compact('device'));
+			$this->input['device_id'] = $device->id;
+			$order = Order::create($this->input);
+
+			//$device->owner->addDevice($device);
+			
+			//return view('TenantSync::sales.device.show', compact('device'));
+		});
 		return redirect()->route('sales.landlord.show', [$this->input['user_id']]);
 	}
 

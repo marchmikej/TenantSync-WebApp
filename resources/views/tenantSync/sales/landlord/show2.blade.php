@@ -137,7 +137,6 @@
 					<tr>
 						<td><a href="/sales/device/{{ $device->id }}">{{ $device->property->address . ', ' .  $device->property->city . ' ' . $device->property->state }}</a></td>
 						<td>{{ $device->location }}</td>
-						<td>{{ $device->alarm_id !== 0 ? str_replace('_', ' ', $device->alarm->slug) : 'Off' }}</td>
 						<td>{{ $device->status }}</td>
 						<td>{{ $device->serial }}</td>
 						

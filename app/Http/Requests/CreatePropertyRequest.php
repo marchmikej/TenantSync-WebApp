@@ -29,12 +29,14 @@ class CreatePropertyRequest extends Request
             'state' => 'required',
             'zip' => 'required|numeric',
             'purchase_price' => 'required|numeric',
+            'purchase_date' => 'required|date',
             'closing_costs' => 'required|numeric',
             'taxes' => 'required|numeric',
             'expenses' => 'required|numeric',
             'insurance' => 'required|numeric',
             'down_payment' => 'required|numeric',
             'mortgage_rate' => 'required|numeric',
+            'mortgage_term' => 'required|numeric',
         ];
     }
 }

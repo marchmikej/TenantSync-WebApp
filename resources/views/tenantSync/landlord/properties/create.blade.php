@@ -53,6 +53,13 @@
 									<input class="form-control" type="text" name="purchase_price" placeholder="Purchase Price" value="{{ old('purchase_price') }}">
 								</div>
 							</div>
+
+							<div class="form-group">
+								<label class="control-label col-sm-3" for="purchase_date">Purchase Date</label>
+								<div class="col-sm-9">
+									<input class="form-control" type="date" name="purchase_date" placeholder="Purchase Date" value="{{ old('purchase_date') }}"/>
+								</div>
+							</div>
 						
 							<div class="form-group">
 								<label class="control-label col-sm-3" for="closing_costs">Closing Costs</label>
@@ -93,6 +100,13 @@
 								<label class="control-label col-sm-3" for="mortgage_rate">Mortgage Rate(%)</label>
 								<div class="col-sm-9">
 									<input class="form-control" type="text" name="mortgage_rate" placeholder="Mortgage Rate" value="{{ old('mortgage_rate') }}"/>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-sm-3" for="mortgage_term">Loan Term(yrs)</label>
+								<div class="col-sm-9">
+									<input class="form-control" type="text" name="mortgage_term" placeholder="Mortgage Term" value="{{ old('mortgage_term') }}"/>
 								</div>
 							</div>
 						</div>

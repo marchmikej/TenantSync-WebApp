@@ -7,7 +7,7 @@
 			<h1 class="text-primary">Add Device</h1>
 		</div>
 	</div>
-	<div class="row">
+	<div id="app" class="row">
 		<form action="/sales/device" class="device-form form form-horizontal" method="POST">
 			<div class="col-sm-6">
 				<input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -17,7 +17,8 @@
 				<div class="form-group">
 					<label class="control-label col-sm-3" for="property_id">Property</label>
 					<div class="col-sm-9">
-						<select class="form-control"name="property_id">
+						<select class="form-control" name="property_id">
+							<option value="null">Select a property...</option>
 							@foreach($landlord->properties as $property)
 							<option value="{{ $property->id }}">{{ $property->address.', '.$property->city.' '.$property->state }}</option>
 							@endforeach
@@ -46,12 +47,12 @@
 					</div>
 				</div>	
 
-				<div class="form-group">
+				<!-- <div class="form-group">
 					<label class="control-label col-sm-3" for="rent_due_day">Rent Due Day</label>
 					<div class="col-sm-9">
 						<input class="form-control" type="text" name="rent_due_day" placeholder="Day of the month" value="{{ old('rent_due_day') }}"/>
 					</div>
-				</div>
+				</div> -->
 
 				<div class="form-group">
 					<label class="control-label col-sm-3" for="late_fee">Late Fee</label>
@@ -87,7 +88,9 @@
 					<div class="col-sm-9">
 						<input class="form-control col-sm-6" type="text" name="city" placeholder="City"/>
 						<select class="form-control col-sm-3" name="state" id="state">
-							<option value="ny">NY</option>
+							@foreach($states as $slug => $state)
+								<option value="{{ $slug }}" {{ $landlord->profile->state == $state ? 'selected' : ''}}>{{ strtoupper($slug) }}</option>
+							@endforeach
 						</select>
 						<input class="form-control col-sm-3" type="text" name="zip" placeholder="Zip code"/>
 					</div>
@@ -104,23 +107,55 @@
 				<div class="form-group">
 					<label class="control-label col-sm-3" for="payment_method">Payment Method</label>
 					<div class="col-sm-9">
-						<input class="form-control form-borderless col-sm-6" type="text" name="payment_method" placeholder="" value="{{ $landlord->paymentMethods->first()->name }}" disabled readonly/>
+						<input class="form-control form-borderless col-sm-6" type="text" name="payment_method" placeholder="" :value="paymentMethods.hasOwnProperty(0) ? paymentMethods[0].MethodName : 'Loading...'" disabled readonly/>
 						<a href="/sales/payment/create?user_id={{ $landlord->id }}" class="btn btn-primary col-sm-4"><span>Change</span></a>
 					</div>
 				</div>
-				<button type="submit" class="btn btn-primary-outline form-control">Continue</button>
+				
+				<div class="form-group">
+					<label class="control-label col-sm-3" for="financed">Finance Install?</label>
+					<div class="col-sm-9">
+						<input class="form-control" type="checkbox" name="financed" value="1"/>
+					</div>
+				</div>
+
+				<button type="submit" class="btn btn-primary form-control">Continue</button>
 			</div>
 		</form>
 	</div>
 
 @endsection
 
-@section('footer')
+@section('scripts')
 
 <script>
 	$('button[form = device-form]').click(function()
 	{
 		$('form.device-form').submit();
+	});
+</script>
+
+<script>
+	var vue = new Vue({
+		el: '#app',
+
+		data: {
+			paymentMethods: {},
+		},
+
+		ready: function() {
+			this.fetchPaymentMethods();
+		},
+
+		methods: {
+			fetchPaymentMethods: function() {
+				this.$http.get('/sales/payment/' + {{ $landlord->id }})
+				.success(function(paymentMethods) {
+					this.paymentMethods = paymentMethods;
+				});
+			},
+		}
+
 	});
 </script>
 

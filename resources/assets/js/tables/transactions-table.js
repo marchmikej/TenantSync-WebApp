@@ -163,7 +163,7 @@ Vue.component('transactions-table', {
 				date: '',
 				payable_id: TenantSync.landlord,
 				payable_type: 'user',
-				payable_search: null,
+				payable_search: ' ',
 				payable_selected: 'General',
 				recurring: false,
 				schedule: null,

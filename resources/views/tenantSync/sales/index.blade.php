@@ -37,7 +37,6 @@
 			<table id="device-table" class="table">
 				<thead>
 					<!-- <th><input type="checkbox" name="devices[]"></th> -->
-					<th>Serial</th>
 					<th>Location</th>
 					<th>Alarm</th>
 					<th>Status</th>
@@ -46,8 +45,7 @@
 					@foreach($devices as $device)
 					<tr>
 						<!-- <td><input type="checkbox" name="devices[]"></td> -->
-						<td><a href="/sales/device/{{$device->id}}">{{ $device->serial }}</a></td>
-						<td>{{ $device->location }}</td>
+						<td><a href="/sales/device/{{$device->id}}">{{ $device->property->address . ' ' . $device->location }}</a></td>
 						<td>{{ $device->alarm }}</td>
 						<td>{{ $device->status }}</td>
 					</tr>

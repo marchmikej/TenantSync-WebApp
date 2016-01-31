@@ -240,6 +240,17 @@ trait Billable2 {
 
 	}
 
+	// public function updateRecurringBilling()
+	// {
+	// 	$tran = new \SoapClient($this->soapUrl);
+	// 	$token = $this->createToken();
+ 
+	// 	$customer = $tran->getCustomer($token, $this->customer_id);
+	// 	$customer->Amount = $this->recurringAmount(); 
+	// 	$customer->Description = 'Added a Device with Id of "' . $device->id . '"'; 
+	// 	$customer->Enabled = true;
+	// }
+
 
 	public function addDevice($device)
 	{
@@ -264,7 +275,7 @@ trait Billable2 {
 		//Calculate the number of days in this cycle
 		$lengthOfThisCycle = (mktime(0,0,0, $month, $day, $year) - mktime(0,0,0, $month - 1, $day, $year)) /60/60/24;
 		$daysLeftInCycle = date('d', strtotime($customer->Next) - time());
-		$amount = /* cost of device per month -> */ 10 * ($daysLeftInCycle / $lengthOfThisCycle);
+		$amount = $device->monthly_cost * ($daysLeftInCycle / $lengthOfThisCycle);
 
 		$this->charge($amount);
 

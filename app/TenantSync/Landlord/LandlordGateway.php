@@ -29,7 +29,7 @@ class LandlordGateway {
 
 		$user = User::create([
 			'email' => $data['email'],
-			'password' => password_hash($data['password'], PASSWORD_BCRYPT),
+			//'password' => password_hash($data['password'], PASSWORD_BCRYPT),
 			'role_id' => $data['role_id'],
 		]);
 

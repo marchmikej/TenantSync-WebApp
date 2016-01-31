@@ -30,6 +30,7 @@ class LandlordController extends SalesController {
 		//$billing->verify($this->input);
 		$landlord = $this->landlordGateway->create($this->input);
 		$data = ['landlord' => $landlord];
+		//send email to set password
 		// $mailer->send('emails.welcome', $data, function($message) use ($landlord)
 		// {
 		// 	$message->to($landlord->email, $landlord->first_name.' '.$landlord->last_name)->subject('Welcome to TenantSync!');

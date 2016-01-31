@@ -126,9 +126,9 @@
 					</div>
 
 					<div class="form-group">
-						<label class="control-label col-sm-3" for="password_confirmation">Comfirm</label>
+						<label class="control-label col-sm-3" for="password_confirmation">Confirm</label>
 						<div class="col-sm-9">
-							<input class="form-control" type="password" name="password_confirmation" placeholder="Comfirm" value="{{ old('password_confirmation') }}"/>
+							<input class="form-control" type="password" name="password_confirmation" placeholder="Confirm" value="{{ old('password_confirmation') }}"/>
 						</div>
 					</div>
 

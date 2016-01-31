@@ -53,7 +53,7 @@
 								</div>
 							</div>
 
-							<div class="form-group">
+							<!-- <div class="form-group">
 								<label class="col-md-4 control-label">Password</label>
 								<div class="col-md-6">
 									<input type="password" class="form-control" name="password">
@@ -65,7 +65,7 @@
 								<div class="col-md-6">
 									<input type="password" class="form-control" name="password_confirmation">
 								</div>
-							</div>
+							</div> -->
 						</div>
 
 						<div class="col-sm-6">
@@ -80,12 +80,7 @@
 								</div>
 							</div>
 
-							<div id="card-inputs">
-								@include('TenantSync::partials/card-inputs')
-							</div>
-							<div id="ach-inputs">
-								@include('TenantSync::partials/ach-inputs')
-							</div>
+							
 							<div class="form-group">
 								<div class="col-md-6 col-sm-offset-6">
 									<button id="register-button" class="form-control btn btn-primary">
