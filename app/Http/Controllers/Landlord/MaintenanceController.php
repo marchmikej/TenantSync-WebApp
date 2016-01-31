@@ -35,12 +35,12 @@ class MaintenanceController extends Controller {
 	{
 		if(!empty($this->input['device_id']))
 		{
-			return MaintenanceRequest::where('device_id', '=', $this->input['device_id'])->orderBy('created_at')->get()->keyBy('id');
+			return MaintenanceRequest::where('device_id', '=', $this->input['device_id'])->orderBy('created_at', 'desc')->get()->keyBy('id');
 		}
 		else
 		{
 			// return Message::where('device_id', '=', $this->user->devices->fetch('id')->toArray())->take(10)->get()->keyBy('id');
-			return MaintenanceRequest::where('user_id', '=', $this->user->id)->with('device', 'device.property')->take(5)->orderBy('created_at')->get()->keyBy('id');
+			return MaintenanceRequest::where('user_id', '=', $this->user->id)->with('device', 'device.property')->take(5)->orderBy('created_at', 'desc')->get()->keyBy('id');
 		}
 	}
 
@@ -148,7 +148,7 @@ class MaintenanceController extends Controller {
 		\Event::fire(new LandlordRespondedToMaintenance($maintenanceRequest->device->id, 'Maintenance response received.'));
 		$maintenanceRequest->save();
 
-		return $maintenanceRequest;
+		return redirect()->back();
 	}
 
 	public function closeRequest($id)

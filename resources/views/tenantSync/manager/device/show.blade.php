@@ -4,25 +4,6 @@
 <div id="device">
 	<div class="row">
 		<h4 class="text-primary"><a href="/manager/properties/{{ $device->property->id }}">{{ $device->property->address . ', ' . $device->property->city }}</a></h4>
-		<div class="col-sm-12 card">
-			<h4 class="m-t-0 text-primary card-header">{{ $device->location }}</h4>
-			<div class="col-sm-3 card-column">
-				<p class="text-center m-t-0">ROI</p>
-				<h3 class="stat text-center text-success">-</h3>
-			</div>
-			<div class="col-sm-3 card-column">
-				<p class="text-center m-t-0">Maintenance</p>
-				<h3 class="stat text-center text-danger">-</h3>
-			</div>
-			<div class="col-sm-3 card-column">
-				<p class="text-center m-t-0">Messages</p>
-				<h3 class="stat text-center text-info">-</h3>
-			</div>
-			<div class="col-sm-3 card-column">
-				<p class="text-center m-t-0">Something</p>
-				<h3 class="stat text-center text-primary">-</h3>
-			</div>
-		</div>
 	</div>
 
 			<div class="row">
@@ -83,7 +64,7 @@
 				<div class="col-sm-12 card">
 					<div class="col-sm-6">
 						<h3 class="card-header m-t-0">Info</h3>
-						<form action="/manager/device/{{$device->id}}" method="POST" class="form form-horizontal">
+						<form id="device-form" action="/manager/device/{{$device->id}}" method="POST" class="form form-horizontal">
 							<input type="hidden" name="_token" value="{{ csrf_token() }}">
 							<input type="hidden" name="_method" value="PATCH">
 							<div class="form-group">
@@ -107,15 +88,15 @@
 
 							<h3 class="card-header m-t">Occupancy</h3>
 
-							<!-- <div class="form-group">
+							<div class="form-group">
 								<label class="control-label col-sm-3" for="occupancy">Occupancy</label>
 								<div class="col-sm-9">
-									<select name="occupancy" class="form-control">
-										<option value="occupied">Occupied</option>
-										<option value="vacant">Vacant</option>
+									<select name="vacant" class="form-control">
+										<option value="0">Occupied</option>
+										<option value="1" {{ $device->vacant ? 'selected' : '' }}>Vacant</option>
 									</select>
 								</div>
-							</div> -->
+							</div>
 
 							<div class="form-group">
 								<label class="control-label col-sm-3" for="contact_name">Contant Name</label>
@@ -151,17 +132,9 @@
 									<input class="form-control" type="text" name="late_fee" placeholder="Late Fee" value="{{ $device->late_fee }}"/>
 								</div>
 							</div>
-
-							<div class="form-group">
-								<label class="control-label col-sm-3" for="balance_due">Balance Due</label>
-								<div class="col-sm-9">
-									<input class="form-control" type="text" name="balance_due" placeholder="Balance Due" value="{{ $device->balance_due }}"/>
-								</div>
-							</div>
-						
-							<button class="form-control col-sm-4 col-sm-offset-8 btn btn-primary">Save</button>
 						</form>
 					</div>
+					<button @click="submitForm" class="form-control col-sm-4 col-sm-offset-8 btn btn-primary">Save</button>
 				</div>
 			</div>
 		</div>
@@ -205,6 +178,10 @@
 				.success(function(maintenanceRequests) {
 					this.maintenanceRequests = maintenanceRequests;
 				});
+			},
+
+			submitForm: function() {
+				$('#device-form').submit();
 			},
 		}
 	})

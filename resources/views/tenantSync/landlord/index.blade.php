@@ -80,7 +80,7 @@
 				</div>
 			</div>
 		</div>
-		<devices-table user-role="landlord" inline-template>
+		<!-- <devices-table user-role="landlord" inline-template>
 			<div class="row card">
 				<div class="col-sm-12">
 					<h4 class="card-header">Devices</h4>
@@ -110,7 +110,8 @@
 					</div>
 				</div>
 			</div>
-		</devices-table>
+		</devices-table> -->
+		@include('TenantSync::includes.tables.devices-table')
 	</div>
 
 @endsection

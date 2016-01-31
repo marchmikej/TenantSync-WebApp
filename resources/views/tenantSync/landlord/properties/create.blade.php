@@ -60,6 +60,13 @@
 									<input class="form-control" type="date" name="purchase_date" placeholder="Purchase Date" value="{{ old('purchase_date') }}"/>
 								</div>
 							</div>
+
+							<div class="form-group">
+								<label class="control-label col-sm-3" for="value">Market Value</label>
+								<div class="col-sm-9">
+									<input class="form-control" type="text" name="value" placeholder="Market Value" value="{{ old('value') }}"/>
+								</div>
+							</div>
 						
 							<div class="form-group">
 								<label class="control-label col-sm-3" for="closing_costs">Closing Costs</label>

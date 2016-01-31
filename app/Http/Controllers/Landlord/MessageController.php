@@ -36,12 +36,12 @@ class MessageController extends Controller {
 	{
 		if(!empty($this->input['device_id']))
 		{
-			return Message::where('device_id', '=', $this->input['device_id'])->orderBy('created_at')->get()->keyBy('id');
+			return Message::where('device_id', '=', $this->input['device_id'])->orderBy('created_at', 'desc')->get()->keyBy('id');
 		}
 		else
 		{
 			// return Message::where('device_id', '=', $this->user->devices->fetch('id')->toArray())->take(10)->get()->keyBy('id');
-			return Message::where('user_id', '=', $this->user->id)->with('device', 'device.property')->take(5)->orderBy('created_at')->get()->keyBy('id');
+			return Message::where('user_id', '=', $this->user->id)->with('device', 'device.property')->take(5)->orderBy('created_at', 'desc')->get()->keyBy('id');
 		}
 	}
 
@@ -64,18 +64,17 @@ class MessageController extends Controller {
 	{
 		$device = Device::find($this->input['device_id']);
 		
-		if(Gate::allows('owned-by-user', $device))
+		if(! Gate::allows('owned-by-user', $device))
 		{
-			Message::create([
-				'user_id' => $this->user->id,
-				'device_id' => $this->input['device_id'],
-				'body' => $this->input['message'],
-				'hidden' => 0,
-				]);
-			\Event::fire(new MessageCreatedByUser($this->input['device_id'], $this->input['message']));
-			return redirect()->back();
+			return abort(403, "Thats not yours!");
 		}
-		return abort(403, "Thats not yours!");
+		Message::create([
+			'user_id' => $this->user->id,
+			'device_id' => $this->input['device_id'],
+			'body' => $this->input['message'],
+			]);
+		\Event::fire(new MessageCreatedByUser($this->input['device_id'], $this->input['message']));
+		return redirect()->back();
 	}
 
 	/**

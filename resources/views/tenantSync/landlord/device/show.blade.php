@@ -37,10 +37,12 @@
 								<div class="col-sm-2">Unit</div>
 								<div class="col-sm-10">Request</div>
 							</div>
-							<div class="table-body table-striped">
-								<div v-for="maintenance in maintenanceRequests" class="table-row row">
-									<div class="col-sm-2">@{{ maintenance.device.location }}</div>
-									<div class="col-sm-10"><a href="/landlord/maintenance/@{{ maintenance.id }}">@{{ maintenance.request }}</a></div>
+							<div class="scrollable">
+								<div class="table-body table-striped">
+									<div v-for="maintenance in maintenanceRequests" class="table-row row">
+										<div class="col-sm-2">@{{ maintenance.device.location }}</div>
+										<div class="col-sm-10"><a href="/landlord/maintenance/@{{ maintenance.id }}">@{{ maintenance.request }}</a></div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -83,7 +85,7 @@
 				<div class="col-sm-12 card">
 					<div class="col-sm-6">
 						<h3 class="card-header m-t-0">Info</h3>
-						<form id="deviceForm" action="/landlord/device/{{$device->id}}" method="POST" class="form form-horizontal">
+						<form id="device-form" action="/landlord/device/{{$device->id}}" method="POST" class="form form-horizontal">
 							<input type="hidden" name="_token" value="{{ csrf_token() }}">
 							<input type="hidden" name="_method" value="PATCH">
 							<div class="form-group">
@@ -199,7 +201,7 @@
 			},
 
 			submitForm: function() {
-				$('#deviceForm').submit();
+				$('#device-form').submit();
 			}
 		}
 	})

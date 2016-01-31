@@ -73,7 +73,7 @@ Vue.component('property-manager-table', {
 	methods: {
 
 		fetchProperties: function(page, sortKey, reverse) {
-			var append = this.generateUrlVars({with: 'devices', paginate: this.paginate, sort: sortKey, page: page, asc: reverse});
+			var append = this.generateUrlVars({with: ['devices', 'devices.alarm'], paginate: this.paginate, sort: sortKey, page: page, asc: reverse});
 
 			this.$http.get('/'+ this.userRole +'/properties/all?' + append)
 				.success(function(result) {
@@ -86,13 +86,13 @@ Vue.component('property-manager-table', {
 		},
 
 		alarmsInProperty: function(property) {
-			var alarms = _.filter(property.devices, function(device) { device.alarm_id != 0 ;}).length;
+			var alarms = _.filter(property.devices, function(device) { return device.alarm_id != 0 ;}).length;
 			property = _.extend(property, {alarms: alarms});
 			return property;
 		},
 
 		inactiveDevicesInProperty: function(property) {
-			var inactives = _.filter(property.devices, function(device) { device.status != 'active' ;}).length;
+			var inactives = _.filter(property.devices, function(device) { return device.status != 'active' ;}).length;
 			property = _.extend(property, {inactives: inactives});
 			return property;
 		},

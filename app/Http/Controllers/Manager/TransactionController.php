@@ -2,11 +2,14 @@
 
 use Gate;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
+use TenantSync\Models\Device;
+use TenantSync\Models\Property;
 use TenantSync\Models\Transaction;
+use App\Http\Controllers\Controller;
+use TenantSync\Billing\RentPaymentGateway;
 use TenantSync\Models\RecurringTransaction;
 use TenantSync\Mutators\TransactionMutator;
-use TenantSync\Models\Property;
+use App\Http\Requests\CreateTransactionRequest;
 
 class TransactionController extends Controller {
 
@@ -93,19 +96,17 @@ class TransactionController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store(Requests\TransactionCreatedRequest $request)
+	public function store(CreateTransactionRequest $request)
 	{
-		$this->input['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $this->input['date'])));
-		$transaction = Transaction::create($this->input);
-		if($this->input['recurring'])
-		{
-			RecurringTransaction::create([
-				'transaction_id' => $transaction->id, 
-				'schedule' => $this->input['schedule'], 
-				'next_date' => date('Y-m-d', strtotime($transaction->date) + (60*60*24*$this->input['schedule']))
-			]);
-		}
-		return $transaction;
+		\DB::transaction(function() {
+			$this->input['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $this->input['date'])));
+			$transaction = Transaction::create($this->input);
+			if(isset($this->input['is_rent'])) {
+				$device = Device::find($this->input['payable_id']);
+				(new RentPaymentGateway($device))->processPayment($transaction->amount, $transaction);
+			}
+			return $transaction;
+		});
 	}
 
 	/**

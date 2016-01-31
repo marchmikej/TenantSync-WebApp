@@ -6,10 +6,10 @@
 			
 					<div class="table-body table-striped">
 						<div v-for="device in devices | orderBy sortKey reverse" class="table-row row">
-							<div class="col-sm-6"><a :href="'/manager/device/' + device.id">@{{ device.address }}</a></div>
+							<div class="col-sm-6"><a :href="'/'+ userRole +'/device/' + device.id">@{{ device.address }}</a></div>
 							<div class="col-sm-2">@{{ device.rent_amount }}</div>
 							<div class="col-sm-2">@{{ device.status }}</div>
-							<div class="col-sm-2">@{{ device.alarm ? device.alarm.slug : 'Off' }}</div>
+							<div class="col-sm-2" :class="device.alarm_id ? 'text-danger' : 'text-success'">@{{ device.alarm_id ? device.alarm.slug : 'Off' }}</div>
 						</div>
 					</div>
 					<div class="col-sm-4 col-sm-offset-4 text-center">

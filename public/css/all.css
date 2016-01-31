@@ -12700,17 +12700,17 @@ td .form-control {
     margin: auto;
   }
 
-  .nav-dropdown {
+  .top-nav .nav-dropdown {
     margin: auto;
     padding-left: 50px;
     text-align: center;
   }
 
-  .nav-dropdown a {
+  .top-nav .nav-dropdown a {
     color: #bbb !important;
   }
 
-  .nav-dropdown .divider {
+  .top-nav .nav-dropdown .divider {
     padding-left: 50px;
     text-align: center;
     width: 25%;

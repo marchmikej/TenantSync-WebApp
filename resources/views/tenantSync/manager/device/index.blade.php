@@ -22,7 +22,7 @@
 						<div class="col-sm-8">Request</div>
 					</div>
 					<div class="table-body table-striped">
-						<div v-for="maintenance in maintenanceRequests" class="table-row row">
+						<div v-for="maintenance in maintenanceRequests | orderBy 'created_at' -1" class="table-row row">
 							<div class="col-sm-4">@{{ maintenance.device.property.address + ', ' + maintenance.device.location }}</div>
 							<div class="col-sm-8"><a href="/manager/maintenance/@{{ maintenance.id }}">@{{ maintenance.request }}</a></div>
 						</div>
@@ -44,7 +44,7 @@
 						<div class="col-sm-8">Message</div>
 					</div>
 					<div class="table-body table-striped">
-						<div v-for="message in messages" class="table-row row">
+						<div v-for="message in messages | orderBy 'created_at' -1" class="table-row row">
 							<div class="col-sm-4"><a href="/manager/device/@{{ message.device.id }}">@{{ message.device.property.address + ', ' + message.device.location }}</a></div>
 							<div class="col-sm-8">@{{ message.body }}</div>
 						</div>
@@ -99,7 +99,7 @@
 			methods: {
 
 				fetchMessages: function() {
-					this.$http.get('/manager/messages/all')
+					this.$http.get('/manager/messages/all', {limit: 5})
 					.success(function(messages) {
 						this.messages = messages;
 					});
