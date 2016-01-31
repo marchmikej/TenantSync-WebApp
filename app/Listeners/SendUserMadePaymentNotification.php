@@ -1,13 +1,13 @@
 <?php namespace App\Listeners;
 
-use App\Events\DeviceMadeUpdate;
+use App\Events\DeviceMadePayment;
 
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldBeQueued;
 use DB;
 use Mail;
 
-class SendUserMessageNotification {
+class SendUserMadePaymentNotification {
 
 	/**
 	 * Create the event handler.
@@ -25,7 +25,7 @@ class SendUserMessageNotification {
 	 * @param  DeviceMadeUpdate  $event
 	 * @return void
 	 */
-	public function handle(DeviceMadeUpdate $event)
+	public function handle(DeviceMadePayment $event)
     {
         //$deviceData = \DB::table('devices')
         //->where('id', '=', $event->deviceId)
@@ -33,17 +33,16 @@ class SendUserMessageNotification {
 
         $users = DB::table('manager_property')
             ->where('manager_property.property_id', '=', $event->propertyId)
-            ->where('manager_property.app_message', '=', 1)
+            ->where('manager_property.app_payment', '=', 1)
             ->join('managers', 'manager_property.manager_id', '=', 'managers.id')
             ->join('landlord_devices', 'managers.user_id', '=', 'landlord_devices.user_id')
             ->join('properties', 'manager_property.property_id', '=', 'properties.id')
             ->join('users', 'managers.user_id', '=', 'users.id')
             ->select('managers.user_id', 'landlord_devices.routing_id', 'landlord_devices.type', 'properties.address', 'users.email', 'managers.last_name', 'managers.first_name')
             ->get();
-
         $emails = DB::table('manager_property')
             ->where('manager_property.property_id', '=', $event->propertyId)
-            ->where('manager_property.email_message', '=', 1)
+            ->where('manager_property.email_payment', '=', 1)
             ->join('managers', 'manager_property.manager_id', '=', 'managers.id')
             ->join('properties', 'manager_property.property_id', '=', 'properties.id')
             ->join('users', 'managers.user_id', '=', 'users.id')
@@ -54,7 +53,7 @@ class SendUserMessageNotification {
         {   
             $currentRow=$emails[$y];
             Mail::queue('emails.usersend', ['currentRow' => $currentRow, 'event' => $event], function ($m) use ($currentRow, $event) {
-                $m->to($currentRow->email, $currentRow->last_name)->subject('Message from ' . $event->deviceName . " " . $currentRow->address);
+                $m->to($currentRow->email, $currentRow->last_name)->subject('Payment received from ' . $event->deviceName . " " . $currentRow->address);
                 $m->from('admin@tenantsync.com', 'TenantSync');
             });
         }
@@ -62,8 +61,8 @@ class SendUserMessageNotification {
         for ($x = 0; $x < count($users); $x++)
         {   
             // This is the message sent to the device
-            $message = "MESSAGE: " . $event->message . " from " . $event->deviceName . " " . $users[$x]->address . " ENDMESSAGE URL: " . $event->urlSend;
-            $iosMessage = $event->message . " from " . $event->deviceName . " " . $users[$x]->address;
+            $message = "MESSAGE: Payment received from " . $event->deviceName . " " . $users[$x]->address . " ENDMESSAGE URL: https://app.tenantsync.com";
+            $iosMessage = "You missed a payment from  " . $event->deviceName . " " . $users[$x]->address;
 
             // If type == 0 it is an iphone
             // If type == 1 it is an android
@@ -95,7 +94,7 @@ class SendUserMessageNotification {
                 $body['aps'] = array(
                     'alert' => $iosMessage,
                     'badge' => 1,
-                    'url' => $event->urlSend,
+                    'url' => "https://app.tenantsync.com",
                     'sound' => 'default'
                 );
 

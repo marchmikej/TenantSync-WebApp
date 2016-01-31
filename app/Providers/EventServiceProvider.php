@@ -28,6 +28,12 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\DeviceChime' => [
             'App\Listeners\SendDeviceChimeNotification',
         ],
+        'App\Events\DeviceMissedPayment' => [
+            'App\Listeners\SendUserMissedPaymentNotification',
+        ],
+        'App\Events\DeviceMadePayment' => [
+            'App\Listeners\SendUserMadePaymentNotification',
+        ],
     ];
 
     /**
