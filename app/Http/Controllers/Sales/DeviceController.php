@@ -34,6 +34,7 @@ class DeviceController extends SalesController {
 			$this->input['token'] = \Token::create();
 			$this->input['rent_due'] = \Carbon\Carbon::parse('first day of next month');
 			$this->input['monthly_cost'] = 10;
+			$this->input['alarm_id'] = 0;
 			$this->input['status'] = 'active';
 			$device = Device::create($this->input);
 

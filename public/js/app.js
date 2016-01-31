@@ -531,7 +531,7 @@ Vue.component('devices-table', {
 	methods: {
 		fetchDevices: function fetchDevices() {
 			var append = this.generateUrlVars({
-				'with': ['property'],
+				'with': ['property', 'alarm'],
 				paginate: this.paginate,
 				page: this.currentPage,
 				sort: this.sortKey,

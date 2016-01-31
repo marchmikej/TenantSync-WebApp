@@ -20,6 +20,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\RefreshDevice::class,
         \App\Console\Commands\ChimeDevice::class,
         \App\Console\Commands\GenerateRentBills::class,
+        \App\Console\Commands\UpdateDeviceAlarms::class,
     ];
 
     /**
@@ -32,5 +33,6 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('command:GenerateRentBills')->daily();
         $schedule->command('command:UpdatePropertyValue')->dailyAt('01:15');
+        $schedule->command('command:UpdateDeviceAlarms')->dailyAt('2:30');
     }
 }
