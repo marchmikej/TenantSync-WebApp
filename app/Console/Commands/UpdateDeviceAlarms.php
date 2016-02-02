@@ -40,6 +40,8 @@ class UpdateDeviceAlarms extends Command implements SelfHandling
      */
     public function handle()
     {
+        \Log::info('Running UpdateDeviceAlarms: ');
+
         $rentBills = RentBill::where(['paid' => 0, 'vacant' => 0])->get();
         $deliquentDevices = array();   
         foreach($rentBills as $bill) {

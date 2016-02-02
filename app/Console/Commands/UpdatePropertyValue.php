@@ -41,6 +41,8 @@ class UpdatePropertyValue extends Command
      */
     public function handle()
     {
+        \Log::info('Running UpdatePropertyValue: ');
+
         $sms1day = DB::table('properties')->get();
 
         for ($x = 0; $x < count($sms1day); $x++)  

@@ -43,6 +43,8 @@ class GenerateRentBills extends Command
      */
     public function handle()
     {
+        \Log::info('Running GenerateRentBills: ');
+
         $devices = Device::all();
         $devicesToBill = $devices->filter(function($device) 
         {
@@ -63,15 +65,15 @@ class GenerateRentBills extends Command
             $device->save();
         }
 
-        $data = array();
-        Mail::send('emails.processran', $data, function($message) {
-            $message->to('marchmikej@gmail.com', 'Code Ran')->subject('GenerateRentBills Ran');
-            $message->from('admin@tenantsync.com', 'TenantSync');
-        });
-        Mail::send('emails.processran', $data, function($message) {
-            $message->to('mitchjam1928@gmail.com', 'Code Ran')->subject('GenerateRentBills Ran');
-            $message->from('admin@tenantsync.com', 'TenantSync');
-        });
+        // $data = array();
+        // Mail::send('emails.processran', $data, function($message) {
+        //     $message->to('marchmikej@gmail.com', 'Code Ran')->subject('GenerateRentBills Ran');
+        //     $message->from('admin@tenantsync.com', 'TenantSync');
+        // });
+        // Mail::send('emails.processran', $data, function($message) {
+        //     $message->to('mitchjam1928@gmail.com', 'Code Ran')->subject('GenerateRentBills Ran');
+        //     $message->from('admin@tenantsync.com', 'TenantSync');
+        // });
         return 'Finished';
     }
 }

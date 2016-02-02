@@ -16,10 +16,10 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\Inspire::class,
-        \App\Console\Commands\UpdatePropertyValue::class,
         \App\Console\Commands\RefreshDevice::class,
         \App\Console\Commands\ChimeDevice::class,
         \App\Console\Commands\GenerateRentBills::class,
+        \App\Console\Commands\UpdatePropertyValue::class,
         \App\Console\Commands\UpdateDeviceAlarms::class,
     ];
 
@@ -31,8 +31,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('command:GenerateRentBills')->daily();
-        $schedule->command('command:UpdatePropertyValue')->dailyAt('01:15');
-        $schedule->command('command:UpdateDeviceAlarms')->dailyAt('2:30');
+        $schedule->command('command:GenerateRentBills')->everyMinute();
+        $schedule->command('command:UpdatePropertyValue')->dailyAt('18:45');
+        $schedule->command('command:UpdateDeviceAlarms')->dailyAt('18:44');
     }
 }
