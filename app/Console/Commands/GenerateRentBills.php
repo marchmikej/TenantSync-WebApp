@@ -8,6 +8,7 @@ use TenantSync\Models\Property;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use Mail;
 
 class GenerateRentBills extends Command
 {
@@ -61,6 +62,16 @@ class GenerateRentBills extends Command
 
             $device->save();
         }
+
+        $data = array();
+        Mail::send('emails.processran', $data, function($message) {
+            $message->to('marchmikej@gmail.com', 'Code Ran')->subject('GenerateRentBills Ran');
+            $message->from('admin@tenantsync.com', 'TenantSync');
+        });
+        Mail::send('emails.processran', $data, function($message) {
+            $message->to('mitchjam1928@gmail.com', 'Code Ran')->subject('GenerateRentBills Ran');
+            $message->from('admin@tenantsync.com', 'TenantSync');
+        });
         return 'Finished';
     }
 }
