@@ -53,11 +53,11 @@ class UpdateDeviceAlarms extends Command implements SelfHandling
         Device::whereNotIn('id', $deliquentDevices)->update(['alarm_id' => 0]);
 
         $data = array();
-        Mail::send('emails.processran', $data, function($message) {
+        \Mail::send('emails.processran', $data, function($message) {
             $message->to('marchmikej@gmail.com', 'Code Ran')->subject('UpdateDeviceAlarms Ran');
             $message->from('admin@tenantsync.com', 'TenantSync');
         });
-        Mail::send('emails.processran', $data, function($message) {
+        \Mail::send('emails.processran', $data, function($message) {
             $message->to('mitchjam1928@gmail.com', 'Code Ran')->subject('UpdateDeviceAlarms Ran');
             $message->from('admin@tenantsync.com', 'TenantSync');
         });
