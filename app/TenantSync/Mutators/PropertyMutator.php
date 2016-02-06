@@ -3,23 +3,49 @@
 namespace TenantSync\Mutators;
 
 use TenantSync\Models\Property;
+use TenantSync\Mutators\ModelMutator;
 
-class PropertyMutator {
+class PropertyMutator extends ModelMutator{
 
-	public static function set($field, $data)
+	public function totalExpenses($device)
 	{
-		if(count($data) < 2) {
-			$data->{$field}();
-			return $data; 
-		}	
+		$amounts = array();
+		foreach($device->expenses() as $expense)
+		{
+			$amounts[] = $expense->amount;
+		}		
+		return array_sum($amounts);
+	}
 
-		if(! is_a($data, 'Illuminate\\Database\\Eloquent\\Collection')) {
-			$data = $data->getCollection();
+	public function roi($device)
+	{
+		if(empty($device->value) || $device->value == 0) {
+			$device->attributes['roi'] = 0;
+			return 0;
 		}
 
-		$properties = $data->each(function($property) use ($field) {
-			return $property->{$field} = $property->{$field}();
+		$appreciation = (new RoiCalculator)->appreciationRoi($device);
+		$equity = (new RoiCalculator)->equityRoi($device);
+		$cash = (new RoiCalculator)->cashRoi($device);
+
+		$roi = ($appreciation + $equity + $cash) / 3;
+		//$roi = (new RoiCalculator)->calculateRoi([$device->$incomes, ($device->value - $device->purchase_price)/$device->down_payment], [$device->expenses]);
+		$device->attributes['roi'] = $roi;
+		return $roi;
+	}
+
+	public function netIncome($device, $fromDate = '-1 month')
+	{
+		$amounts = array();
+		$transactions = collect(array_merge($device->incomes()->toArray(), $device->expenses()->toArray()));
+		$transactions = $transactions->filter(function($transaction) use ($fromDate) {
+				return strtotime($transaction->date) >= strtotime($fromDate);
 		});
-		return $properties;
+		foreach($transactions as $transaction)
+		{
+			$amounts[] = $transaction->amount;
+		}
+
+		return array_sum($amounts);
 	}
 }

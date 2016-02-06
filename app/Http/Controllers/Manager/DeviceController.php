@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\Manager;
 
 use Gate;
+use TenantSync\Api\ApiQuery;
 use App\Http\Requests;
 use TenantSync\Models\Device;
 use TenantSync\Models\Manager;
@@ -13,6 +14,7 @@ class DeviceController extends Controller {
 	{
 		parent::__construct();
 		$this->manager = $this->user->manager;
+		$this->apiQuery = new ApiQuery('Device');
 	}
 	/**
 	 * Display a listing of the resource.
@@ -28,8 +30,8 @@ class DeviceController extends Controller {
 
 	public function all()
 	{
-		$paginate = 15;
-		$query = Device::whereIn('property_id', $this->manager->properties->keyBy('id')->keys()->toArray())->select('devices.*');
+		$list = $this->apiQuery->whereIn('property_id', $this->manager->properties->keyBy('id')->keys()->toArray())->select('devices.*');
+		$list->with($with);
 
 		if(isset($this->input['sort']) && ! empty($this->input['sort']))
 		{

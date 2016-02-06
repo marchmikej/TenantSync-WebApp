@@ -10,34 +10,20 @@ Vue.component('most-expensive-property-table', {
 
 			columns: [
 				{
-					key: 'address',
+					name: 'address',
 					label: 'Address',
 					width: 'col-sm-10',
 					isSortable: false,
 				},
-				// {
-				// 	key: 'income',
-				// 	label: 'Income',
-				// 	width: 'col-sm-2',
-				// 	isSortable: false,
-				// },
 				{
-					key: 'expenses',
+					name: 'expenses',
 					label: 'Expenses MTD',
 					width: 'col-sm-2',
 					isSortable: false,
 				},
-				// {
-				// 	key: 'netIncome',
-				// 	label: 'Net Income',
-				// 	width: 'col-sm-2',
-				// 	isSortable: false,
-				// }
 			],
 
-			properties: [
-
-			],
+			properties: [],
 		}
 	},
 
@@ -48,9 +34,13 @@ Vue.component('most-expensive-property-table', {
 	methods: {
 
 		fetchProperties: function() {
-			this.$http.get('/'+ this.userRole +'/properties/all')
-			.success(function(result) {
-				this.properties = _.map(result.data, function(property) {
+			var data = {
+				with: ['transactions']
+			}
+
+			this.$http.get('/api/properties')
+			.success(function(properties) {
+				this.properties = _.map(properties, function(property) {
 					return this.setTotalExpenses(property);
 				}.bind(this));
 			});

@@ -12,13 +12,7 @@ Vue.component('portfolio-table', {
 
 			currentPage: 1,
 
-			paginated: {},
-
 			search: null,
-
-			range: {
-				from: moment().subtract(1, 'month').format('YYYY-MM-DD'),
-			},
 
 			columns: [
 				{
@@ -53,11 +47,7 @@ Vue.component('portfolio-table', {
 				}
 			],
 
-			properties: [
-
-			],
-
-			numeral: window.numeral,
+			properties: [],
 		};
 
 	},
@@ -74,7 +64,6 @@ Vue.component('portfolio-table', {
 
 	ready: function() {
 		this.fetchProperties();
-		var numeral = numeral;
 	},
 
 
@@ -86,29 +75,22 @@ Vue.component('portfolio-table', {
 		},
 
 		fetchProperties: function(page, sortKey, reverse) {
-			//var append = this.generateUrlVars({paginate: this.paginate, sort: sortKey, page: page, asc: reverse});
+			var data = {
+				with: [
+					'devices',
+					'transactions'
+				],
+			};
 
-			this.$http.get('/landlord/properties/all?')
-				.success( function(result) {
-					this.properties = _.map(result.data, function(property) {
-						return this.setTotalExpenses(property);
-					}.bind(this));
-					this.paginated = result;
-					this.currentPage = result.current_page;
+			this.$http.get('/api/properties', data)
+				.success( function(properties) {
+					this.properties = properties;
 				});
 		},
 
 		showDetails: function(id) {
 			var property = _.where(this.properties, {id: id});
-
 			$('[data-property-id='+ id +']').toggle();
-			
-		},
-
-		setTotalExpenses: function(property) {
-			var totalExpenses = _.reduce(property.expenses, function(memo , current) { return Number(memo) + Number(current.amount) * -1; }, 0);
-			property = _.extend(property, {totalExpenses: totalExpenses});
-			return property;
 		},
 	},
 });

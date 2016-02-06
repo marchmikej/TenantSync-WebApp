@@ -47,7 +47,15 @@ class Property extends Model {
 	// Name for morph relationship
 	protected $morphClass = 'property';
 
+	// Additional attributes to set on the class
+	protected $appends = ['roi', 'net_income', 'all_transactions'];
+
 	public function owner()
+	{
+		return $this->user;
+	}
+
+	public function user()
 	{
 		return $this->belongsTo('TenantSync\Models\User');
 	}
@@ -67,88 +75,92 @@ class Property extends Model {
 		return $this->belongsToMany('TenantSync\Models\Manager');
 	}
 
+	public static function getPropertiesForUser($user, $with = [])
+	{
+		if($user->role == 'manager') {
+			return $user->manager->properties()->with($with)->get();
+		}
+
+		return $user->properties()->with($with)->get();
+	}
+
+	public function getAllTransactionsAttribute()
+	{
+		return $this->allTransactions();
+	}
+
+	public function allTransactions()
+	{
+		$transactions = collect(\DB::table('transactions')
+			->where(function($queryContainer) {
+				$queryContainer
+				->where(function($query) {
+					$query->where(['payable_type' => 'property'])
+						->where(['payable_id' => $this->id]);
+				})
+				->orWhere(function($query) {
+					$query->where(['payable_type' => 'device'])
+						->whereIn('payable_id', $this->devices->pluck('id')->toArray());
+				});
+			})
+			->get());
+
+		return $transactions;
+	}
+
+	public function getRoiAttribute($value)
+	{
+		return $this->roi();
+	}
+
 	public function roi()
 	{
-		if(empty($this->purchase_price) || $this->purchase_price == 0) {
-			$this->attributes['roi'] = 0;
-			return false;
+		if(empty($this->value) || $this->value == 0) {
+			return 0;
 		}
 
 		$appreciation = (new RoiCalculator)->appreciationRoi($this);
+
 		$equity = (new RoiCalculator)->equityRoi($this);
+
 		$cash = (new RoiCalculator)->cashRoi($this);
 
 		$roi = ($appreciation + $equity + $cash) / 3;
-		//$roi = (new RoiCalculator)->calculateRoi([$this->$incomes, ($this->value - $this->purchase_price)/$this->down_payment], [$this->expenses]);
-		$this->attributes['roi'] = $roi;
+
 		return $roi;
+	}
+
+	public function getNetIncomeAttribute($value)
+	{
+		return $this->netIncome('first of the year');
 	}
 
 	public function netIncome($fromDate = '-1 month')
 	{
-		$amounts = array();
-		$transactions = collect(array_merge($this->incomes()->toArray(), $this->expenses()->toArray()));
+		$transactions = $this->allTransactions();
+
 		$transactions = $transactions->filter(function($transaction) use ($fromDate) {
 				return strtotime($transaction->date) >= strtotime($fromDate);
 		});
-		foreach($transactions as $transaction)
-		{
-			$amounts[] = $transaction->amount;
-		}
 
-		return array_sum($amounts);
-		//return array_sum($this->incomes()->fetch('amount')->toArray()) - abs(array_sum($this->expenses()->fetch('amount')->toArray()));
+		$netIncome = array_sum($transactions->pluck('amount')->toArray());
+
+		return $netIncome;
 	}
 
 	public function incomes()
 	{
-		$transactions = collect(\DB::table('transactions')
-			->where('amount', '>=', 0)
-			->where(function($queryContainer) {
-				$queryContainer
-				->where(function($query) {
-					$query->where(['payable_type' => 'property'])
-						->where(['payable_id' => $this->id]);
-				})
-				->orWhere(function($query) {
-					$query->where(['payable_type' => 'device'])
-						->whereIn('payable_id', $this->devices->pluck('id')->toArray());
-				});
-			})
-			->get());
-
-		return $transactions;
-
+		return $this->allTransactions()->filter(function($transaction) {
+			return $transaction->amount <= 0;
+		});
 	}
 
 	public function expenses()
 	{
-		$transactions = collect(\DB::table('transactions')
-			->where('amount', '<', 0)
-			->where(function($queryContainer) {
-				$queryContainer
-				->where(function($query) {
-					$query->where(['payable_type' => 'property'])
-						->where(['payable_id' => $this->id]);
-				})
-				->orWhere(function($query) {
-					$query->where(['payable_type' => 'device'])
-						->whereIn('payable_id', $this->devices->pluck('id')->toArray());
-				});
-			})
-			->get());
-
-		return $transactions;
+		return $this->allTransactions()->filter(function($transaction) {
+			return $transaction->amount > 0;
+		});
 	}
 
-	public function totalExpenses()
-	{
-		$amounts = array();
-		foreach($this->expenses() as $expense)
-		{
-			$amounts[] = $expense->amount;
-		}		
-		return array_sum($amounts);
-	}
 
 }

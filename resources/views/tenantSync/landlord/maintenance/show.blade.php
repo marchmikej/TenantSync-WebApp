@@ -130,6 +130,16 @@
         			this.$http.patch('/'+ this.userRole +'/maintenance/'+ this.maintenanceRequest.id, this.maintenanceRequest)
         			.success(function(result) {
         				this.fetchMaintenanceRequest();
+        				swal(
+        					'Updated!',
+        						'You have updated this maintenance request.'
+        				);
+        			})
+        			.error(function(result) {
+        				swal(
+        					'Uh Oh!',
+        						'There was an error. Please contact tech support.'
+        				);
         			});
         		},
 
@@ -138,9 +148,16 @@
         			this.$http.patch('/landlord/maintenance/' + {{ $maintenanceRequest->id }} + '/close')
         			.success(function(response) {
         				this.fetchMaintenanceRequest();
+        				swal(
+        					'Closed!',
+        						'You have closed this maintenance request.'
+        				);
         			})
         			.error(function(response) {
-        				console.log(response);
+        				swal(
+        					'Uh Oh!',
+        						'There was an error. Please contact tech support.'
+        				);
         			});
         		},
 

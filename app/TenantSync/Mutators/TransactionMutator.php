@@ -6,33 +6,15 @@ use TenantSync\Models\User;
 use TenantSync\Models\Device;
 use TenantSync\Models\Property;
 
-class TransactionMutator {
-	
-	public function set($field, $data)
-	{
-		if(is_a($data, 'TenantSync\Models\Transaction')) {
-			$data->{$field} = $this->{'set'.ucfirst($field)}($data);
-			return $data; 
-		}	
+class TransactionMutator extends ModelMutator {
 
-		if(! is_a($data, 'Illuminate\\Database\\Eloquent\\Collection')) {
-			$data = $data->getCollection();
-		}
-
-		$items = $data->each(function($item) use ($field) {
-			return $item->{$field} = $this->{'set'.ucfirst($field)}($item);
-		});
-		return $items;
-	}
-
-
-	public function setPayable($transaction)
+	public function payable($transaction)
 	{
 		$model = ucfirst($transaction->payable_type);
 		return $model::where(['id' => $transaction->payable_id]);
 	}
 
-	public function setAddress($transaction)
+	public function address($transaction)
 	{
 		switch($transaction->payable_type) {
 			case 'TenantSync\\Models\\Device': 

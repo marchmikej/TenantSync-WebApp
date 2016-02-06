@@ -5,4 +5,13 @@
 		landlord: {!! Auth::user()->role == 'manager' ? Auth::user()->manager->landlord->id : Auth::user()->id !!}
 	};
 
+	var math = {
+		    '+': function(a, b) { return a + b },
+		    '-': function(a, b) { return a - b },
+		    '>': function(a, b) { return a > b },
+		    '<': function(a, b) { return a < b },
+		};
+
+	var dateString = 'YYYY-MM-DD';
+
 </script>

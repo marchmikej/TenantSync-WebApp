@@ -12533,10 +12533,32 @@ h5 {
   margin-top: 0;
 }
 
+table {
+  font-size: 1em;
+}
+
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > tbody > tr > td {
+  font-weight: 300;
+  padding: 12px 5px;
+}
+
+.table > thead > tr > th,
+.table > thead > tr > td,
+.table > tfoot > tr > td {
+  font-weight: bold;
+  padding: 12px 5px;
+}
+
 .table-borderless > tbody > tr > td,
 .table-borderless > tbody > tr > th {
   border: none;
   border-top: none;
+}
+
+.table > thead > tr > th {
+  border-bottom: none;
 }
 
 td .form-control {

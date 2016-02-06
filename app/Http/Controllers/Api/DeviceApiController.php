@@ -11,7 +11,7 @@ use TenantSync\Landlord\LandlordGateway;
 use TenantSync\Billing\RentPaymentGateway;
 use TenantSync\Models\MaintenanceRequest;
 
-class ApiController extends Controller {
+class DeviceApiController extends Controller {
 
 	public function __construct(Request $request)
 	{
@@ -187,19 +187,22 @@ class ApiController extends Controller {
 
 	public function payRent()
 	{ 
-		//card number, expiration, card_holder, cvv2, payment_type
-		if($this->deviceIsValid($this->device))
-		{
-			$this->input['amount'] = $this->input['payment_amount'];
-			$response = $this->device->charge($this->input['amount'], $this->input);
-			if($response->Result == "Approved")
+		\DB::transaction(function() {
+			//card number, expiration, card_holder, cvv2, payment_type
+			if($this->deviceIsValid($this->device))
 			{
-				$payment = Transaction::create(['amount' => $this->input['amount'], 'user_id' => $this->device->owner->id, 'payable_type' => 'device', 'payable_id' => $this->device->id, 'description' => 'Rent Payment', 'date' => date('Y-m-d', time()), 'reference_number' => $response->RefNum]);
-				(new RentPaymentGateway($this->device))->processPayment($payment->amount, $payment);
+				$this->input['amount'] = $this->input['payment_amount'];
+				$response = $this->device->charge($this->input['amount'], $this->input);
+				// var_export($response);die();
+				if($response->Result == "Approved")
+				{
+					$payment = Transaction::create(['amount' => $this->input['amount'], 'user_id' => $this->device->owner->id, 'payable_type' => 'device', 'payable_id' => $this->device->id, 'description' => 'Rent Payment', 'date' => date('Y-m-d', time()), 'reference_number' => $response->RefNum]);
+					(new RentPaymentGateway($this->device))->processPayment($payment->amount, $payment);
+				}
+				return json_encode(['RefNum' => $response->RefNum, 'Error' => $response->Error, 'Result' => $response->Result]);
 			}
-			return json_encode(['RefNum' => $response->RefNum, 'Error' => $response->Error, 'Result' => $response->Result]);
-		}
-		return json_encode(['errors', ['The device is not valid...']]);
+			return json_encode(['errors', ['The device is not valid...']]);
+		});
 	}
 
 }  

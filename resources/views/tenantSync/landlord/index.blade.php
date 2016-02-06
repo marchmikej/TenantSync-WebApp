@@ -7,16 +7,26 @@
 				<h4 class="card-header">Dashboard</h4>
 		
 				<div class="col-sm-3 card-column">
-					<p class="text-center">Revenue</p>
-					<div class="w-md m-x-auto">
-					  <!-- <canvas
-					    class="ex-graph"
-					    width="200" height="200"
-					    data-chart="doughnut"
-					    data-value="[{ value: 230, color: '#1ca8dd', label: 'Returning' }, { value: 130, color: '#1bc98e', label: 'New' }]"
-					    data-segment-stroke-color="#fff">
-					  </canvas> -->
-					</div>
+					<p class="text-center">Alarms</p>
+					<!-- <div class="w-md m-x-auto">
+						<canvas
+						    class="ex-graph"
+						    width="200" height="200"
+						    data-chart="doughnut"
+						    data-value="[{ value: 230, color: '#1ca8dd', label: 'Returning' }, { value: 130, color: '#1bc98e', label: 'New' }]"
+						    data-segment-stroke-color="#fff">
+						</canvas>
+					</div> -->
+					<p class="stat text-danger text-center">
+						@if($landlord->devices)
+						{{ 
+							$landlord->devices->filter(function($device) {
+								return $device->alarm_id;
+							})
+							->count()
+						}}
+						@endif
+					</p>
 				</div>
 		
 				<div class="col-sm-3 card-column">
@@ -26,7 +36,7 @@
 					{{
 						array_sum($landlord->rentPayments()->filter(function($rentPayment) 
 							{
-								return date('m', strtotime($rentPayment->created_at)) == date('m', time());
+								return date('m', strtotime($rentPayment->date)) == date('m', time());
 							})
 						->pluck('amount')->toArray())
 					}}
@@ -36,26 +46,26 @@
 				</div>
 		
 				<div class="col-sm-3 card-column">
-					<p class="text-center">Deliquent Rent MTD</p>
+					<p class="text-center">Delinquency MTD</p>
 					<p class="stat text-warning text-center">
 					@if($landlord->rentBills->count() && $landlord->rentPayments())
-					{{ 
-						array_sum($landlord->rentBills->filter(function($rentBill) 
+				{{ 
+					array_sum($landlord->rentBills->filter(function($rentBill) 
+						{
+							if($rentBill->vacant == 1)
 							{
-								if($rentBill->vacant == 1)
-								{
-									return false;
-								}
-								return date('m', strtotime($rentBill->rent_month)) == date('m', time());
-							})
-						->pluck('bill_amount')->toArray()) - array_sum($landlord->rentPayments()->filter(function($rentPayment) 
-							{
-								return date('m', strtotime($rentPayment->created_at)) == date('m', time());
-							})
-						->pluck('amount')->toArray())
-					}}
-					@else {{ 0 }}
-					@endif
+								return false;
+							}
+							return date('m', strtotime($rentBill->rent_month)) == date('m', time());
+						})
+					->pluck('bill_amount')->toArray()) - array_sum($landlord->rentPayments()->filter(function($rentPayment) 
+						{
+							return date('m', strtotime($rentPayment->date)) == date('m', time());
+						})
+					->pluck('amount')->toArray())
+				}}
+				@else {{ 0 }}
+				@endif
 					</p>
 				</div>
 				

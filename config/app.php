@@ -150,6 +150,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\ViewServiceProvider::class,
+        Yajra\Datatables\DatatablesServiceProvider::class
         //Barryvdh\Debugbar\ServiceProvider::class,
 
     ],

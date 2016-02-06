@@ -58,30 +58,31 @@ Vue.component('property-manager-table', {
 			showDevices: [
 
 			],
-
-			numeral: window.numeral,
 		};
 	},
 
 
 	ready: function() {
 		this.fetchProperties();
-		var numeral = numeral;
 	},
 
 
 	methods: {
 
 		fetchProperties: function(page, sortKey, reverse) {
-			var append = this.generateUrlVars({with: ['devices', 'devices.alarm'], paginate: this.paginate, sort: sortKey, page: page, asc: reverse});
+			var data = {
+				with: [
+					'devices', 
+					'devices.alarm'
+				]
+			};
 
-			this.$http.get('/'+ this.userRole +'/properties/all?' + append)
-				.success(function(result) {
-					this.properties = _.map(result.data, function(property) {
+			this.$http.get('/api/properties', data)
+				.success(function(properties) {
+					this.properties = _.map(properties, function(property) {
 						property = this.inactiveDevicesInProperty(property);
 						return this.alarmsInProperty(property);
 					}.bind(this));
-					this.paginated = result;
 				});
 		},
 

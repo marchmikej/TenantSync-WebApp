@@ -13,14 +13,18 @@
 // Route::get('test', 'HomeController@test');
 
 
-Route::get('api/maintenance', 'Api\ApiController@allRequests');
-Route::post('api/maintenance/{id?}', 'Api\ApiController@storeRequest');
-Route::get('api/device', 'Api\ApiController@showDevice');
-Route::post('api/device', 'Api\ApiController@UpdateRoutingId');
-Route::get('api/message', 'Api\ApiController@getMessages');
-Route::post('api/message', 'Api\ApiController@createMessage');
-Route::post('api/pay', 'Api\ApiController@payRent');
-Route::post('api/rent-status', 'Api\ApiController@rentStatus');
+Route::get('api/devices', 'Api\DeviceController@index');
+Route::get('api/transactions', 'Api\TransactionController@index');
+Route::get('api/properties', 'Api\PropertyController@index');
+
+Route::get('api/maintenance', 'Api\DeviceApiController@allRequests');
+Route::post('api/maintenance/{id?}', 'Api\DeviceApiController@storeRequest');
+Route::get('api/device', 'Api\DeviceApiController@showDevice');
+Route::post('api/device', 'Api\DeviceApiController@UpdateRoutingId');
+Route::get('api/message', 'Api\DeviceApiController@getMessages');
+Route::post('api/message', 'Api\DeviceApiController@createMessage');
+Route::post('api/pay', 'Api\DeviceApiController@payRent');
+Route::post('api/rent-status', 'Api\DeviceApiController@rentStatus');
 Route::post('api/receivingnotifications', 'Api\PhoneAppController@receivingNotifications');
 Route::post('api/loginapp', 'Api\PhoneAppController@isUser');
 

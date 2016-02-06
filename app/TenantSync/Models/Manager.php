@@ -56,8 +56,7 @@ class Manager extends Model {
 
 	public function devices()
 	{
-		return \DB::table('devices')->whereIn('property_id', $this->properties->keyBy('id')->keys()->toArray())->get();
-		// return \DB::table('devices')->whereIn('property_id', $this->properties->keyBy('id')->keys()->toArray())->select('devices.*')->get();
+		return collect(\DB::table('devices')->whereIn('property_id', $this->properties->keyBy('id')->keys()->toArray())->get());
 	}
 
 	public function messages()

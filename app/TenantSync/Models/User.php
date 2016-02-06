@@ -120,7 +120,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	{
 		return $this->hasMany('TenantSync\Models\Transaction')
 			->join('rent_payments', 'rent_payments.transaction_id', '=', 'transactions.id')
-			->select('transactions.*', 'rent_payments.rent_bill_id')
+			->select('rent_payments.*', 'transactions.date')
 			->get();
 	}
 

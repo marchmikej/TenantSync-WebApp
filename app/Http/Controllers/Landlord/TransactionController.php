@@ -32,45 +32,13 @@ class TransactionController extends Controller {
 	}
 
 	public function all()
-	{
-		$paginate = 15;
-		$query = Transaction::query(); 
-		$query = $query->where(['user_id' => $this->user->id]);
-
-		if(isset($this->input['sort']) && ! empty($this->input['sort']))
-		{
-			$sort = $this->input['sort'];
-			$order = isset($this->input['asc']) && $this->input['asc'] != 1 ? 'desc' : 'asc';
-			$query = $query->orderBy($sort, $order);
-		}
-		
-		if(isset($this->input['paginate']) && !empty($this->input['paginate']))
-		{
-			$paginate = $this->input['paginate'];
-		}	
-		
+	{	
 		if(isset($this->input['with']))
 		{
 			$with = $this->input['with'];
-			$query = $query->with($with);
 		}
-
-		if(isset($this->input['dates']['from']) && !empty($this->input['dates']['from'])) {
-			$from = $this->input['dates']['from'];
-			$query->where('date', '>', date('Y-m-d', strtotime($from)));
-
-			// if(isset($this->input['date']['to'])) {
-			// 	$to = $this->input['dates']['to'];
-			// 	$query->where('date', '<', date('Y-m-d', strtotime($to)));
-			// }
-		}
-
-		$paginated =  $query->paginate($paginate);
-		$transactions =  $paginated->load('payable');
-		//$transactions = Transaction::where(['user_id' => $this->user->id])->with(['payable'])->get()->keyBy('id');
-		$this->transactionMutator->set('address', $transactions);
-		$paginated->data = $transactions;
-		return $paginated;
+		$transactions = $this->transactionMutator->set('address', $transactions);
+		return $transactions;
 	}
 
 	/**
@@ -137,46 +105,51 @@ class TransactionController extends Controller {
 	 */
 	public function update(CreateTransactionRequest $request, $id)
 	{
-		$transaction = Transaction::find($id);
-		if(Gate::denies('owned-by-user', $transaction))
-		{
-			return abort(403, "That's not yours");
-		}
-		$this->input['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $this->input['date'])));
-		$transaction->update(['amount' => $this->input['amount'], 'description' => $this->input['description'], 'date' => $this->input['date'], 'payable_type' => $this->input['payable_type'], 'payable_id' => $this->input['payable_id']]);
-		
-		if($this->input['recurring'])
-		{
-			$schedule = (60*60*24*$this->input['schedule']);
-			$nextDate = strtotime($transaction->date) + $schedule;
-			while($nextDate < time())
+		\DB::transaction(function() use ($id) {
+			$transaction = Transaction::find($id);
+			if(Gate::denies('owned-by-user', $transaction))
 			{
-				$nextDate = $nextDate + $schedule;
+				return abort(403, "That's not yours");
 			}
-			$nextDate = date('Y-m-d', $nextDate);
-
-			if(! RecurringTransaction::where(['transaction_id' => $transaction->id])->exists())
-			{
-				RecurringTransaction::create([
-					'transaction_id' => $transaction->id, 
-					'schedule' => $this->input['schedule'], 
-					'next_date' => $nextDate
-				]);
-			}
-			RecurringTransaction::where(['transaction_id' => $transaction->id])->update([
-				'transaction_id' => $transaction->id, 
-				'schedule' => $this->input['schedule'], 
-				'next_date' => $nextDate
-			]);
+			$this->input['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $this->input['date'])));
+			$transaction->update(['amount' => $this->input['amount'], 'description' => $this->input['description'], 'date' => $this->input['date'], 'payable_type' => $this->input['payable_type'], 'payable_id' => $this->input['payable_id']]);
 			
-		}
-		if(!$this->input['recurring'] && $transaction->recurringTransaction)
-		{
-			RecurringTransaction::where([
-				'transaction_id' => $transaction->id, 
-			])
-			->delete();
-		}
+			// if($transaction->rentPayments()) {
+			// 	(new RentPaymentGateway)->
+			// }
+			// if($this->input['recurring'])
+			// {
+			// 	$schedule = (60*60*24*$this->input['schedule']);
+			// 	$nextDate = strtotime($transaction->date) + $schedule;
+			// 	while($nextDate < time())
+			// 	{
+			// 		$nextDate = $nextDate + $schedule;
+			// 	}
+			// 	$nextDate = date('Y-m-d', $nextDate);
+
+			// 	if(! RecurringTransaction::where(['transaction_id' => $transaction->id])->exists())
+			// 	{
+			// 		RecurringTransaction::create([
+			// 			'transaction_id' => $transaction->id, 
+			// 			'schedule' => $this->input['schedule'], 
+			// 			'next_date' => $nextDate
+			// 		]);
+			// 	}
+			// 	RecurringTransaction::where(['transaction_id' => $transaction->id])->update([
+			// 		'transaction_id' => $transaction->id, 
+			// 		'schedule' => $this->input['schedule'], 
+			// 		'next_date' => $nextDate
+			// 	]);
+				
+			// }
+			// if(!$this->input['recurring'] && $transaction->recurringTransaction)
+			// {
+			// 	RecurringTransaction::where([
+			// 		'transaction_id' => $transaction->id, 
+			// 	])
+			// 	->delete();
+			// }
+		});
 	}
 
 	/**

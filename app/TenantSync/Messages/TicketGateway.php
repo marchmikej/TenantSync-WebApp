@@ -1,7 +1,7 @@
 <?php namespace TenantSync\Messages;
 
 
-class TicketGateway {
+class TicketGatewaysssssssssssss {
 
 	public function __construct(Ticket $ticket)
 	{

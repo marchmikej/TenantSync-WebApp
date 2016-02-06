@@ -14,13 +14,7 @@ Vue.component('devices-table', {
 
 			currentPage: 1,
 
-			paginated: {},
-
 			search: null,
-
-			range: {
-				from: moment().subtract(1, 'month').format('YYYY-MM-DD'),
-			},
 
 			columns: [
 				{
@@ -30,8 +24,8 @@ Vue.component('devices-table', {
 					isSortable: false
 				},
 				{
-					name: 'rent_amount',
-					label: 'rent_amount',
+					name: 'rent_owed',
+					label: 'Rent Owed',
 					width: 'col-sm-2',
 					isSortable: true
 				},
@@ -53,20 +47,10 @@ Vue.component('devices-table', {
 		};
 	},
 
-	computed: {
-		dates: function() {
-			return {
-				from: moment(this.range.from).format(),
-				to: null
-			};
-		}
-	},
-
 	events: {
 		'table-sorted': function(sortKey) {
 			this.sortKey = sortKey;
 			this.reverse = (this.sortKey == sortKey) ? this.reverse * -1 : 1;
-			this.currentPage = 1;
 			this.fetchDevices();
 		}
 	},
@@ -77,46 +61,18 @@ Vue.component('devices-table', {
 
 	methods: {
 		fetchDevices: function() {
-			var append = this.generateUrlVars({
+			var data = {
 				with: ['property', 'alarm'],
-				paginate: this.paginate, 
-				page: this.currentPage,
-				sort: this.sortKey, 
-				asc: this.reverse, 
-				dates: {
-					from: this.dates.from, 
-					to: this.dates.to
-				}
-			});
+			};
 
-			this.$http.get('/' + this.userRole + '/device/all?' + append)
-			.success(function(result) {
-				for(var i = 0; i < result.data.length; i++)
+			this.$http.get('/api/devices', data)
+			.success(function(list) {
+				this.devices = list;
+				for(var i = 0; i < list.length; i++)
 				{
-					result.data[i].rent_amount = Number(result.data[i].rent_amount);
+					list[i].rent_amount = Number(list[i].rent_amount);
 				}
-				this.devices = _.map(result.data, function(device) {
-					return this.setDeviceAddress(device);
-				}.bind(this));
-				this.paginated = result;
-				this.page = result.current_page;
 			});
-		},
-
-		fetchPage: function(increment) {
-			this.currentPage = Number(this.currentPage) + Number(increment);
-			this.fetchDevices();
-		},
-
-		refreshTable: function(sortKey, reverse)
-		{
-			this.fetchDevices();
-		},
-
-
-		setDeviceAddress: function(device) {
-			device.address = device.property.address + ', ' + device.location;
-			return device;
 		},
 
 		alarmsInProperty: function(property) {

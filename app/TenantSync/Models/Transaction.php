@@ -32,15 +32,10 @@ class Transaction extends Model {
 		return $this->morphTo();
 	}
 
-	public function getPayableTypeAttribute($type) {
-	    // transform to lower case
+	public function getPayableTypeAttribute($type) 
+    {
 	    $type = strtolower($type);
-
-	    // to make sure this returns value from the array
 	    return array_get($this->types, $type, $type);
-
-	    // which is always safe, because new 'class'
-	    // will work just the same as new 'Class'
     }
 
     public function rentBills()
@@ -61,5 +56,24 @@ class Transaction extends Model {
     		return true;
     	}
     	return false;
+    }
+
+    public function rentPayments()
+    {
+    	return \DB::table('rent_payments')->where(['transaction_id' => $this->id])->get();
+    }
+
+    public static function getTransactionsForUser($user, $with)
+    {
+        if($user->role = 'landlord') {
+            return self::where(['user_id' => $user->id])->with($with)->get();
+        }
+        else {
+            $transactions = array_map(function($transaction) {
+                return $transaction->id;
+            }, $user->manager->transactions());
+
+            return self::whereIn('id', $transactions)->with($with)->get();
+        }
     }
 }

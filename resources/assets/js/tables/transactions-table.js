@@ -13,13 +13,7 @@ Vue.component('transactions-table', {
 
 			currentPage: 1,
 
-			paginated: {},
-
 			search: null,
-
-			range: {
-				from: moment().subtract(1, 'month').format('YYYY-MM-DD'),
-			},
 
 			columns: [
 				{
@@ -67,15 +61,11 @@ Vue.component('transactions-table', {
 			transactions: [],
 
 			properties: [],
-		}
-	},
 
-	computed: {
-		dates: function() {
-			return {
-				from: moment(this.range.from).format(),
-				to: null
-			};
+			dates: {
+				from: moment().subtract(1, 'month').format(dateString),
+				to: moment().format(dateString)
+			},
 		}
 	},
 
@@ -100,36 +90,81 @@ Vue.component('transactions-table', {
 
 	methods: {
 		fetchTransactions: function() {
-			var append = {
-				paginate: this.paginate, 
-				sort: this.sortKey, 
-				page: this.page, 
-				asc: this.reverse, 
-				dates: {
-					from: this.dates.from, 
-					to: this.dates.to
-				}
-			};
 
-			this.$http.get('/'+ this.userRole +'/transaction/all', append)
-				.success( function(result) {
-					_.each(result.data, function(transaction) { transaction.amount = Number(transaction.amount); });
-					this.transactions = result.data;
-					this.paginated = result;
-					this.currentPage = result.current_page;
+			this.$http.get('/api/transactions')
+				.success( function(transactions) {
+					_.each(transactions, function(transaction) { transaction.amount = Number(transaction.amount); });
+					this.transactions = transactions;
 				});
 		},
 
 		fetchProperties: function() {
-			var append = this.generateUrlVars({
+			var data = this.generateUrlVars({
 				with: ['devices'],
 			});
 
-			this.$http.get('/'+ this.userRole +'/properties/all?' + append)
-				.success( function(result) {
-					this.properties = result.data;
+			this.$http.get('/api/properties', data)
+				.success( function(properties) {
+					this.properties = properties;
 					//console.log(result);
 				});
+		},
+
+		submitTransaction: function() {
+			if(this.forms.transaction.transaction)
+			{
+				this.updateTransaction();
+			}
+			else
+			{
+				this.createTransaction();
+			}
+		},
+
+		createTransaction: function() {
+			var that = this;
+
+			TS.post('/'+ this.userRole +'/transaction', this.forms.transaction)
+				.then( function(transaction){
+					that.$broadcast('hide-modal');
+					that.refreshForm();
+					that.fetchTransactions(1, that.sortKey, that.reverse);
+				});
+		},
+
+		updateTransaction: function() {
+			var that = this;
+		
+			TS.patch('/'+ this.userRole +'/transaction/' + this.forms.transaction.transaction.id, this.forms.transaction)
+				.then( function(transaction) {
+					that.$broadcast('hide-modal');
+					that.refreshForm();
+					that.fetchTransactions(1, that.sortKey, that.reverse);
+				});
+		},
+
+		deleteTransaction: function(id) {
+			var that = this;
+
+			TS.delete('/'+ this.userRole +'/transaction/' + id, this.forms.transaction)
+				.then( function() {
+					that.fetchTransactions(1, that.sortKey, that.reverse);
+				});
+		},
+
+		getTransactionPayable: function(transaction) {
+				
+			switch (transaction.payable_type) {
+				case 'TenantSync\\Models\\Property':
+					return 'property';
+					break;
+				case 'TenantSync\\Models\\Device':
+					return 'device';
+					break;
+				case 'TenantSync\\Models\\User':
+					return 'user';
+					break;
+			}
 		},
 
 		generateModal: function(transactionId) {
@@ -138,6 +173,10 @@ Vue.component('transactions-table', {
 				this.populateForm(transactionId);
 			}
 			this.showModal();
+		},
+
+		showModal: function() {
+			this.$broadcast('show-modal');
 		},
 
 		populateForm: function(transactionId) {
@@ -174,79 +213,19 @@ Vue.component('transactions-table', {
 			this.initializeForm();
 		},
 
-		showModal: function() {
-			this.$broadcast('show-modal');
-		},
+		// setPayable: function(type, id, string) {
+		// 	this.forms.transaction.is_rent == false;
+		// 	this.forms.transaction.payable_type = type;
+		// 	if(type == 'user') {
+		// 		this.forms.transaction.payable_selected = 'General';
+		// 		this.forms.transaction.payable_id = TenantSync.landlord;
+		// 		return true;
+		// 	}
 
-		submitTransaction: function() {
-			if(this.forms.transaction.transaction)
-			{
-				this.updateTransaction();
-			}
-			else
-			{
-				this.createTransaction();
-			}
-		},
-
-		setPayable: function(type, id, string) {
-			this.forms.transaction.is_rent == false;
-			this.forms.transaction.payable_type = type;
-			if(type == 'user') {
-				this.forms.transaction.payable_selected = 'General';
-				this.forms.transaction.payable_id = TenantSync.landlord;
-				return true;
-			}
-
-			this.forms.transaction.payable_selected = string;
-			this.forms.transaction.payable_id = id;
-			return true;
-		},
-
-		createTransaction: function() {
-			var self = this;
-
-			TS.post('/'+ this.userRole +'/transaction', this.forms.transaction)
-				.then( function(transaction){
-					self.$broadcast('hide-modal');
-					self.refreshForm();
-					self.fetchTransactions(1, self.sortKey, self.reverse);
-				});
-		},
-
-		updateTransaction: function() {
-			var self = this;
-		
-			TS.patch('/'+ this.userRole +'/transaction/' + this.forms.transaction.transaction.id, this.forms.transaction)
-				.then( function(transaction) {
-					self.$broadcast('hide-modal');
-					self.refreshForm();
-					self.fetchTransactions(1, self.sortKey, self.reverse);
-				});
-		},
-
-		deleteTransaction: function(id) {
-			var self = this;
-			TS.delete('/'+ this.userRole +'/transaction/' + id, this.forms.transaction)
-				.then( function() {
-					self.fetchTransactions(1, self.sortKey, self.reverse);
-				});
-		},
-
-		getTransactionPayable: function(transaction) {
-				
-			switch (transaction.payable_type) {
-				case 'TenantSync\\Models\\Property':
-					return 'property';
-					break;
-				case 'TenantSync\\Models\\Device':
-					return 'device';
-					break;
-				case 'TenantSync\\Models\\User':
-					return 'user';
-					break;
-			}
-		},
+		// 	this.forms.transaction.payable_selected = string;
+		// 	this.forms.transaction.payable_id = id;
+		// 	return true;
+		// },
 	},
 
 });

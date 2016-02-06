@@ -95,4 +95,12 @@ class Device extends Model {
 	{
 		return $this->hasMany('TenantSync\Models\RentBill');
 	}
+
+	public static function getDevicesForUser($user, $with = null)
+	{
+		if($user->role == 'manager') {
+			return $user->manager->devices()->with($with)->get();
+		}
+		return $user->devices()->with($with)->get();
+	}
 }

@@ -2,8 +2,9 @@
 
 use Gate;
 use App\Http\Requests;
+use TenantSync\Models\Device;
+use TenantSync\Mutators\DeviceMutator;
 use App\Http\Controllers\Controller;
-use TenantSync\Models\Device; 
 use App\Http\Controllers\Traits\AuthorizesUsers;
 
 class DeviceController extends Controller {
@@ -53,7 +54,9 @@ class DeviceController extends Controller {
 		}
 
 		//return Device::where(['user_id' => $this->user->id])->orderBy('rent_amount', 'desc')->with(['property', 'alarm'])->paginate(15);
-		return $query->paginate($paginate);
+		$paginator = $query->paginate($paginate);
+		$paginator->data = (new DeviceMutator)->set('rent_owed', $paginator);
+		return $paginator;
 	}
 
 	/**

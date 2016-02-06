@@ -4,13 +4,6 @@
 				<h4 class="card-header">
 					Properties<!-- <button  class=" btn btn-clear text-primary"><h4 class="m-a-0 icon icon-plus"></h4></button> -->
 				</h4>
-				<!-- <div class="row table-heading">
-					<div class="col-sm-5">Address</div>
-					<div class="col-sm-2">ROI YTD</div>
-					<div class="col-sm-2">Devices</div>
-					<div class="col-sm-2">Value</div>
-					<div class="col-sm-1"></div>
-				</div> -->
 				<table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers>
 
 				<div class="table-body table-striped">
@@ -32,7 +25,7 @@
 										<div class="col-sm-6 text-left">Closing Costs</div>
 										<div class="col-sm-6 text-right">$@{{ property.closing_costs ? property.closing_costs : '-' }}</div>
 										<div class="col-sm-6 text-left">Expenses</div>
-										<div class="col-sm-6 text-right">$@{{ property.expenses.length > 0  ? property.totalExpenses : '-'}}</div>
+										<div class="col-sm-6 text-right">$@{{ property.expenses  ? property.expenses : '-'}}</div>
 										<div class="col-sm-6 text-left">Taxes</div>
 										<div class="col-sm-6 text-right">$@{{ property.taxes ? property.taxes : '-' }}</div>
 										<div class="col-sm-6 text-left">Insurance</div>
@@ -45,12 +38,14 @@
 										<div class="col-sm-6 text-right">@{{ property.mortgage_payment ? property.mortgage_payment : '-' }}</div>
 										<div class="col-sm-6 text-left">Purchase Date</div>
 										<div class="col-sm-6 text-right">@{{ property.purchase_date ? property.purchase_date : '-' }}</div>
-<!-- 										<div class="col-sm-6 text-left">Aquisition Cost</div>
+										<!-- 
+										<div class="col-sm-6 text-left">Aquisition Cost</div>
 										<div class="col-sm-6 text-right">@{{ +property.down_payment + +property.closing_costs }}</div>
 										<div class="col-sm-6 text-left">Appreciation</div>
 										<div class="col-sm-6 text-right">@{{ property.value - property.purchase_price }}</div>
 										<div class="col-sm-6 text-left">Appreciation / Aquisition</div>
-										<div class="col-sm-6 text-right">@{{ (property.value - property.purchase_price) /  (property.down_payment + property.closing_costs) }}</div> -->
+										<div class="col-sm-6 text-right">@{{ (property.value - property.purchase_price) /  (property.down_payment + property.closing_costs) }}</div> 
+										-->
 									</div>
 								</div>
 							</div>

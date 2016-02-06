@@ -13,12 +13,33 @@ class RentPaymentGateway {
 	public function processPayment($amount, $payment)
 	{
 		//credit device for the amount charged
-		$this->addToCredit($amount);
+		$this->applyToCredit($amount);
 		//process all payments for bill from the device credit
 		$this->payBills($payment);
+	}
 
-		//$bills = $this->unpaidBills();
-		//$bill = $bills->shift();
+	public function reversePayment($difference, $transaction)
+	{
+		$this->applyToCredit($difference);
+		$bills = $this->bills('desc');
+		$this->applyCreditToBills();
+
+		// apply difference to credit
+		// get all rent bills
+		// subtract credit
+		// unpay bill
+		// if bill balance_due is 0 go to next bill
+
+		/*
+		apply credit to device
+		---grab bills
+		add credit to bill balance due
+		--open bill (paid = 0)
+			--if less than 0
+		--if greater than bill_amount
+			--close bill
+		go to next bill		
+		*/
 	}
 
 	public function payBills($payment)
@@ -29,16 +50,26 @@ class RentPaymentGateway {
 		foreach($bills as $bill)
 		{
 			$this->payBill($bill, $payment);
-			if(! $this->deviceHasCredit())
-			{
+			if(! $this->deviceHasCredit()) {
 				break;
 			}
 		}
 	}
 
-	public function unpaidBills()
+	// Get all the unpaid bills
+	public function unpaidBills($order = 'asc')
 	{
-		return RentBill::where(['user_id' => $this->device->owner->id, 'device_id' => $this->device->id, 'paid' => 0, 'vacant' => 0])->orderBy('rent_month', 'asc')->get();	
+		return $this->bills($order, 0);
+		//RentBill::where(['user_id' => $this->device->owner->id, 'device_id' => $this->device->id, 'paid' => 0, 'vacant' => 0])->orderBy('rent_month', 'asc')->get();
+	}
+
+	public function bills($order, $paid = null)
+	{
+		$query = RentBill::where(['user_id' => $this->device->owner->id, 'device_id' => $this->device->id])->orderBy('rent_month', $order);
+		if($paid !== null) {
+			$query->where(['paid' => $paid]);
+		}
+		return $query->get();
 	}
 
 	public function payBill($bill, $payment)
@@ -76,9 +107,9 @@ class RentPaymentGateway {
 		$bill->save();
 	}
 
-	public function addToCredit($amount)
+	public function applyToCredit($amount)
 	{
-		$this->device->credit += abs($amount);
+		$this->device->credit += $amount;
 		$this->device->save();
 	}
 

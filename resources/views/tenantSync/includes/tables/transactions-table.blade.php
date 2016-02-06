@@ -6,7 +6,7 @@
 						Transactions
 						<button @click="generateModal()" class=" btn btn-clear text-primary p-y-0"><h3 class="m-a-0 icon icon-plus"></h3></button>
 						<input type="text" class="col-sm-2 col-xs-12 pull-right form-control" placeholder="search..." v-model='search'>
-						<input @change="fetchTransactions()" type="date" class="col-sm-2 col-xs-12 pull-right form-control" v-model="range.from">
+						<input @change="fetchTransactions()" type="date" class="col-sm-2 col-xs-12 pull-right form-control" v-model="dates.from">
 					</div>
 				</h3>
 

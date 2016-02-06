@@ -7,6 +7,7 @@ use App\Http\Requests;
 use TenantSync\Models\User;
 use TenantSync\Models\Manager;
 use App\Events\ManagerCreated;
+use App\Http\Requests\CreateManagerRequest;
 use App\Http\Controllers\Controller;
 
 class ManagerController extends Controller
@@ -71,7 +72,7 @@ class ManagerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store()
+    public function store(CreateManagerRequest $request)
     {
         $this->input['role'] = 'manager';
         $this->input['landlord_id'] = $this->user->id;

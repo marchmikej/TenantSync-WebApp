@@ -37,12 +37,10 @@
 								<div class="col-sm-2">Unit</div>
 								<div class="col-sm-10">Request</div>
 							</div>
-							<div class="scrollable">
-								<div class="table-body table-striped">
-									<div v-for="maintenance in maintenanceRequests" class="table-row row">
-										<div class="col-sm-2">@{{ maintenance.device.location }}</div>
-										<div class="col-sm-10"><a href="/landlord/maintenance/@{{ maintenance.id }}">@{{ maintenance.request }}</a></div>
-									</div>
+							<div class="table-body table-striped">
+								<div v-for="maintenance in maintenanceRequests" class="table-row row">
+									<div class="col-sm-2">@{{ maintenance.device.location }}</div>
+									<div class="col-sm-10"><a href="/landlord/maintenance/@{{ maintenance.id }}">@{{ maintenance.request }}</a></div>
 								</div>
 							</div>
 						</div>

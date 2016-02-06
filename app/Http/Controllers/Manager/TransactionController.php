@@ -38,47 +38,16 @@ class TransactionController extends Controller {
 	}
 
 	public function all()
-	{
-		$transactions = array_map(function($transaction) {
-			return $transaction->id;
-		}, $this->manager->transactions());
+	{	
+		$transactions = (new Transaction)->getTransactionsForUser($this->user);
 
-		$paginate = 15;
-		$query = Transaction::whereIn('id', $transactions);
-
-		if(isset($this->input['sort']) && ! empty($this->input['sort']))
-		{
-			$sort = $this->input['sort'];
-			$order = isset($this->input['asc']) && $this->input['asc'] != 1 ? 'desc' : 'asc';
-			$query = $query->orderBy($sort, $order);
-		}
-		
-		if(isset($this->input['paginate']) && !empty($this->input['paginate']))
-		{
-			$paginate = $this->input['paginate'];
-		}	
-		
 		if(isset($this->input['with']))
 		{
 			$with = $this->input['with'];
-			$query = $query->with($with);
 		}
 
-		if(isset($this->input['dates']['from']) && !empty($this->input['dates']['from'])) {
-			$from = $this->input['dates']['from'];
-			$query->where('date', '>', date('Y-m-d', strtotime($from)));
-
-			// if(isset($this->input['date']['to'])) {
-			// 	$to = $this->input['dates']['to'];
-			// 	$query->where('date', '<', date('Y-m-d', strtotime($to)));
-			// }
-		}
-
-		$paginated =  $query->paginate($paginate);
-		$transactions =  $paginated->load('payable');
-		$this->transactionMutator->set('address', $transactions);
-		$paginated->data = $transactions;
-		return $paginated;
+		$transactions = $this->transactionMutator->set('address', $transactions);
+		return $transactions;
 	}
 
 	/**

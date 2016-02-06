@@ -25,7 +25,7 @@ class RoiCalculator {
 		$this->mortgageCalculator->setYears($loanTerm);
 		return $this->mortgageCalculator->calculateRepayment();
 	}
-	public function cashOnCashRoi($purchasePrice, $rent, $expenses, $taxes, $loanTerm = 30, $interestRate = 4.25, $insurance = 800, $downPaymentPercent = 75)
+	public function cashOnCashRoi($purchasePrice, $rent, $expenses, $taxes, $loanTerm = 30, $interestRate = 4.25, $insurance = 800, $downPaymentPercent = 75, $closingCost = 0)
 	{
 		$mortgagePayment = $this->mortgagePayment($purchasePrice, $downPaymentPercent, $loanTerm, $interestRate);
 		$cashFlow = ($rent - ($mortgagePayment + ($expenses/12) + ($taxes/12) + ($insurance/12)));
@@ -53,6 +53,7 @@ class RoiCalculator {
 
 	public function appreciationRoi($property)
 	{
+
 		$roi = ($property->value - $property->purchase_price) / ($property->down_payment + $property->closing_costs);
 		return $roi;
 	}

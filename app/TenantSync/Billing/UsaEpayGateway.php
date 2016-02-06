@@ -38,8 +38,8 @@ class UsaEpayGateway {
 		} 
 		catch (\SoapFault $e) 
 		{
-			//return abort(500, $e->getMessage());
-			return $e;
+			return abort(500, $e->getMessage());
+			//return $e;
 		}
 	}
 
