@@ -48,7 +48,7 @@ class Property extends Model {
 	protected $morphClass = 'property';
 
 	// Additional attributes to set on the class
-	protected $appends = ['roi', 'net_income', 'all_transactions'];
+	protected $appends = ['roi', 'net_income', 'transactions'];
 
 	public function owner()
 	{
@@ -65,10 +65,10 @@ class Property extends Model {
 		return $this->hasMany('TenantSync\Models\Device');
 	}
 
-	public function transactions()
-	{
-		return $this->morphMany('TenantSync\Models\Transaction', 'payable');
-	}
+	// public function transactions()
+	// {
+	// 	return $this->morphMany('TenantSync\Models\Transaction', 'payable');
+	// }
 
 	public function managers()
 	{
@@ -84,12 +84,12 @@ class Property extends Model {
 		return $user->properties()->with($with)->get();
 	}
 
-	public function getAllTransactionsAttribute()
+	public function getTransactionsAttribute()
 	{
-		return $this->allTransactions();
+		return $this->transactions();
 	}
 
-	public function allTransactions()
+	public function transactions()
 	{
 		$transactions = collect(\DB::table('transactions')
 			->where(function($queryContainer) {
@@ -137,7 +137,7 @@ class Property extends Model {
 
 	public function netIncome($fromDate = '-1 month')
 	{
-		$transactions = $this->allTransactions();
+		$transactions = $this->transactions();
 
 		$transactions = $transactions->filter(function($transaction) use ($fromDate) {
 				return strtotime($transaction->date) >= strtotime($fromDate);
@@ -150,14 +150,14 @@ class Property extends Model {
 
 	public function incomes()
 	{
-		return $this->allTransactions()->filter(function($transaction) {
+		return $this->transactions()->filter(function($transaction) {
 			return $transaction->amount <= 0;
 		});
 	}
 
 	public function expenses()
 	{
-		return $this->allTransactions()->filter(function($transaction) {
+		return $this->transactions()->filter(function($transaction) {
 			return $transaction->amount > 0;
 		});
 	}

@@ -98,7 +98,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	public function managers()
 	{
-		return $this->hasMany('TenantSync\Models\Manager');
+		return $this->hasMany('TenantSync\Models\Manager', 'landlord_id');
 	}
 
 	public function manager()

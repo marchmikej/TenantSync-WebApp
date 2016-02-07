@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use Gate;
 use TenantSync\Models\Device;
-use TenantSync\Mutators\DeviceMutator;
 use App\Http\Controllers\Controller;
+use TenantSync\Mutators\DeviceMutator;
 
 class DeviceController extends Controller
 {

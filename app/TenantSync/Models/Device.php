@@ -99,7 +99,7 @@ class Device extends Model {
 	public static function getDevicesForUser($user, $with = null)
 	{
 		if($user->role == 'manager') {
-			return $user->manager->devices()->with($with)->get();
+			return Device::whereIn('property_id', $user->manager->properties->keyBy('id')->keys()->toArray())->with($with)->get();
 		}
 		return $user->devices()->with($with)->get();
 	}

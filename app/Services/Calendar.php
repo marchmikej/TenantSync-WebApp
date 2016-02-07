@@ -33,7 +33,7 @@ class Calendar {
 		$manager = Manager::where(['user_id' => $user->id])->first();
 		$devices = array_map(function($device) {
 				return $device->id;
-			}, $manager->devices());
+			}, $manager->devices()->toArray());
 		$maintenanceRequests = MaintenanceRequest::whereIn('device_id', $devices)->get();
 		return $maintenanceRequests->toArray();
 	}

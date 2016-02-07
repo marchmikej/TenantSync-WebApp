@@ -47,8 +47,8 @@ Vue.component('most-expensive-property-table', {
 		},
 
 		setTotalExpenses: function(property) {
-			var expenses = _.filter(property.expenses, function(expense) { return moment(expense.date) >= moment().subtract(1, 'month')});
-			var totalExpenses = _.reduce(expenses, function(memo , current) { return Number(memo) + Number(current.amount) * -1; }, 0);
+			var transactions = _.filter(property.transactions, function(transaction) { return moment(transaction.date) >= moment().subtract(1, 'month')});
+			var totalExpenses = _.reduce(transactions, function(memo , transaction) { return Number(memo) + Number(transaction.amount) * -1; }, 0);
 			property = _.extend(property, {totalExpenses: totalExpenses});
 			return property;
 		},

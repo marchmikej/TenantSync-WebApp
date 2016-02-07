@@ -10,8 +10,7 @@
 					</div>
 				</h3>
 
-				<!-- <table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers> -->
-				@include('TenantSync::includes.tables.table-headers')
+				<table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers>
 
 				<div class="table-body table-striped">
 					<div v-for="transaction in transactions | orderBy sortKey reverse | search search" class="table-row row">
@@ -20,7 +19,7 @@
 						<div class="col-sm-6">@{{ transaction.description }}</div>
 						<div class="col-sm-1">@{{ (transaction.date.substring(5) + '/' + transaction.date.substring(2, 4)).replace('-', '/') }}</div>
 						<div class="col-sm-1">
-							<button @click=" generateModal( $index )" class="btn btn-clear p-a-0"><span class="text-primary icon icon-edit"></span></button>
+							<button @click=" generateModal( transaction.id )" class="btn btn-clear p-a-0"><span class="text-primary icon icon-edit"></span></button>
 							<button @click=" confirm('delete', 'Transaction', transaction.id )" class="btn btn-clear p-y-0 p-r-0"><span class="text-danger icon icon-cross"></span></button>
 						</div>
 					</div>
@@ -56,9 +55,9 @@
 						</div>
 					</div>
 				
-					<div v-show="forms.transaction.payable_search" class="well col-sm-9 col-sm-offset-3" style="max-height: 150px; overflow-y: scroll;">
+					<div class="well col-sm-9 col-sm-offset-3" style="max-height: 150px; overflow-y: scroll;">
 						<ul class="list-select">
-							<li @click.stop="setPayable('user')"><strong>General</strong></li>
+							<li v-if="userRole == 'landlord'" @click.stop="setPayable('user')"><strong>General</strong></li>
 							<li @click.stop="setPayable('property', property.id, property.address)" v-for="(key, property) in properties | search forms.transaction.payable_search" class="col-sm-12">
 								<strong>@{{ property.address }}</strong>
 								<ul>
@@ -70,13 +69,13 @@
 						</ul>
 					</div>
 
-					<ts-checkbox
+					<!-- <ts-checkbox
 						:name="'is_rent'"
 						:display="'Rent Payment'"
 						:form="forms.transaction"
 						:input.sync="forms.transaction.is_rent"
 						:show="forms.transaction.payable_type == 'device'"
-					>
+					> -->
 					</ts-checkbox>
 
 					<ts-text

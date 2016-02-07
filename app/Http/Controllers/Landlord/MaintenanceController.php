@@ -134,7 +134,7 @@ class MaintenanceController extends Controller {
 
 		$maintenanceRequest->status = 'awaiting_approval';
 		
-		if(! $maintenanceRequest->transaction)
+		if(! count($maintenanceRequest->transaction))
 		{
 			$transaction = Transaction::create(['user_id' => $maintenanceRequest->user_id, 'description' => 'Maintenance Request '.$maintenanceRequest->id, 'payable_type' => 'device', 'payable_id' => $maintenanceRequest->device->id, 'date' => date('Y-m-d', time())]);
 			$maintenanceRequest->update(['transaction_id' => $transaction->id]);
@@ -142,7 +142,7 @@ class MaintenanceController extends Controller {
 
 		if(isset($this->input['cost']))
 		{
-			$maintenanceRequest->transaction->update(['amount' => abs($this->input['cost']) * -1 , 'date' => date('Y-m-d', strtotime($maintenanceRequest->appointment_date))]);
+			$maintenanceRequest->transaction->update(['amount' => abs($this->input['cost']) * -1, 'date' => date('Y-m-d', strtotime($maintenanceRequest->appointment_date))]);
 		}
 
 		\Event::fire(new LandlordRespondedToMaintenance($maintenanceRequest->device->id, 'Maintenance response received.'));

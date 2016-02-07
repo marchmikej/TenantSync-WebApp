@@ -1,7 +1,6 @@
 <?php namespace App\Http\Controllers\Manager;
 
 use Gate;
-use TenantSync\Api\ApiQuery;
 use App\Http\Requests;
 use TenantSync\Models\Device;
 use TenantSync\Models\Manager;
@@ -14,7 +13,6 @@ class DeviceController extends Controller {
 	{
 		parent::__construct();
 		$this->manager = $this->user->manager;
-		$this->apiQuery = new ApiQuery('Device');
 	}
 	/**
 	 * Display a listing of the resource.
@@ -23,7 +21,7 @@ class DeviceController extends Controller {
 	 */
 	public function index()
 	{
-		$devices = $this->manager->devices();
+		$devices = $this->manager->devices()->toArray();
 		$manager = $this->manager;
 		return view('TenantSync::manager/device/index', compact('devices', 'manager'));
 	}
@@ -52,7 +50,7 @@ class DeviceController extends Controller {
 		}
 
 		return $query->paginate($paginate);
-		//return \DB::table('devices')->whereIn('property_id', $this->properties->keyBy('id')->keys()->toArray())->select('devices.*')->paginate()
+		// //return \DB::table('devices')->whereIn('property_id', $this->properties->keyBy('id')->keys()->toArray())->select('devices.*')->paginate()
 
 	}
 

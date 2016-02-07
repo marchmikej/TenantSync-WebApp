@@ -19,6 +19,10 @@ trait AuthorizesUser {
 
 	public function hasTransaction($transaction)
 	{
+		if($this->role == 'landlord') {
+			return $this->owns($transaction);
+		}
+
 		$id = $transaction->id;
 
 		$result = array_filter($this->manager->transactions(), function($transaction) use ($id) {
@@ -30,42 +34,25 @@ trait AuthorizesUser {
 
 	public function hasProperty($property)
 	{
+		if($this->role == 'landlord') {
+			return $this->owns($property);
+		}
+
 		return !! $this->manager->properties->find($property->id);
 	}
 
 	public function hasDevice($device)
 	{
+		if($this->role == 'landlord') {
+			return $this->owns($device);
+		}
+
 		$id = $device->id;
 		// var_export($this->manager->devices());die();
-		$result = array_filter($this->manager->devices(), function($device) use ($id) {
+		$result = array_filter($this->manager->devices()->toArray(), function($device) use ($id) {
 			return $device->id == $id;
 		});
 		return !! $result;
 	}
-
-	// public function owns($model)
-	// {
-	// 	if($this->user->role_id == 5)
-	// 	{
-	// 		$manager = Manager::where('user_id', '=', $this->user->id)->first();
-			
-	// 		if (
-	// 			Device::where([
-	// 			'user_id' => $manager->landlord->id,
-	// 			'id' => $id
-	// 			])->exists() 
-	// 		&& 
-	// 			$manager->devices->contains($id))
-	// 		{	
-	// 			return true;
-	// 		}
-	// 		return false;
-			
-	// 	}
-	// 	return Device::where([
-	// 		'user_id' => $this->user->id,
-	// 		'id' => $id
-	// 		])->exists();
-	// }
 
 }

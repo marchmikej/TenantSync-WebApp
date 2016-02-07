@@ -13,9 +13,21 @@
 // Route::get('test', 'HomeController@test');
 
 
-Route::get('api/devices', 'Api\DeviceController@index');
-Route::get('api/transactions', 'Api\TransactionController@index');
-Route::get('api/properties', 'Api\PropertyController@index');
+Route::resource('api/devices', 'Api\DeviceController');
+
+Route::patch('api/transactions/{id}', 'Api\TransactionController@update');
+Route::delete('api/transactions/{id}', 'Api\TransactionController@destroy');
+Route::resource('api/transactions', 'Api\TransactionController');
+
+Route::get('api/properties/{id}/devices', 'Api\PropertyController@devices');
+Route::resource('api/properties', 'Api\PropertyController');
+
+Route::delete('api/managers/properties', 'Api\ManagerController@removeProperties');
+Route::patch('api/managers/properties', 'Api\ManagerController@addProperties');
+Route::delete('api/managers/{id}', 'Api\ManagerController@destroy');
+Route::resource('api/managers', 'Api\ManagerController');
+
+
 
 Route::get('api/maintenance', 'Api\DeviceApiController@allRequests');
 Route::post('api/maintenance/{id?}', 'Api\DeviceApiController@storeRequest');

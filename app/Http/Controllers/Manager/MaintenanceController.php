@@ -118,7 +118,7 @@ class MaintenanceController extends Controller {
 			$maintenanceRequest->update(['transaction_id' => $transaction->id]);
 		}
 
-		if(isset($this->input['cost']))
+		if($maintenanceRequest->transaction && isset($this->input['cost']))
 		{
 			$maintenanceRequest->transaction->update(['amount' => abs($this->input['cost']) * -1 , 'date' => date('Y-m-d', strtotime($maintenanceRequest->appointment_date))]);
 		}

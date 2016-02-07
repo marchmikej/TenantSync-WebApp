@@ -3,17 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use Gate;
-use TenantSync\Models\Property;
+use TenantSync\Models\Manager;
 use App\Http\Controllers\Controller;
-use TenantSync\Mutators\PropertyMutator;
-use App\Http\Requests\CreatePropertyRequest;
 
-class PropertyController extends Controller
+class ManagerController extends Controller
 {
     public function __construct()
     {
         parent::__construct();
-        $this->propertyMutator = new PropertyMutator;
     }
 
     /**
@@ -24,15 +21,10 @@ class PropertyController extends Controller
     public function index()
     {
         $with = isset($this->input['with']) ? $this->input['with'] : [];
-    
-        $devices = Property::getPropertiesForUser($this->user, $with);
 
-        return $devices;
-    }
+        $managers = $this->user->managers()->with($with)->get();
 
-    public function devices($id)
-    {
-        return Device::where(['property_id' => $id])->get();
+        return $managers;
     }
 
     /**
@@ -54,6 +46,29 @@ class PropertyController extends Controller
     public function store(Request $request)
     {
         //
+    }
+
+    public function addProperties()
+    {
+        $manager = Manager::find($this->input['manager_id']);
+        if(Gate::denies('owned-by-user', $manager))
+        {
+            return abort(403, "Thats not yours!");
+        }
+
+        $manager->properties()->attach($this->input['properties']);
+        return $manager->with('properties')->get();
+    }
+
+    public function removeProperties()
+    {
+        $manager = Manager::find($this->input['manager_id']);
+        if(Gate::denies('owned-by-user', $manager))
+        {
+            return abort(403, "Thats not yours!");
+        }
+        $manager->properties()->detach($this->input['properties']);
+        return $manager->with('properties')->get();
     }
 
     /**
@@ -85,16 +100,9 @@ class PropertyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CreatePropertyRequest $request, $id)
+    public function update(Request $request, $id)
     {
-        $property = Property::find($id);
-        if(Gate::denies('has-property', $property))
-        {
-            return abort(403, "Thats not yours!");
-        }
-
-        $property->update(\Request::except('_token'));
-        return $property;
+        //
     }
 
     /**
@@ -105,6 +113,15 @@ class PropertyController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $manager = Manager::find($id);
+        if(Gate::denies('owned-by-user', $manager))
+        {
+            return abort(403, "Thats not yours!");
+        }
+
+        $manager->user->delete();
+        $manager->properties()->detach();
+        $manager->delete();
+        return $this->user->managers;
     }
 }

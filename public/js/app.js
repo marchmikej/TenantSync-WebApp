@@ -589,11 +589,11 @@ Vue.component('most-expensive-property-table', {
 		},
 
 		setTotalExpenses: function setTotalExpenses(property) {
-			var expenses = _.filter(property.expenses, function (expense) {
-				return moment(expense.date) >= moment().subtract(1, 'month');
+			var transactions = _.filter(property.transactions, function (transaction) {
+				return moment(transaction.date) >= moment().subtract(1, 'month');
 			});
-			var totalExpenses = _.reduce(expenses, function (memo, current) {
-				return Number(memo) + Number(current.amount) * -1;
+			var totalExpenses = _.reduce(transactions, function (memo, transaction) {
+				return Number(memo) + Number(transaction.amount) * -1;
 			}, 0);
 			property = _.extend(property, { totalExpenses: totalExpenses });
 			return property;
@@ -928,7 +928,6 @@ Vue.component('transactions-table', {
 
 	methods: {
 		fetchTransactions: function fetchTransactions() {
-
 			this.$http.get('/api/transactions').success(function (transactions) {
 				_.each(transactions, function (transaction) {
 					transaction.amount = Number(transaction.amount);
@@ -949,6 +948,11 @@ Vue.component('transactions-table', {
 		},
 
 		submitTransaction: function submitTransaction() {
+			if (!this.forms.transaction.payable_id) {
+				swal('Error', 'No property or device selected!');
+				return false;
+			}
+
 			if (this.forms.transaction.transaction) {
 				this.updateTransaction();
 			} else {
@@ -958,29 +962,28 @@ Vue.component('transactions-table', {
 
 		createTransaction: function createTransaction() {
 			var that = this;
-
-			TS.post('/' + this.userRole + '/transaction', this.forms.transaction).then(function (transaction) {
+			TS.post('/api/transactions', this.forms.transaction).then(function (transaction) {
+				that.fetchTransactions();
 				that.$broadcast('hide-modal');
 				that.refreshForm();
-				that.fetchTransactions(1, that.sortKey, that.reverse);
 			});
 		},
 
 		updateTransaction: function updateTransaction() {
 			var that = this;
 
-			TS.patch('/' + this.userRole + '/transaction/' + this.forms.transaction.transaction.id, this.forms.transaction).then(function (transaction) {
+			TS.patch('/api/transactions/' + this.forms.transaction.transaction.id, this.forms.transaction).then(function (transaction) {
 				that.$broadcast('hide-modal');
 				that.refreshForm();
-				that.fetchTransactions(1, that.sortKey, that.reverse);
+				that.fetchTransactions();
 			});
 		},
 
 		deleteTransaction: function deleteTransaction(id) {
 			var that = this;
 
-			TS['delete']('/' + this.userRole + '/transaction/' + id, this.forms.transaction).then(function () {
-				that.fetchTransactions(1, that.sortKey, that.reverse);
+			TS['delete']('/api/transactions/' + id, this.forms.transaction).then(function () {
+				that.fetchTransactions();
 			});
 		},
 
@@ -1027,10 +1030,10 @@ Vue.component('transactions-table', {
 				description: '',
 				transaction: null,
 				date: '',
-				payable_id: TenantSync.landlord,
-				payable_type: 'user',
-				payable_search: ' ',
-				payable_selected: 'General',
+				payable_id: null,
+				payable_type: null,
+				payable_search: null,
+				payable_selected: null,
 				recurring: false,
 				schedule: null
 			});
@@ -1038,24 +1041,24 @@ Vue.component('transactions-table', {
 
 		refreshForm: function refreshForm() {
 			this.initializeForm();
-		}
+		},
 
+		setPayable: function setPayable(type, id, string) {
+			this.forms.transaction.is_rent == false;
+			this.forms.transaction.payable_type = type;
+			if (type == 'user') {
+				this.forms.transaction.payable_selected = 'General';
+				this.forms.transaction.payable_id = TenantSync.landlord;
+				return true;
+			}
+
+			this.forms.transaction.payable_selected = string;
+			this.forms.transaction.payable_id = id;
+			return true;
+		}
 	}
 
 });
-// setPayable: function(type, id, string) {
-// 	this.forms.transaction.is_rent == false;
-// 	this.forms.transaction.payable_type = type;
-// 	if(type == 'user') {
-// 		this.forms.transaction.payable_selected = 'General';
-// 		this.forms.transaction.payable_id = TenantSync.landlord;
-// 		return true;
-// 	}
-
-// 	this.forms.transaction.payable_selected = string;
-// 	this.forms.transaction.payable_id = id;
-// 	return true;
-// },
 
 },{}],15:[function(require,module,exports){
 'use strict';

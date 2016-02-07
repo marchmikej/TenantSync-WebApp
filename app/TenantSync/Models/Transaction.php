@@ -22,10 +22,17 @@ class Transaction extends Model {
 		'payable_id',
 		];
 
+    protected $appends = ['address', 'payable'];
+
 	public function user()
 	{
 		return $this->belongsTo('TenantSync\Models\User');
 	}
+
+    public function getPayableAttribute()
+    {
+        return $this->payable()->first();
+    }
 
 	public function payable()
 	{
@@ -48,6 +55,37 @@ class Transaction extends Model {
     	return $this->hasOne('TenantSync\Models\RecurringTransaction');
     }
 
+    public static function getTransactionsForUser($user, $with)
+    {
+        if($user->role = 'manager') {
+            $transactions = array_map(function($transaction) {
+                return $transaction->id;
+            }, $user->manager->transactions());
+
+            return self::whereIn('id', $transactions)->with($with)->get(); 
+        }
+
+        return self::where(['user_id' => $user->id])->with($with)->get(); 
+    }
+
+    public function getAddressAttribute()
+    {
+        return $this->address();
+    }
+
+    public function address()
+    {
+        switch($this->payable_type) {
+            case 'TenantSync\\Models\\Device': 
+                $device = Device::find($this->payable_id);
+                return $device->property->address . ', ' . $device->location;
+            case 'TenantSync\\Models\\Property':
+                return Property::find($this->payable_id)->address;
+            default:
+                return 'General';
+        }
+    }
+
     public function recurring()
     {
     	if($this->recurringTransaction)
@@ -61,19 +99,5 @@ class Transaction extends Model {
     public function rentPayments()
     {
     	return \DB::table('rent_payments')->where(['transaction_id' => $this->id])->get();
-    }
-
-    public static function getTransactionsForUser($user, $with)
-    {
-        if($user->role = 'landlord') {
-            return self::where(['user_id' => $user->id])->with($with)->get();
-        }
-        else {
-            $transactions = array_map(function($transaction) {
-                return $transaction->id;
-            }, $user->manager->transactions());
-
-            return self::whereIn('id', $transactions)->with($with)->get();
-        }
     }
 }

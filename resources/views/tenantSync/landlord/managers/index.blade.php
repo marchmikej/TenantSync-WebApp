@@ -113,13 +113,7 @@ var vue = new Vue({
 
 		currentPage: 1,
 
-		paginated: {},
-
 		search: null,
-
-		// range: {
-		// 	from: moment().subtract(1, 'month').format('YYYY-MM-DD'),
-		// },
 
 		columns: [
 			{
@@ -176,31 +170,21 @@ var vue = new Vue({
 
 	methods: {
 		fetchManagers: function() {
-			var append = this.generateUrlVars({
+			var data = {
 				with: ['properties', 'properties.devices', 'user'],
-				paginate: this.paginate, 
-				page: this.currentPage,
-				sort: this.sortKey, 
-				asc: this.reverse, 
-				// dates: {
-				// 	from: this.dates.from, 
-				// 	to: this.dates.to
-				// }
-			});
+			};
 
-			this.$http('/landlord/managers/all?' + append)
-			.success(function(result) {
-				this.managers = result.data;
-				this.paginated = result;
-				this.currentPage = result.current_page;
+			this.$http.get('/api/managers', data)
+			.success(function(managers) {
+				this.managers = managers;
 			});
 		},
 
 		fetchProperties: function() {
 
-			this.$http('/landlord/properties/all?')
-			.success(function(result) {
-				this.properties = result.data;
+			this.$http.get('/api/properties/')
+			.success(function(properties) {
+				this.properties = properties;
 			});
 		},
 
@@ -221,8 +205,8 @@ var vue = new Vue({
 				manager_id: this.modal.manager.id,
 			};
 
-			this.$http.patch('/landlord/managers/properties', data)
-				.success(function(result) {
+			this.$http.patch('/api/managers/properties', data)
+				.success(function(properties) {
 					this.fetchManagers();
 					this.hideModal();
 
@@ -246,7 +230,7 @@ var vue = new Vue({
 				properties: [property.id],
 				manager_id: manager.id,
 			};
-			this.$http.delete('/landlord/managers/properties', data)
+			this.$http.delete('/api/managers/properties', data)
 				.success(function(result) {
 					manager.properties.$remove(property);
 					this.hideModal();
@@ -261,7 +245,7 @@ var vue = new Vue({
 				return manager.id == id;
 			});
 
-			this.$http.delete('/landlord/managers/'+ id)
+			this.$http.delete('/api/managers/'+ id)
 			.success(function(managers) {
 					this.managers.$remove(manager);
 			});	

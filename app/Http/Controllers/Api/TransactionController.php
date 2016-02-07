@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use Gate;
 use TenantSync\Models\Transaction;
-use TenantSync\Mutators\TransactionMutator;
 use App\Http\Controllers\Controller;
+use TenantSync\Mutators\TransactionMutator;
+use App\Http\Requests\CreateTransactionRequest;
 
 class TransactionController extends Controller
 {
@@ -21,15 +23,10 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        $with = [];
-        if(isset($this->input['with']))
-        {
-            $with = $this->input['with'];
-        }
+        $with = isset($this->input['with']) ? $this->input['with'] : [];
 
-        $transactions = Transaction::getTransactionsForUser($this->user, $with);
-        $transactions = $this->transactionMutator->set('address', $transactions);
-        $transactions = $this->transactionMutator->set('payable', $transactions);
+        $transactions = Transaction::getTransactionsForUser($this->user, $with)->keyBy('id');
+
         return $transactions;
     }
 
@@ -49,9 +46,12 @@ class TransactionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateTransactionRequest $request)
     {
-        //
+        $this->input['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $this->input['date'])));
+        $transaction = Transaction::create($this->input);
+
+        return $transaction;
     }
 
     /**
@@ -83,9 +83,24 @@ class TransactionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CreateTransactionRequest $request, $id)
     {
-        //
+        \DB::transaction(function() use ($id) {
+            $transaction = Transaction::find($id);
+            if(Gate::denies('has-transaction', $transaction))
+            {
+                return abort(403, "That's not yours");
+            }
+            $this->input['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $this->input['date'])));
+            $transaction->update([
+                'amount' => $this->input['amount'], 
+                'description' => $this->input['description'], 
+                'date' => $this->input['date'], 
+                'payable_type' => $this->input['payable_type'], 
+                'payable_id' => $this->input['payable_id']
+            ]);
+            return $transaction;
+        });
     }
 
     /**
@@ -96,6 +111,17 @@ class TransactionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $transaction = Transaction::find($id);
+        if(Gate::denies('has-transaction', $transaction))
+        {
+            return abort(403, "Thats not yours!");
+        }
+
+        if($transaction->recurringTransaction)
+        {
+            $transaction->recurringTransaction->delete();
+        }
+
+        return json_encode(Transaction::find($id)->delete());
     }
 }

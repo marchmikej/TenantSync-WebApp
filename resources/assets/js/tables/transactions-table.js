@@ -90,7 +90,6 @@ Vue.component('transactions-table', {
 
 	methods: {
 		fetchTransactions: function() {
-
 			this.$http.get('/api/transactions')
 				.success( function(transactions) {
 					_.each(transactions, function(transaction) { transaction.amount = Number(transaction.amount); });
@@ -111,6 +110,11 @@ Vue.component('transactions-table', {
 		},
 
 		submitTransaction: function() {
+			if(! this.forms.transaction.payable_id) {
+				swal( 'Error', 'No property or device selected!');
+				return false;
+			}
+
 			if(this.forms.transaction.transaction)
 			{
 				this.updateTransaction();
@@ -123,32 +127,31 @@ Vue.component('transactions-table', {
 
 		createTransaction: function() {
 			var that = this;
-
-			TS.post('/'+ this.userRole +'/transaction', this.forms.transaction)
+			TS.post('/api/transactions', this.forms.transaction)
 				.then( function(transaction){
+					that.fetchTransactions();
 					that.$broadcast('hide-modal');
 					that.refreshForm();
-					that.fetchTransactions(1, that.sortKey, that.reverse);
 				});
 		},
 
 		updateTransaction: function() {
 			var that = this;
 		
-			TS.patch('/'+ this.userRole +'/transaction/' + this.forms.transaction.transaction.id, this.forms.transaction)
+			TS.patch('/api/transactions/' + this.forms.transaction.transaction.id, this.forms.transaction)
 				.then( function(transaction) {
 					that.$broadcast('hide-modal');
 					that.refreshForm();
-					that.fetchTransactions(1, that.sortKey, that.reverse);
+					that.fetchTransactions();
 				});
 		},
 
 		deleteTransaction: function(id) {
 			var that = this;
 
-			TS.delete('/'+ this.userRole +'/transaction/' + id, this.forms.transaction)
+			TS.delete('/api/transactions/' + id, this.forms.transaction)
 				.then( function() {
-					that.fetchTransactions(1, that.sortKey, that.reverse);
+					that.fetchTransactions();
 				});
 		},
 
@@ -200,10 +203,10 @@ Vue.component('transactions-table', {
 				description: '',
 				transaction: null,
 				date: '',
-				payable_id: TenantSync.landlord,
-				payable_type: 'user',
-				payable_search: ' ',
-				payable_selected: 'General',
+				payable_id: null,
+				payable_type: null,
+				payable_search: null,
+				payable_selected: null,
 				recurring: false,
 				schedule: null,
 			});
@@ -213,19 +216,19 @@ Vue.component('transactions-table', {
 			this.initializeForm();
 		},
 
-		// setPayable: function(type, id, string) {
-		// 	this.forms.transaction.is_rent == false;
-		// 	this.forms.transaction.payable_type = type;
-		// 	if(type == 'user') {
-		// 		this.forms.transaction.payable_selected = 'General';
-		// 		this.forms.transaction.payable_id = TenantSync.landlord;
-		// 		return true;
-		// 	}
+		setPayable: function(type, id, string) {
+			this.forms.transaction.is_rent == false;
+			this.forms.transaction.payable_type = type;
+			if(type == 'user') {
+				this.forms.transaction.payable_selected = 'General';
+				this.forms.transaction.payable_id = TenantSync.landlord;
+				return true;
+			}
 
-		// 	this.forms.transaction.payable_selected = string;
-		// 	this.forms.transaction.payable_id = id;
-		// 	return true;
-		// },
+			this.forms.transaction.payable_selected = string;
+			this.forms.transaction.payable_id = id;
+			return true;
+		},
 	},
 
 });

@@ -41,7 +41,7 @@ class Manager extends Model {
 	{
 		$devices = array_map(function($device) {
 			return $device->id;
-		}, $this->devices());
+		}, $this->devices()->toArray());
 
 		if(! empty($relations)) {
 			return MaintenanceRequest::whereIn('device_id', $devices)->with($relations)->get();
@@ -63,7 +63,7 @@ class Manager extends Model {
 	{
 		$devices = array_map(function($device) {
 			return $device->id;
-		}, $this->devices());
+		}, $this->devices()->toArray());
 		return Message::whereIn('device_id', $devices)->with(['device', 'device.property'])->get();
 	}
 
@@ -71,7 +71,7 @@ class Manager extends Model {
 	{
 		$devices = array_map(function($device) {
 			return $device->id;
-		}, $this->devices());
+		}, $this->devices()->toArray());
 
 		return $transactions = \DB::table('transactions')
 			->where(function($queryContainer) use ($devices) {
@@ -92,7 +92,7 @@ class Manager extends Model {
 	{
 		$devices = array_map(function($device) {
 			return $device->id;
-		}, $this->devices());
+		}, $this->devices()->toArray());
 
 		return RentBIll::where(['user_id' => $this->landlord->id])->whereIn('device_id', $devices)->get();
 	}
