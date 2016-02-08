@@ -57,19 +57,29 @@ class DeviceApiController extends Controller {
 		{
 			if($id == null || !is_numeric($id))
 			{
-				$maintenanceRequest = $maintenanceRequest->create(['user_id' => $this->device->owner->id, 'request' => $this->input['message'], 'device_id' => $this->device->id, 'status' => 'open']);
-				if(!empty($maintenanceRequest))
-				{
-					$transaction = Transaction::create(['user_id' => $this->device->owner->id]);
-					$maintenanceRequest->transaction_id = $transaction->id;
-					$maintenanceRequest->save();
-					\Event::fire(new DeviceMadeUpdate($this->device->owner->id, $this->device->id, "New Maintenance Request","landlord/device"));
-					return 'Maintenance request successfully created.';
+				$maintenanceCount = MaintenanceRequest::where('device_id', '=', $this->device->id)
+                  	->where('request', '=', $this->input['message'])
+                    ->where('update_key', '=', $this->input['update_key'])
+                    ->count();
+                if($maintenanceCount == 0) {
+					$maintenanceRequest = $maintenanceRequest->create(['user_id' => $this->device->owner->id, 'request' => $this->input['message'], 'device_id' => $this->device->id, 'update_key' => $this->input['update_key'], 'status' => 'open']);
+					if(!empty($maintenanceRequest))
+					{
+						$transaction = Transaction::create(['user_id' => $this->device->owner->id]);
+						$maintenanceRequest->transaction_id = $transaction->id;
+						$maintenanceRequest->save();
+						\Event::fire(new DeviceMadeUpdate($this->device->owner->id, $this->device->id, "New Maintenance Request","landlord/device"));
+						return 'Maintenance request successfully created.';
+					}
+					else
+					{
+						return 'Failed';
+					}
 				}
-				else
-				{
-					return 'Failed';
-				}
+				else {
+                    // Maintenance already created
+                    return 'Maintenance request successfully created.';
+                }
 			}
 			else
 			{
@@ -158,14 +168,24 @@ class DeviceApiController extends Controller {
 	{
 		if($this->deviceIsValid($this->device))
 		{
-			if(Message::create(['user_id' => $this->device->owner->id, 'device_id' => $this->device->id, 'body' => $this->input['message'], 'is_from_device' => 1]))
-			{
-				\Event::fire(new DeviceMadeUpdate($this->device->owner->id, $this->device->id, $this->input['message'],"landlord/device"));
-				return 'success';
+			$messageCount = Message::where('device_id', '=', $this->device->id)
+              	->where('body', '=', $this->input['message'])
+                ->where('update_key', '=', $this->input['update_key'])
+                ->count();
+            if($messageCount == 0) {
+				if(Message::create(['user_id' => $this->device->owner->id, 'device_id' => $this->device->id, 'body' => $this->input['message'], 'update_key' => $this->input['update_key'], 'is_from_device' => 1]))
+				{
+					\Event::fire(new DeviceMadeUpdate($this->device->owner->id, $this->device->id, $this->input['message'],"landlord/device"));
+					return 'success';
+				}
+				else
+				{
+					return 'failed';
+				}
 			}
-			else
-			{
-				return 'failed';
+			else {
+				// Message already created
+				return 'success';
 			}
 		}
 	}

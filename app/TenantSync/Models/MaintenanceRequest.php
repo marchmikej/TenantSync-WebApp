@@ -23,6 +23,7 @@ class MaintenanceRequest extends Model {
 		'response',
 		'status',
 		'cost',
+		'update_key',
 		'appointment_date',
 		'transaction_id',
 	];

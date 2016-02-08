@@ -10,6 +10,7 @@ class Message extends Model {
 		'body',
 		'hidden',
 		'is_from_device',
+		'update_key',
 		'created_at'
 	];
 
