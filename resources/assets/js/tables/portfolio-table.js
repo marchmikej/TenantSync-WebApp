@@ -79,7 +79,7 @@ Vue.component('portfolio-table', {
 				with: [
 					'devices',
 					'transactions'
-				],
+				]
 			};
 
 			this.$http.get('/api/properties', data)

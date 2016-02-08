@@ -2,8 +2,8 @@
 
 namespace TenantSync\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Services\RoiCalculator;
+use Illuminate\Database\Eloquent\Model;
 
 class Property extends Model {
 
@@ -81,7 +81,8 @@ class Property extends Model {
 			return $user->manager->properties()->with($with)->get();
 		}
 
-		return $user->properties()->with($with)->get();
+		// return $user->properties()->with($with)->get();
+		return $user->properties()->get();
 	}
 
 	public function getTransactionsAttribute()

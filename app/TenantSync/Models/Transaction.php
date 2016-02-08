@@ -57,7 +57,7 @@ class Transaction extends Model {
 
     public static function getTransactionsForUser($user, $with)
     {
-        if($user->role = 'manager') {
+        if($user->role == 'manager') {
             $transactions = array_map(function($transaction) {
                 return $transaction->id;
             }, $user->manager->transactions());

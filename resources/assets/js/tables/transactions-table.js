@@ -26,7 +26,7 @@ Vue.component('transactions-table', {
 					name: 'address',
 					label: 'Applied To',
 					width: 'col-sm-2',
-					isSortable: false
+					isSortable: true
 				},
 				{
 					name: 'description',
@@ -79,8 +79,8 @@ Vue.component('transactions-table', {
 		'table-sorted': function(sortKey) {
 			this.sortKey = sortKey;
 			this.reverse = (this.sortKey == sortKey) ? this.reverse * -1 : 1;
-			this.currentPage = 1;
-			this.fetchTransactions();
+			//this.currentPage = 1;
+			//this.fetchTransactions();
 		},
 
 		'modal-hidden': function() {
