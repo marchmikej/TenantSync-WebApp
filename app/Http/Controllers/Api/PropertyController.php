@@ -24,10 +24,14 @@ class PropertyController extends Controller
     public function index()
     {
         $with = isset($this->input['with']) ? $this->input['with'] : [];
-    
-        $devices = Property::getPropertiesForUser($this->user, $with);
+        
+        $set = isset($this->input['set']) ? $this->input['set'] : [];
 
-        return $devices;
+        $properties = Property::getPropertiesForUser($this->user, $with);
+
+        $properties = PropertyMutator::set($set, $properties);
+
+        return $properties;
     }
 
     public function devices($id)

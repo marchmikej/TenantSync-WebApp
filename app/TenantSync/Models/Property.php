@@ -48,7 +48,7 @@ class Property extends Model {
 	protected $morphClass = 'property';
 
 	// Additional attributes to set on the class
-	protected $appends = ['roi', 'net_income', 'transactions'];
+	// protected $appends = ['roi', 'net_income', 'transactions'];
 
 	public function owner()
 	{
@@ -80,14 +80,8 @@ class Property extends Model {
 		if($user->role == 'manager') {
 			return $user->manager->properties()->with($with)->get();
 		}
-
-		// return $user->properties()->with($with)->get();
-		return $user->properties()->get();
-	}
-
-	public function getTransactionsAttribute()
-	{
-		return $this->transactions();
+		
+		return $user->properties()->with($with)->get();
 	}
 
 	public function transactions()
@@ -109,11 +103,6 @@ class Property extends Model {
 		return $transactions;
 	}
 
-	public function getRoiAttribute($value)
-	{
-		return $this->roi();
-	}
-
 	public function roi()
 	{
 		if(empty($this->value) || $this->value == 0) {
@@ -129,11 +118,6 @@ class Property extends Model {
 		$roi = ($appreciation + $equity + $cash) / 3;
 
 		return $roi;
-	}
-
-	public function getNetIncomeAttribute($value)
-	{
-		return $this->netIncome('first of the year');
 	}
 
 	public function netIncome($fromDate = '-1 month')

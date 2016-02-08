@@ -47,8 +47,7 @@ class Device extends Model {
 
 	protected $morphClass = 'device';
 
-	protected $appends = ['rent_owed', 'address'];
-
+	// protected $appends = ['rent_owed', 'address'];
 
 	public function owner()
 	{
@@ -98,7 +97,7 @@ class Device extends Model {
 		return $this->hasMany('TenantSync\Models\RentBill');
 	}
 
-	public static function getDevicesForUser($user, $with = null)
+	public static function getDevicesForUser($user, $with = [])
 	{
 		if($user->role == 'manager') {
 			return Device::whereIn('property_id', $user->manager->properties->keyBy('id')->keys()->toArray())->with($with)->get();
@@ -106,19 +105,9 @@ class Device extends Model {
 		return $user->devices()->with($with)->get();
 	}
 
-	public function getRentOwedAttribute()
-	{
-		return $this->rentOwed();
-	}
-
 	public function rentOwed()
 	{
 		return array_sum($this->rentBills->pluck('bill_amount')->toArray()) - array_sum($this->transactions->pluck('amount')->toArray());
-	}
-
-	public function getAddressAttribute()
-	{
-		return $this->address();
 	}
 
 	public function address()

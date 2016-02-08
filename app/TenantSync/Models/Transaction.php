@@ -22,17 +22,10 @@ class Transaction extends Model {
 		'payable_id',
 		];
 
-    protected $appends = ['address', 'payable'];
-
 	public function user()
 	{
 		return $this->belongsTo('TenantSync\Models\User');
 	}
-
-    public function getPayableAttribute()
-    {
-        return $this->payable()->first();
-    }
 
 	public function payable()
 	{
@@ -55,7 +48,7 @@ class Transaction extends Model {
     	return $this->hasOne('TenantSync\Models\RecurringTransaction');
     }
 
-    public static function getTransactionsForUser($user, $with)
+    public static function getTransactionsForUser($user, $with = [])
     {
         if($user->role == 'manager') {
             $transactions = array_map(function($transaction) {
@@ -66,11 +59,6 @@ class Transaction extends Model {
         }
 
         return self::where(['user_id' => $user->id])->with($with)->get(); 
-    }
-
-    public function getAddressAttribute()
-    {
-        return $this->address();
     }
 
     public function address()

@@ -7,7 +7,6 @@ use App\Http\Utilities\State;
 use TenantSync\Models\Property;
 use App\Http\Requests\CreatePropertyRequest;
 use App\Http\Controllers\Controller;
-use TenantSync\Mutators\PropertyMutator;
 
 class PropertyController extends Controller {
 
@@ -33,6 +32,7 @@ class PropertyController extends Controller {
 
 	public function all()
 	{
+
 		$paginate = 15;
 		$query = Property::where(['user_id' => $this->user->id]);
 
@@ -58,10 +58,6 @@ class PropertyController extends Controller {
 		$result = $query->paginate($paginate);
 
 		//$properties = $this->user->properties->load('devices')->keyBy('id');
-		$properties = PropertyMutator::set('netIncome', $result);
-		$properties = PropertyMutator::set('incomes', $result);
-		$properties = PropertyMutator::set('expenses', $result);
-		$properties = PropertyMutator::set('roi', $result);
 		$result->data = $properties;
 		return $result;
 	}

@@ -4,29 +4,27 @@ namespace TenantSync\Mutators;
 
 abstract class ModelMutator {
 
-	public function set($fields, $data)
+	public static function set($fields, $list)
 	{
-		$fields = is_array($fields) ? $fields : [$fields];
+		$fields = is_array($fields) ? $fields : array($fields);
 
-		$collection = $this->getCollection($data);
+		$collection = self::getCollection($list);
 
-		$items = $collection->each(function($item) use ($fields) {
+		$list = $collection->each(function($model) use ($fields) {
 			foreach($fields as $field) {
-				return $item->$field = $this->{camel_case($field)}($item);
+				$model->$field = (new static)->{camel_case($field)}($model);
 			}
+			return $model;
 		});
 
-		return $items;
+		return $list;
 	}
 
-	public function getCollection($data)
+	protected static function getCollection($list)
 	{
-		if(is_a($data, 'Illuminate\\Database\\Eloquent\\Collection')) {
-			return $data;
-		} 
-		// elseif(is_a($data, 'Illuminate\\Pagination\\AbstractPaginator')) {
-		// 	return $data->getCollection();
-		// }
-		return collect($data);
+		if(is_a($list, 'Illuminate\\Database\\Eloquent\\Collection')) {
+			return $list;
+		}
+		return collect($list);
 	}
 }

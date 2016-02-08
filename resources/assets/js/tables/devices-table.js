@@ -63,6 +63,7 @@ Vue.component('devices-table', {
 		fetchDevices: function() {
 			var data = {
 				with: ['property', 'alarm'],
+				set: ['address', 'rent_owed']
 			};
 
 			this.$http.get('/api/devices', data)

@@ -515,7 +515,8 @@ Vue.component('devices-table', {
 	methods: {
 		fetchDevices: function fetchDevices() {
 			var data = {
-				'with': ['property', 'alarm']
+				'with': ['property', 'alarm'],
+				set: ['address', 'rent_owed']
 			};
 
 			this.$http.get('/api/devices', data).success(function (list) {
@@ -750,7 +751,8 @@ Vue.component('property-manager-table', {
 
 		fetchProperties: function fetchProperties(page, sortKey, reverse) {
 			var data = {
-				'with': ['devices', 'devices.alarm']
+				'with': ['devices', 'devices.alarm'],
+				set: ['roi', 'net_income']
 			};
 
 			this.$http.get('/api/properties', data).success(function (properties) {
