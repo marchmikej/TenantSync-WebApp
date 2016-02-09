@@ -8,7 +8,7 @@
 
 @section('content')
 
-<div id="properties" v-cloak>
+<div v-cloak>
 	
 	<div class="row">
 		<div class="col-sm-6 p-r-md">
@@ -76,7 +76,7 @@
 		var vue = new Vue({
 			
 
-			el: '#properties',
+			el: '#app',
 
 			data: {
 

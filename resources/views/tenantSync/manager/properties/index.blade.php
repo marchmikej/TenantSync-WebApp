@@ -145,7 +145,7 @@
 		var vue = new Vue({
 			
 
-			el: '#portfolio',
+			el: '#app',
 
 
 			// data: {

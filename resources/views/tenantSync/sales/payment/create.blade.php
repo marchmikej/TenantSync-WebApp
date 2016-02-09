@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div id="app" class="row card">
+<div class="row card">
 	<div class="col-sm-6 col-sm-offset-3">
 	<h4 class="card-header">Payment Methods</h4>
 		<form class="form form-horizontal">

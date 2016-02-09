@@ -158,7 +158,7 @@
 <script>
 	vue = new Vue({
 	
-		el: "#device",
+		el: "#app",
 
 		data: {
 			device: {

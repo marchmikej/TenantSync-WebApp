@@ -6,14 +6,14 @@
 						Transactions
 						<button @click="generateModal()" class=" btn btn-clear text-primary p-y-0"><h3 class="m-a-0 icon icon-plus"></h3></button>
 						<input type="text" class="col-sm-2 col-xs-12 pull-right form-control" placeholder="search..." v-model='search'>
-						<input @change="fetchTransactions()" type="date" class="col-sm-2 col-xs-12 pull-right form-control" v-model="dates.from">
+						<input type="date" class="col-sm-2 col-xs-12 pull-right form-control" v-model="dates.from">
 					</div>
 				</h3>
 
 				<table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers>
 
 				<div class="table-body table-striped">
-					<div v-for="transaction in transactions | orderBy sortKey reverse | search search" class="table-row row">
+					<div v-for="transaction in transactions | orderBy sortKey reverse | filterBy search | filterBy withinDates" class="table-row row">
 						<div :class="transaction.amount > 0 ? 'text-success' : 'text-danger'" class="col-sm-2"><strong>@{{ transaction.amount }}</strong></div>
 						<div class="col-sm-2">@{{ transaction.address }}</div>
 						<div class="col-sm-6">@{{ transaction.description }}</div>
@@ -45,7 +45,7 @@
 
 		<!--// MODAL -->
 		<modal>
-			<div slot="one" class="">
+			<div slot="one">
 				<form role="form" class="form form-horizontal">
 					<div class="form-group">
 						<label class="control-label col-sm-3" for="payable">Apply To</label>
@@ -58,7 +58,7 @@
 					<div class="well col-sm-9 col-sm-offset-3" style="max-height: 150px; overflow-y: scroll;">
 						<ul class="list-select">
 							<li v-if="userRole == 'landlord'" @click.stop="setPayable('user')"><strong>General</strong></li>
-							<li @click.stop="setPayable('property', property.id, property.address)" v-for="(key, property) in properties | search forms.transaction.payable_search" class="col-sm-12">
+							<li @click.stop="setPayable('property', property.id, property.address)" v-for="property in properties | filterBy forms.transaction.payable_search" class="col-sm-12">
 								<strong>@{{ property.address }}</strong>
 								<ul>
 									<li @click.stop="setPayable('device', device.id, property.address + ', ' + device.location)" v-for="device in property.devices" >

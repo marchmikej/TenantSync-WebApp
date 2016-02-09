@@ -1,6 +1,4 @@
 @extends('TenantSync::manager/layout')
-@section('heading')
-@endsection
 
 @section('head')
 	<meta id="user_id" value="{{ $user->id }}">
@@ -71,7 +69,7 @@
 		var vue = new Vue({
 			
 
-			el: '#properties',
+			el: '#app',
 
 
 			data: {

@@ -104,7 +104,7 @@ Vue.component('modal', {
 Vue.config.debug = true;
 
 var vue = new Vue({
-	el: '#managers',
+	el: '#app',
 
 	data: {
 		sortKey: 'first_name',

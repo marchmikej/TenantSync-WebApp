@@ -579,10 +579,10 @@ Vue.component('most-expensive-property-table', {
 
 		fetchProperties: function fetchProperties() {
 			var data = {
-				'with': ['transactions']
+				set: ['transactions']
 			};
 
-			this.$http.get('/api/properties').success(function (properties) {
+			this.$http.get('/api/properties', data).success(function (properties) {
 				this.properties = _.map(properties, (function (property) {
 					return this.setTotalExpenses(property);
 				}).bind(this));
@@ -657,8 +657,7 @@ Vue.component('portfolio-table', {
 		'table-sorted': function tableSorted(sortKey) {
 			this.sortKey = sortKey;
 			this.reverse = this.sortKey == sortKey ? this.reverse * -1 : 1;
-			this.currentPage = 1;
-			this.fetchProperties();
+			// this.currentPage = 1;
 		}
 	},
 
@@ -668,13 +667,10 @@ Vue.component('portfolio-table', {
 
 	methods: {
 
-		refreshTable: function refreshTable(sortKey, reverse) {
-			this.fetchProperties(1, sortKey, reverse);
-		},
-
 		fetchProperties: function fetchProperties(page, sortKey, reverse) {
 			var data = {
-				'with': ['devices', 'transactions']
+				'with': ['devices', 'transactions'],
+				set: ['roi']
 			};
 
 			this.$http.get('/api/properties', data).success(function (properties) {
@@ -752,7 +748,7 @@ Vue.component('property-manager-table', {
 		fetchProperties: function fetchProperties(page, sortKey, reverse) {
 			var data = {
 				'with': ['devices', 'devices.alarm'],
-				set: ['roi', 'net_income']
+				set: ['roi', 'net_income', 'transactions']
 			};
 
 			this.$http.get('/api/properties', data).success(function (properties) {
@@ -929,8 +925,12 @@ Vue.component('transactions-table', {
 	},
 
 	methods: {
+
 		fetchTransactions: function fetchTransactions() {
-			this.$http.get('/api/transactions').success(function (transactions) {
+			var data = {
+				set: ['address']
+			};
+			this.$http.get('/api/transactions', data).success(function (transactions) {
 				_.each(transactions, function (transaction) {
 					transaction.amount = Number(transaction.amount);
 				});
@@ -939,9 +939,9 @@ Vue.component('transactions-table', {
 		},
 
 		fetchProperties: function fetchProperties() {
-			var data = this.generateUrlVars({
+			var data = {
 				'with': ['devices']
-			});
+			};
 
 			this.$http.get('/api/properties', data).success(function (properties) {
 				this.properties = properties;
@@ -1057,6 +1057,20 @@ Vue.component('transactions-table', {
 			this.forms.transaction.payable_selected = string;
 			this.forms.transaction.payable_id = id;
 			return true;
+		},
+
+		withinDates: function withinDates(transaction) {
+			var from = Number(moment(this.dates.from).format('X'));
+
+			var to = Number(moment(this.dates.to).format('X'));
+
+			var transactionDate = Number(moment(transaction.$value.date).format('X'));
+
+			if (from <= transactionDate && transactionDate <= to) {
+
+				return true;
+			}
+			return false;
 		}
 	}
 
@@ -1065,24 +1079,9 @@ Vue.component('transactions-table', {
 },{}],15:[function(require,module,exports){
 'use strict';
 
-Vue.http.headers.common['X-CSRF-TOKEN'] = document.getElementById('_token').getAttribute('value');
-
 Vue.config.debug = true;
 
-var math = {
-	'+': function _(a, b) {
-		return a + b;
-	},
-	'-': function _(a, b) {
-		return a - b;
-	},
-	'>': function _(a, b) {
-		return a > b;
-	},
-	'<': function _(a, b) {
-		return a < b;
-	}
-};
+Vue.http.headers.common['X-CSRF-TOKEN'] = document.getElementById('_token').getAttribute('value');
 
 Vue.prototype.numeral = window.numeral;
 Vue.prototype.moment = window.moment;

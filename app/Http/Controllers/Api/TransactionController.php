@@ -27,11 +27,11 @@ class TransactionController extends Controller
 
         $set = isset($this->input['set']) ? $this->input['set'] : [];
 
-        $transactions = Transaction::getTransactionsForUser($this->user, $with)->keyBy('id');
+        $transactions = Transaction::getTransactionsForUser($this->user, $with);
 
         $transactions = TransactionMutator::set($set, $transactions);
 
-        return $transactions;
+        return $transactions->keyBy('id');
     }
 
     /**

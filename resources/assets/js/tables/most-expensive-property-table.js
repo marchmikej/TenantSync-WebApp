@@ -35,10 +35,10 @@ Vue.component('most-expensive-property-table', {
 
 		fetchProperties: function() {
 			var data = {
-				with: ['transactions']
+				set: ['transactions']
 			}
 
-			this.$http.get('/api/properties')
+			this.$http.get('/api/properties', data)
 			.success(function(properties) {
 				this.properties = _.map(properties, function(property) {
 					return this.setTotalExpenses(property);

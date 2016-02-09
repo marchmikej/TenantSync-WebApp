@@ -132,7 +132,7 @@
 <script>
 	vue =  new Vue({
 
-		el: '#property-form',
+		el: '#app',
 
 		data: {
 

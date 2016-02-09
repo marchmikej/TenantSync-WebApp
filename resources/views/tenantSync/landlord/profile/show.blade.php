@@ -245,7 +245,7 @@
 
 <script>
 vue = new Vue({
-	el: '#profile',
+	el: '#app',
 	data: {
 		newPaymentMethod: false,
 		showModal: false,

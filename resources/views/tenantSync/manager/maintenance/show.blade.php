@@ -109,7 +109,7 @@
 
     <script>
         vue = new Vue({
-        	el: '#maintenance',
+        	el: '#app',
 
         	data: {
         		appointmentDate: '',

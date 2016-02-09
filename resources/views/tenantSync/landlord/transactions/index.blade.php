@@ -98,7 +98,7 @@ Vue.config.debug =true;
 
 	var vue = new Vue({
 
-		el: '#ledger',
+		el: '#app',
 
 	// 	data: {
 

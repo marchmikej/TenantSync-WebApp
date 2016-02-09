@@ -96,7 +96,7 @@
 
 	var vue = new Vue({
 
-		el: '#ledger',
+		el: '#app',
 
 		methods: {
 

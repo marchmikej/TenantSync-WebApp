@@ -94,7 +94,7 @@
 	<script>
 	var calculator = new Vue({
 
-		el: '#calculator',
+		el: '#app',
 
 		data: {
 			property: {

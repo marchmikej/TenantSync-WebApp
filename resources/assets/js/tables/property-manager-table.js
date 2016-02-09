@@ -72,7 +72,7 @@ Vue.component('property-manager-table', {
 		fetchProperties: function(page, sortKey, reverse) {
 			var data = {
 				with: ['devices', 'devices.alarm'],
-				set: ['roi', 'net_income']
+				set: ['roi', 'net_income', 'transactions']
 			};
 
 			this.$http.get('/api/properties', data)

@@ -3,6 +3,7 @@
 namespace TenantSync\Mutators;
 
 abstract class ModelMutator {
+	
 
 	public static function set($fields, $list)
 	{
@@ -11,20 +12,31 @@ abstract class ModelMutator {
 		$collection = self::getCollection($list);
 
 		$list = $collection->each(function($model) use ($fields) {
+
 			foreach($fields as $field) {
-				$model->$field = (new static)->{camel_case($field)}($model);
+
+				$method = camel_case($field);
+
+				$model->$field = (new static)->$method($model);
+
 			}
+
 			return $model;
+
 		});
 
 		return $list;
 	}
 
+
 	protected static function getCollection($list)
 	{
 		if(is_a($list, 'Illuminate\\Database\\Eloquent\\Collection')) {
+
 			return $list;
+
 		}
+
 		return collect($list);
 	}
 }

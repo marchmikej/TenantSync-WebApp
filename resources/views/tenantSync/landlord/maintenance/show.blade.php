@@ -99,7 +99,7 @@
     <script>
 
         vue = new Vue({
-        	el: '#maintenance',
+        	el: '#app',
 
         	data: {
         		userRole: TenantSync.user.role,

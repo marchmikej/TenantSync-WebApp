@@ -13,5 +13,4 @@ class DeviceMutator extends ModelMutator {
 	{
 		return $device->property->address . ', ' . $device->location;
 	}
-
 }

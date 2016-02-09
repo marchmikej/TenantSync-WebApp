@@ -47,9 +47,6 @@ class Property extends Model {
 	// Name for morph relationship
 	protected $morphClass = 'property';
 
-	// Additional attributes to set on the class
-	// protected $appends = ['roi', 'net_income', 'transactions'];
-
 	public function owner()
 	{
 		return $this->user;
@@ -65,10 +62,10 @@ class Property extends Model {
 		return $this->hasMany('TenantSync\Models\Device');
 	}
 
-	// public function transactions()
-	// {
-	// 	return $this->morphMany('TenantSync\Models\Transaction', 'payable');
-	// }
+	public function transactions()
+	{
+		return $this->morphMany('TenantSync\Models\Transaction', 'payable');
+	}
 
 	public function managers()
 	{
@@ -84,65 +81,31 @@ class Property extends Model {
 		return $user->properties()->with($with)->get();
 	}
 
-	public function transactions()
-	{
-		$transactions = collect(\DB::table('transactions')
-			->where(function($queryContainer) {
-				$queryContainer
-				->where(function($query) {
-					$query->where(['payable_type' => 'property'])
-						->where(['payable_id' => $this->id]);
-				})
-				->orWhere(function($query) {
-					$query->where(['payable_type' => 'device'])
-						->whereIn('payable_id', $this->devices->pluck('id')->toArray());
-				});
-			})
-			->get());
-
-		return $transactions;
-	}
-
-	public function roi()
-	{
-		if(empty($this->value) || $this->value == 0) {
-			return 0;
-		}
-
-		$appreciation = (new RoiCalculator)->appreciationRoi($this);
-
-		$equity = (new RoiCalculator)->equityRoi($this);
-
-		$cash = (new RoiCalculator)->cashRoi($this);
-
-		$roi = ($appreciation + $equity + $cash) / 3;
-
-		return $roi;
-	}
-
 	public function netIncome($fromDate = '-1 month')
 	{
-		$transactions = $this->transactions();
-
+		$amounts = array();
+		$transactions = collect(array_merge($this->incomes()->toArray(), $this->expenses()->toArray()));
 		$transactions = $transactions->filter(function($transaction) use ($fromDate) {
 				return strtotime($transaction->date) >= strtotime($fromDate);
 		});
+		foreach($transactions as $transaction)
+		{
+			$amounts[] = $transaction->amount;
+		}
 
-		$netIncome = array_sum($transactions->pluck('amount')->toArray());
-
-		return $netIncome;
+		return array_sum($amounts);
 	}
 
 	public function incomes()
 	{
-		return $this->transactions()->filter(function($transaction) {
+		return $this->transactions->filter(function($transaction) {
 			return $transaction->amount <= 0;
 		});
 	}
 
 	public function expenses()
 	{
-		return $this->transactions()->filter(function($transaction) {
+		return $this->transactions->filter(function($transaction) {
 			return $transaction->amount > 0;
 		});
 	}

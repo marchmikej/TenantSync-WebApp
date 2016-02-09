@@ -56,7 +56,7 @@
 		</nav>
 	</header>
 
-	<div id="app" class="page-content-wrapper">
+	<div id="app" class="page-content-wrapper" v-cloak>
 		<div class="container">
 			<h2 class="text-info">@yield('heading')</h2>
 		</div>
@@ -97,9 +97,6 @@
 	</footer>
 	
 	<!-- Scripts -->
-	
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
-
 
 	<!-- <script src="/js/all.js"></script> -->
 	<!-- <script src="/js/chart.js"></script> -->

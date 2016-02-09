@@ -7,7 +7,7 @@
 			<h1 class="text-primary">Add Device</h1>
 		</div>
 	</div>
-	<div id="app" class="row">
+	<div class="row">
 		<form action="/sales/device" class="device-form form form-horizontal" method="POST">
 			<div class="col-sm-6">
 				<input type="hidden" name="_token" value="{{ csrf_token() }}">

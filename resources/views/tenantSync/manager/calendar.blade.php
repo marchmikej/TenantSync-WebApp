@@ -20,7 +20,7 @@
 <script>
 	var container = new Vue({
 
-		el: '#container',
+		el: '#app',
 
 		data: {
 			events:[

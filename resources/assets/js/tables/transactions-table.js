@@ -89,8 +89,12 @@ Vue.component('transactions-table', {
 	},
 
 	methods: {
+
 		fetchTransactions: function() {
-			this.$http.get('/api/transactions')
+			var data = {
+				set: ['address']
+			};
+			this.$http.get('/api/transactions', data)
 				.success( function(transactions) {
 					_.each(transactions, function(transaction) { transaction.amount = Number(transaction.amount); });
 					this.transactions = transactions;
@@ -98,9 +102,9 @@ Vue.component('transactions-table', {
 		},
 
 		fetchProperties: function() {
-			var data = this.generateUrlVars({
+			var data = {
 				with: ['devices'],
-			});
+			};
 
 			this.$http.get('/api/properties', data)
 				.success( function(properties) {
@@ -228,6 +232,21 @@ Vue.component('transactions-table', {
 			this.forms.transaction.payable_selected = string;
 			this.forms.transaction.payable_id = id;
 			return true;
+		},
+
+		withinDates: function(transaction) {
+			var from = Number(moment(this.dates.from).format('X'));
+
+			var to = Number(moment(this.dates.to).format('X'));
+
+			var transactionDate = Number(moment(transaction.$value.date).format('X'));
+
+			if(from <= transactionDate && transactionDate <= to) {
+
+				return true;
+
+			}
+			return false;
 		},
 	},
 

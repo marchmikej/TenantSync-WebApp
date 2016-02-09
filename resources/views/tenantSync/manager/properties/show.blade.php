@@ -164,7 +164,7 @@
 
 		var vue = new Vue({
 
-			el: '#property',
+			el: '#app',
 
 
 			data: {

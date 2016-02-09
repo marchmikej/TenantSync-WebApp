@@ -5,8 +5,9 @@ use App\Http\Requests;
 use TenantSync\Models\Device;
 use App\Http\Utilities\State;
 use TenantSync\Models\Property;
-use App\Http\Requests\CreatePropertyRequest;
+use TenantSync\Mutators\PropertyMutator;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreatePropertyRequest;
 
 class PropertyController extends Controller {
 
@@ -22,11 +23,11 @@ class PropertyController extends Controller {
 	public function index()
 	{
 		$landlord = $this->user;
-		foreach($landlord->properties as $property)
-		{
-			$roiGroup[] = $property->roi();
-		}
-		$roi = array_sum($roiGroup) / count($roiGroup);
+
+		$properties = PropertyMutator::set('roi', $landlord->properties);
+		
+		$roi = array_sum($properties->pluck('roi')->toArray()) / $properties->count();
+
 		return view('TenantSync::landlord/properties/index', compact('landlord', 'roi'));
 	}
 

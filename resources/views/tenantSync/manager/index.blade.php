@@ -1,7 +1,7 @@
 @extends('TenantSync::manager/layout')
 
 @section('content')
-	<div id="app">
+	<div>
 		<div class="row">
 			<div class="col-sm-12 card">
 				<h4 class="card-header">Dashboard</h4>
@@ -97,43 +97,7 @@ var vue = new Vue({
 			sortKey: 'rent_amount',
 
 			reverse: -1,
-
-		// 	paginate: 10,
-
-		// 	columns: [
-		// 		{
-		// 			name: 'address',
-		// 			label: 'address',
-		// 			width: 'col-sm-6',
-		// 			isSortable: false
-		// 		},
-		// 		{
-		// 			name: 'rent_amount',
-		// 			label: 'rent_amount',
-		// 			width: 'col-sm-2',
-		// 			isSortable: true
-		// 		},
-		// 		{
-		// 			name: 'status',
-		// 			label: 'status',
-		// 			width: 'col-sm-2',
-		// 			isSortable: true
-		// 		},
-		// 		{
-		// 			name: 'alarm_id',
-		// 			label: 'alarm',
-		// 			width: 'col-sm-2',
-		// 			isSortable: true
-		// 		}
-		// 	],
-
-
-		// 	devices: [],
 		},
-	
-		// ready: function() {
-		// 	this.fetchDevices(1, this.sortKey, this.reverse);
-		// },
 
 		methods: {
 			fetchDevices: function(page, sortKey, reverse) {
@@ -159,5 +123,7 @@ var vue = new Vue({
 	});
 
 </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
 
 @endsection

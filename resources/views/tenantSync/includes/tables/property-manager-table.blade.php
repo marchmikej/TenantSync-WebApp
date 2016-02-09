@@ -35,8 +35,7 @@
 								<div class="col-sm-1">Alarm</div>
 							</div>
 							<div v-for="device in property.devices" class="table-row row">	
-									<div class="col-sm-1 text-right"><span class="fa fa-long-arrow-right"></span></div>
-									<div class="col-sm-3"><a :href="'/'+ userRole +'/device/' + device.id">@{{ device.location }}</a></div>
+									<div class="col-sm-3 col-sm-offset-1"><a :href="'/'+ userRole +'/device/' + device.id">@{{ device.location }}</a></div>
 									<div class="col-sm-2">$@{{ device.rent_amount }}</div>
 									<div class="col-sm-2">@{{ device.contact_name ? device.contact_name : '-' }}</div>
 									<div class="col-sm-2">@{{ device.contact_phone ? device.contact_phone : '-' }}</div>

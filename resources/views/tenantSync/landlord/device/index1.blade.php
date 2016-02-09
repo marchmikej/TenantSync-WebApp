@@ -112,7 +112,7 @@
 		var vue = new Vue({
 			
 
-			el: '#properties',
+			el: '#app',
 
 
 			data: {

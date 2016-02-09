@@ -56,8 +56,7 @@ Vue.component('portfolio-table', {
 		'table-sorted': function(sortKey) {
 			this.sortKey = sortKey;
 			this.reverse = (this.sortKey == sortKey) ? this.reverse * -1 : 1;
-			this.currentPage = 1;
-			this.fetchProperties();
+			// this.currentPage = 1;
 		}
 	},
 
@@ -69,17 +68,10 @@ Vue.component('portfolio-table', {
 
 	methods: {
 
-		refreshTable: function(sortKey, reverse)
-		{
-			this.fetchProperties(1, sortKey, reverse);
-		},
-
 		fetchProperties: function(page, sortKey, reverse) {
 			var data = {
-				with: [
-					'devices',
-					'transactions'
-				]
+				with: ['devices', 'transactions'],
+				set: ['roi']
 			};
 
 			this.$http.get('/api/properties', data)
