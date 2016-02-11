@@ -22,13 +22,9 @@ class PropertyController extends Controller {
 	 */
 	public function index()
 	{
-		$landlord = $this->user;
+		$landlord = $this->user;		
 
-		$properties = PropertyMutator::set('roi', $landlord->properties);
-		
-		$roi = array_sum($properties->pluck('roi')->toArray()) / $properties->count();
-
-		return view('TenantSync::landlord/properties/index', compact('landlord', 'roi'));
+		return view('TenantSync::landlord/properties/index', compact('landlord'));
 	}
 
 	public function all()

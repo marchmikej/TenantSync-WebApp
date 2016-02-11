@@ -79,8 +79,6 @@ Vue.component('transactions-table', {
 		'table-sorted': function(sortKey) {
 			this.sortKey = sortKey;
 			this.reverse = (this.sortKey == sortKey) ? this.reverse * -1 : 1;
-			//this.currentPage = 1;
-			//this.fetchTransactions();
 		},
 
 		'modal-hidden': function() {
@@ -109,7 +107,6 @@ Vue.component('transactions-table', {
 			this.$http.get('/api/properties', data)
 				.success( function(properties) {
 					this.properties = properties;
-					//console.log(result);
 				});
 		},
 

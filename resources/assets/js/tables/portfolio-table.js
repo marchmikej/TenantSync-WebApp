@@ -70,13 +70,14 @@ Vue.component('portfolio-table', {
 
 		fetchProperties: function(page, sortKey, reverse) {
 			var data = {
-				with: ['devices', 'transactions'],
+				with: ['devices'],
 				set: ['roi']
 			};
 
 			this.$http.get('/api/properties', data)
 				.success( function(properties) {
 					this.properties = properties;
+					this.$dispatch('properties-loaded', properties);
 				});
 		},
 

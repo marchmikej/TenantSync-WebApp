@@ -1,5 +1,5 @@
-// Get all the random stuff in the vue-all file
-require('./vue-all.js');
+// Get all the random stuff in the vue-helpers file
+require('./vue-helpers.js');
 
 // Get all the table components
 require('./tables/table-headers.js');
@@ -17,5 +17,8 @@ require('./tables/transactions-table.js');
 
 // Get modal stuff
 require('./components/modal.js');
+
+// Get the Stat components
+require('./components/ytd-stats.js');
 
 

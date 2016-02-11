@@ -37,6 +37,7 @@ class Property extends Model {
 		'mortgage_term'
 	];
 
+
 	/**
 	 * The attributes excluded from the model's JSON form.
 	 *
@@ -44,8 +45,14 @@ class Property extends Model {
 	 */
 	protected $hidden = [];
 
-	// Name for morph relationship
+
+	/**
+	 * Name to map to Payable relation
+	 * 
+	 * @var string
+	 */
 	protected $morphClass = 'property';
+
 
 	public function owner()
 	{
@@ -62,9 +69,33 @@ class Property extends Model {
 		return $this->hasMany('TenantSync\Models\Device');
 	}
 
+	// /**
+	//  * Get transactions explicitly attached to the property
+	//  * 
+	//  * @return class MorphMany
+	//  */
+	// public function transactions()
+	// {
+	// 	return $this->morphMany('TenantSync\Models\Transaction', 'payable');
+	// }
+	
 	public function transactions()
 	{
-		return $this->morphMany('TenantSync\Models\Transaction', 'payable');
+		$transactions = collect(\DB::table('transactions')
+			->where(function($queryContainer) {
+				$queryContainer
+					->where(function($query) {
+						$query->where(['payable_type' => 'property'])
+							->where(['payable_id' => $this->id]);
+					})
+					->orWhere(function($query) {
+						$query->where(['payable_type' => 'device'])
+							->whereIn('payable_id', $this->devices->pluck('id')->toArray());
+					});
+			})
+			->get());
+
+		return $transactions;
 	}
 
 	public function managers()
@@ -98,14 +129,14 @@ class Property extends Model {
 
 	public function incomes()
 	{
-		return $this->transactions->filter(function($transaction) {
+		return $this->transactions()->filter(function($transaction) {
 			return $transaction->amount <= 0;
 		});
 	}
 
 	public function expenses()
 	{
-		return $this->transactions->filter(function($transaction) {
+		return $this->transactions()->filter(function($transaction) {
 			return $transaction->amount > 0;
 		});
 	}

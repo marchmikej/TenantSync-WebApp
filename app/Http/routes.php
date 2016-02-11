@@ -10,7 +10,7 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-// Route::get('test', 'HomeController@test');
+Route::get('test', 'HomeController@test');
 
 
 Route::resource('api/devices', 'Api\DeviceController');
@@ -26,6 +26,8 @@ Route::delete('api/managers/properties', 'Api\ManagerController@removeProperties
 Route::patch('api/managers/properties', 'Api\ManagerController@addProperties');
 Route::delete('api/managers/{id}', 'Api\ManagerController@destroy');
 Route::resource('api/managers', 'Api\ManagerController');
+
+Route::resource('api/rent-bills', 'Api\RentBillController');
 
 
 

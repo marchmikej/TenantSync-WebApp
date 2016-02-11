@@ -12792,6 +12792,7 @@ body {
 
 [v-cloak] {
   display: none;
+  transition-duration: .5s;
 }
 
 .page-content-wrapper {

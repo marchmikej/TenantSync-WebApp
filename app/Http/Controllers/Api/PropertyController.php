@@ -13,7 +13,10 @@ class PropertyController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->propertyMutator = new PropertyMutator;
+
+        $this->with = isset($this->input['with']) ? $this->input['with'] : [];
+        
+        $this->set = isset($this->input['set']) ? $this->input['set'] : [];
     }
 
     /**
@@ -23,13 +26,9 @@ class PropertyController extends Controller
      */
     public function index()
     {
-        $with = isset($this->input['with']) ? $this->input['with'] : [];
-        
-        $set = isset($this->input['set']) ? $this->input['set'] : [];
+        $properties = Property::getPropertiesForUser($this->user, $this->with);
 
-        $properties = Property::getPropertiesForUser($this->user, $with);
-
-        $properties = PropertyMutator::set($set, $properties);
+        $properties = PropertyMutator::set($this->set, $properties);
 
         return $properties;
     }

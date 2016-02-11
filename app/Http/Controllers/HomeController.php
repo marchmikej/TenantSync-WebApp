@@ -1,10 +1,12 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Auth\AuthManager as Auth;
+use Illuminate\Http\Request;
 use TenantSync\Models\Device;
+use TenantSync\Models\Property;
 use TenantSync\Models\User;
+use TenantSync\Mutators\PropertyMutator;
 
 class HomeController extends Controller {
 
@@ -46,5 +48,13 @@ class HomeController extends Controller {
 	{
 		$manager = $this->user->manager;
 		return view('TenantSync::manager.index', compact('manager'));
+	}
+
+	public function test()
+	{
+		$property = Property::find(15);
+		var_export($property);var_export('<br>');
+		$properties = PropertyMutator::set('transactions', $property);
+		return $properties;
 	}
 }  

@@ -32,4 +32,10 @@ class RentBill extends Model
     	return $this->belongsToMany('TenantSync\Models\Transaction', 'rent_payments', 'rent_bill_id', 'transaction_id')->withTimestamps();;
     }
 
+    public static function getRentBillsForUser($user, $with = [], $fromDate = '-1 month') 
+    {   
+
+        return $user->rentBills()->where('rent_month', '>=', date('Y-m-d', strtotime($fromDate)))->with($with)->get();
+    }
+
 }

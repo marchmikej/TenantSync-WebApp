@@ -56,7 +56,7 @@
 		</nav>
 	</header>
 
-	<div id="app" class="page-content-wrapper" v-cloak>
+	<div id="app" class="page-content-wrapper">
 		<div class="container">
 			<h2 class="text-info">@yield('heading')</h2>
 		</div>
@@ -97,11 +97,6 @@
 	</footer>
 	
 	<!-- Scripts -->
-
-	<!-- <script src="/js/all.js"></script> -->
-	<!-- <script src="/js/chart.js"></script> -->
-	<!-- <script src="/js/vendor.js"></script> -->
-	<!-- <script src="/js/plugins.js"></script> -->
 	<script src="/js/core.js"></script>
 	<script src="/js/app.js"></script>
 	@yield('scripts')

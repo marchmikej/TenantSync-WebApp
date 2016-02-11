@@ -14,7 +14,12 @@ class TransactionController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->transactionMutator = new TransactionMutator;
+
+        $this->with = isset($this->input['with']) ? $this->input['with'] : [];
+
+        $this->set = isset($this->input['set']) ? $this->input['set'] : [];
+        
+        $this->fromDate = isset($this->input['from']) ? $this->input['from'] : '-1 month';
     }
     /**
      * Display a listing of the resource.
@@ -23,13 +28,9 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        $with = isset($this->input['with']) ? $this->input['with'] : [];
+        $transactions = Transaction::getTransactionsForUser($this->user, $this->with, $this->fromDate);
 
-        $set = isset($this->input['set']) ? $this->input['set'] : [];
-
-        $transactions = Transaction::getTransactionsForUser($this->user, $with);
-
-        $transactions = TransactionMutator::set($set, $transactions);
+        $transactions = TransactionMutator::set($this->set, $transactions);
 
         return $transactions->keyBy('id');
     }

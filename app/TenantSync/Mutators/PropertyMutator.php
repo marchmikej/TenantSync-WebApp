@@ -6,8 +6,14 @@ use App\Services\RoiCalculator;
 use TenantSync\Models\Property;
 use TenantSync\Mutators\ModelMutator;
 
-class PropertyMutator extends ModelMutator{
+class PropertyMutator extends ModelMutator {
 
+	/**
+	 * Set the total_expenses property on model
+	 *
+	 * @param  Property $property 
+	 * @return int
+	 */
 	public function totalExpenses($property)
 	{
 		$amounts = array();
@@ -18,6 +24,13 @@ class PropertyMutator extends ModelMutator{
 		return array_sum($amounts);
 	}
 
+
+	/**
+	 * Set the roi property on the model
+	 * 
+	 * @param  Propety $property 
+	 * @return int
+	 */
 	public function roi($property)
 	{
 		if(empty($property->value) || $property->value == 0) {
@@ -32,27 +45,28 @@ class PropertyMutator extends ModelMutator{
 		return $roi;
 	}
 
+
+	/**
+	 * Set net_income property on model
+	 * 
+	 * @param  Property $property 
+	 * @param  string $fromDate 
+	 * @return int
+	 */
 	public function netIncome($property, $fromDate = '-1 month')
 	{
 		return $property->netIncome();
 	}
 
+
+	/**
+	 * Set transactions property on model
+	 * 
+	 * @param  Property $property 
+	 * @return Collection
+	 */
 	public function transactions($property)
 	{
-		$transactions = collect(\DB::table('transactions')
-			->where(function($queryContainer) use ($property) {
-				$queryContainer
-				->where(function($query) use ($property) {
-					$query->where(['payable_type' => 'property'])
-						->where(['payable_id' => $property->id]);
-				})
-				->orWhere(function($query) use ($property) {
-					$query->where(['payable_type' => 'property'])
-						->whereIn('payable_id', $property->devices->pluck('id')->toArray());
-				});
-			})
-			->get());
-
-		return $transactions;
+		return $property->transactions();
 	}
 }

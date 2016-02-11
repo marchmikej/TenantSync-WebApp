@@ -1,8 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-// Get all the random stuff in the vue-all file
+// Get all the random stuff in the vue-helpers file
 'use strict';
 
-require('./vue-all.js');
+require('./vue-helpers.js');
 
 // Get all the table components
 require('./tables/table-headers.js');
@@ -21,7 +21,10 @@ require('./tables/transactions-table.js');
 // Get modal stuff
 require('./components/modal.js');
 
-},{"./components/modal.js":2,"./forms/bootstrap.js":3,"./forms/transaction-form.js":8,"./tables/devices-table.js":9,"./tables/most-expensive-property-table.js":10,"./tables/portfolio-table.js":11,"./tables/property-manager-table.js":12,"./tables/table-headers.js":13,"./tables/transactions-table.js":14,"./vue-all.js":15}],2:[function(require,module,exports){
+// Get the Stat components
+require('./components/ytd-stats.js');
+
+},{"./components/modal.js":2,"./components/ytd-stats.js":3,"./forms/bootstrap.js":4,"./forms/transaction-form.js":9,"./tables/devices-table.js":10,"./tables/most-expensive-property-table.js":11,"./tables/portfolio-table.js":12,"./tables/property-manager-table.js":13,"./tables/table-headers.js":14,"./tables/transactions-table.js":15,"./vue-helpers.js":16}],2:[function(require,module,exports){
 'use strict';
 
 Vue.component('modal', {
@@ -74,6 +77,115 @@ Vue.component('modal', {
 });
 
 },{}],3:[function(require,module,exports){
+'use strict';
+
+Vue.component('ytd-stats', {
+
+	data: function data() {
+		return {
+			properties: [],
+
+			transactions: [],
+
+			rentBills: []
+		};
+	},
+
+	computed: {
+		stats: function stats() {
+			return {
+				roi: this.averageRoi(),
+				paid_rent: this.paidRent(),
+				deliquent_rent: this.deliquentRent(),
+				vacant_rent: this.vacantRent()
+			};
+		}
+	},
+
+	ready: function ready() {
+		this.fetchRentBills();
+
+		this.fetchProperties();
+	},
+
+	methods: {
+		fetchRentBills: function fetchRentBills() {
+			var data = {
+				from: '-1 year'
+			};
+
+			this.$http.get('/api/rent-bills', data).success(function (rentBills) {
+				this.rentBills = rentBills;
+			});
+		},
+
+		fetchProperties: function fetchProperties() {
+			var data = {
+				set: ['transactions', 'roi']
+			};
+
+			return this.$http.get('/api/properties', data).success(function (properties) {
+				this.properties = properties;
+				this.getTransactions();
+			});
+		},
+
+		getTransactions: function getTransactions() {
+			var transactions = _.pluck(this.properties, 'transactions');
+
+			this.transactions = _.flatten(transactions, true);
+		},
+
+		averageRoi: function averageRoi() {
+			var roiSum = _.reduce(this.properties, function (initial, property) {
+				return initial + Number(property.roi);
+			}, 0);
+
+			var roiAsFraction = roiSum / this.properties.length;
+
+			return numeral(roiAsFraction).format('0%');
+		},
+
+		paidRent: function paidRent() {
+			var transactions = _.filter(this.transactions, function (transaction) {
+				var from = Number(moment().subtract(1, 'year').format('X'));
+
+				var transactionDate = Number(moment(transaction.date).format('X'));
+
+				if (from <= transactionDate && transaction.payable_type == 'device') {
+					return true;
+				}
+
+				return false;
+			});
+
+			return _.reduce(transactions, function (initial, transaction) {
+				return initial + Number(transaction.amount);
+			}, 0);
+		},
+
+		deliquentRent: function deliquentRent() {
+			var totalBills = _.reduce(this.rentBills, function (initial, bill) {
+				return initial + Number(bill.bill_amount);
+			}, 0);
+
+			return totalBills - this.paidRent();
+		},
+
+		vacantRent: function vacantRent() {
+			var bills = _.filter(this.rentBills, function (bill) {
+				return bill.vacant;
+			});
+
+			return _.reduce(bills, function (initial, bill) {
+				return initial + Number(bill.bill_amount);
+			}, 0);
+		}
+
+	}
+});
+
+},{}],4:[function(require,module,exports){
 /**
  * Initialize the Spark form extension points.
  */
@@ -105,7 +217,7 @@ $.extend(TS, require('./http'));
  */
 require('./components');
 
-},{"./components":4,"./errors":5,"./http":6,"./instance":7}],4:[function(require,module,exports){
+},{"./components":5,"./errors":6,"./http":7,"./instance":8}],5:[function(require,module,exports){
 /**
  * Text field input component for Bootstrap.
  */
@@ -214,7 +326,7 @@ Vue.component('ts-select', {
 </div>'
 });
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /**
  * Spark form error collection class.
  */
@@ -279,7 +391,7 @@ window.TSFormErrors = function () {
     };
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -325,7 +437,7 @@ module.exports = {
     }
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /**
  * SparkForm helper class. Used to set common properties on all forms.
  */
@@ -352,7 +464,7 @@ window.TSForm = function (data) {
     };
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 Vue.component('transaction-form', {
@@ -453,7 +565,7 @@ Vue.component('transaction-form', {
 
 });
 
-},{"./components.js":4}],9:[function(require,module,exports){
+},{"./components.js":5}],10:[function(require,module,exports){
 'use strict';
 
 Vue.component('devices-table', {
@@ -542,7 +654,7 @@ Vue.component('devices-table', {
 
 });
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 Vue.component('most-expensive-property-table', {
@@ -603,7 +715,7 @@ Vue.component('most-expensive-property-table', {
 
 });
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 Vue.component('portfolio-table', {
@@ -669,12 +781,13 @@ Vue.component('portfolio-table', {
 
 		fetchProperties: function fetchProperties(page, sortKey, reverse) {
 			var data = {
-				'with': ['devices', 'transactions'],
+				'with': ['devices'],
 				set: ['roi']
 			};
 
 			this.$http.get('/api/properties', data).success(function (properties) {
 				this.properties = properties;
+				this.$dispatch('properties-loaded', properties);
 			});
 		},
 
@@ -685,7 +798,7 @@ Vue.component('portfolio-table', {
 	}
 });
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 Vue.component('property-manager-table', {
@@ -782,7 +895,7 @@ Vue.component('property-manager-table', {
 
 });
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 Vue.component('table-headers', {
@@ -838,7 +951,7 @@ Vue.component('table-headers', {
 	}
 });
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 Vue.component('transactions-table', {
@@ -915,8 +1028,6 @@ Vue.component('transactions-table', {
 		'table-sorted': function tableSorted(sortKey) {
 			this.sortKey = sortKey;
 			this.reverse = this.sortKey == sortKey ? this.reverse * -1 : 1;
-			//this.currentPage = 1;
-			//this.fetchTransactions();
 		},
 
 		'modal-hidden': function modalHidden() {
@@ -945,7 +1056,6 @@ Vue.component('transactions-table', {
 
 			this.$http.get('/api/properties', data).success(function (properties) {
 				this.properties = properties;
-				//console.log(result);
 			});
 		},
 
@@ -1076,7 +1186,7 @@ Vue.component('transactions-table', {
 
 });
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 Vue.config.debug = true;
