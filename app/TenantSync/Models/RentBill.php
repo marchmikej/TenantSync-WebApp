@@ -16,6 +16,7 @@ class RentBill extends Model
         'vacant'
     ];
 
+    protected $append = ['address'];
 
     public function user()
     {
@@ -34,8 +35,11 @@ class RentBill extends Model
 
     public static function getRentBillsForUser($user, $with = [], $fromDate = '-1 month') 
     {   
-
         return $user->rentBills()->where('rent_month', '>=', date('Y-m-d', strtotime($fromDate)))->with($with)->get();
     }
 
+    public function getAddressAttribute()
+    {
+        return $this->device->address();
+    }
 }

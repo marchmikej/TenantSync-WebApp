@@ -12674,6 +12674,10 @@ td .form-control {
   overflow: hidden;
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 .navbar-default {
   box-shadow: -2px 0px 18px #666;
 }

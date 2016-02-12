@@ -37,6 +37,10 @@ Vue.mixin({
 					return confirmed ? this[action + object](id) : false;
 				}.bind(this));
 		},
+
+		user: function() {
+			return TenantSync.user;
+		},
 	}
 });
 

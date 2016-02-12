@@ -10,6 +10,9 @@ Vue.component('modal', {
 	      	</div>\
 		  	<div class="modal-body">\
 		  		<slot name="one"></slot>\
+		  		<slot name="two"></slot>\
+		  		<slot name="three"></slot>\
+		  		<slot name="four"></slot>\
 		  	</div>\
 		</div><!-- /.modal-content -->\
 	</div><!-- /.modal-dialog -->\
@@ -29,6 +32,10 @@ Vue.component('modal', {
 		'hide-modal': function() {
 			this.hide();
 		},
+
+		'toggle-modal': function() {
+			this.visible = !this.visible;
+		}
 	},
 
 	methods: {
@@ -37,9 +44,6 @@ Vue.component('modal', {
 		},
 
 		hide: function() {
-			//reset the content to empty
-
-			// hide modal
 			this.visible = false;
 			this.$dispatch('modal-hidden');
 		},

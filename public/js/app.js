@@ -39,6 +39,9 @@ Vue.component('modal', {
 	      	</div>\
 		  	<div class="modal-body">\
 		  		<slot name="one"></slot>\
+		  		<slot name="two"></slot>\
+		  		<slot name="three"></slot>\
+		  		<slot name="four"></slot>\
 		  	</div>\
 		</div><!-- /.modal-content -->\
 	</div><!-- /.modal-dialog -->\
@@ -57,6 +60,10 @@ Vue.component('modal', {
 
 		'hide-modal': function hideModal() {
 			this.hide();
+		},
+
+		'toggle-modal': function toggleModal() {
+			this.visible = !this.visible;
 		}
 	},
 
@@ -66,9 +73,6 @@ Vue.component('modal', {
 		},
 
 		hide: function hide() {
-			//reset the content to empty
-
-			// hide modal
 			this.visible = false;
 			this.$dispatch('modal-hidden');
 		}
@@ -1224,6 +1228,10 @@ Vue.mixin({
 				closeOnConfirm: true }, (function (confirmed) {
 				return confirmed ? this[action + object](id) : false;
 			}).bind(this));
+		},
+
+		user: function user() {
+			return TenantSync.user;
 		}
 	}
 });

@@ -19,7 +19,7 @@ class TransactionController extends Controller
 
         $this->set = isset($this->input['set']) ? $this->input['set'] : [];
         
-        $this->fromDate = isset($this->input['from']) ? $this->input['from'] : '-1 month';
+        $this->fromDate = isset($this->input['from']) ? $this->input['from'] : 'January 1 2000';
     }
     /**
      * Display a listing of the resource.

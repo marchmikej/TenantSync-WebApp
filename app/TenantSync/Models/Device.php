@@ -47,7 +47,7 @@ class Device extends Model {
 
 	protected $morphClass = 'device';
 
-	// protected $appends = ['rent_owed', 'address'];
+	protected $appends = ['address'];
 
 	public function owner()
 	{
@@ -109,7 +109,10 @@ class Device extends Model {
 	{
 		return array_sum($this->rentBills->pluck('bill_amount')->toArray()) - array_sum($this->transactions->pluck('amount')->toArray());
 	}
-
+	public function getAddressAttribute()
+	{
+		return $this->address();
+	}
 	public function address()
 	{
 		return $this->property->address . ', ' . $this->location;
