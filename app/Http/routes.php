@@ -29,6 +29,8 @@ Route::resource('api/managers', 'Api\ManagerController');
 
 Route::resource('api/rent-bills', 'Api\RentBillController');
 
+Route::resource('api/messages', 'Api\MessageController');
+
 
 
 Route::get('api/maintenance', 'Api\DeviceApiController@allRequests');

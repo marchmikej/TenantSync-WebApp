@@ -205,7 +205,7 @@ class DeviceApiController extends Controller {
 		return response()->json(['rent_amount' => $this->device->rent_amount, 'balance_due' => $this->device->balance_due]);
 	}
 
-	public function payRent()
+	public function payRent(RentPaymentRequest $request)
 	{ 
 		\DB::transaction(function() {
 			//card number, expiration, card_holder, cvv2, payment_type

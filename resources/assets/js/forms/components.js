@@ -106,3 +106,20 @@ Vue.component('ts-select', {
     </div>\
 </div>'
 });
+
+/**
+ * Textarea input component for Bootstrap.
+ */
+Vue.component('ts-textarea', {
+    props: ['display', 'form', 'name', 'items', 'input', 'show'],
+
+    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    <label class="col-md-3 control-label">{{ display }}</label>\
+    <div class="col-md-9">\
+        <textarea v-model="input" class="form-control" rows="4"></textarea>\
+        <span class="help-block" v-show="form.errors.has(name)">\
+            <strong>{{ form.errors.get(name) }}</strong>\
+        </span>\
+    </div>\
+</div>'
+});

@@ -128,9 +128,9 @@ class RoiCalculator {
 	 * @param  Property $property
 	 * @return float          
 	 */
-	public function cashRoi($property)
+	public function cashRoi($property, $fromDate = '-1 year')
 	{
-		$roi = ($property->netIncome()) / ($property->down_payment + $property->closing_costs);
+		$roi = ($property->netIncome($fromDate = '-1 year')) / ($property->down_payment + $property->closing_costs);
 
 		return $roi;
 	}

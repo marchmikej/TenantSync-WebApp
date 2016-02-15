@@ -87,6 +87,12 @@ Vue.component('ytd-stats', {
 
 	data: function data() {
 		return {
+			showStat: {
+				paid_rent: false,
+				deliquent_rent: false,
+				vacant_rent: false
+			},
+
 			properties: [],
 
 			transactions: [],
@@ -106,8 +112,16 @@ Vue.component('ytd-stats', {
 		}
 	},
 
+	events: {
+		'modal-hidden': function modalHidden() {
+			this.hideStats();
+		}
+	},
+
 	ready: function ready() {
 		this.fetchRentBills();
+
+		this.fetchTransactions();
 
 		this.fetchProperties();
 	},
@@ -115,7 +129,9 @@ Vue.component('ytd-stats', {
 	methods: {
 		fetchRentBills: function fetchRentBills() {
 			var data = {
-				from: '-1 year'
+				from: '-1 year',
+
+				'with': ['device']
 			};
 
 			this.$http.get('/api/rent-bills', data).success(function (rentBills) {
@@ -130,14 +146,33 @@ Vue.component('ytd-stats', {
 
 			return this.$http.get('/api/properties', data).success(function (properties) {
 				this.properties = properties;
-				this.getTransactions();
 			});
 		},
 
-		getTransactions: function getTransactions() {
-			var transactions = _.pluck(this.properties, 'transactions');
+		fetchTransactions: function fetchTransactions() {
+			var data = {
+				from: '-1 year',
 
-			this.transactions = _.flatten(transactions, true);
+				set: ['address']
+			};
+
+			this.$http.get('/api/transactions', data).success(function (transactions) {
+				this.transactions = transactions;
+			});
+		},
+
+		toggleStat: function toggleStat(stat) {
+			this.showStat[stat] = !this.showStat[stat];
+
+			this.$broadcast('show-modal');
+		},
+
+		hideStats: function hideStats() {
+			for (var i = 0; i < _.size(this.showStat); i++) {
+				var key = Object.keys(this.showStat)[i];
+
+				this.showStat[key] = false;
+			}
 		},
 
 		averageRoi: function averageRoi() {
@@ -150,22 +185,60 @@ Vue.component('ytd-stats', {
 			return numeral(roiAsFraction).format('0%');
 		},
 
-		paidRent: function paidRent() {
-			var transactions = _.filter(this.transactions, function (transaction) {
-				var from = Number(moment().subtract(1, 'year').format('X'));
+		paidRentTransactions: function paidRentTransactions() {
+			return _.filter(this.transactions, function (transaction) {
+				var from = Number(moment().subtract(1, 'month').format('X'));
 
 				var transactionDate = Number(moment(transaction.date).format('X'));
 
-				if (from <= transactionDate && transaction.payable_type == 'device') {
+				if (from < transactionDate && transaction.payable_type == 'TenantSync\\Models\\Device') {
 					return true;
 				}
 
 				return false;
 			});
+		},
+
+		paidRent: function paidRent() {
+			var transactions = this.paidRentTransactions();
 
 			return _.reduce(transactions, function (initial, transaction) {
 				return initial + Number(transaction.amount);
 			}, 0);
+		},
+
+		deliquentDevices: function deliquentDevices() {
+			var deviceListWithDuplicates = _.pluck(this.rentBills, 'device');
+
+			var devices = [];
+
+			_.each(deviceListWithDuplicates, function (device) {
+				if (_.find(devices, { 'id': device.id })) {
+					return false;
+				}
+
+				return devices.push(device);
+			});
+
+			_.each(devices, (function (device) {
+				var rentBills = _.where(this.rentBills, { 'device_id': device.id });
+
+				var rentPayments = _.where(this.paidRentTransactions(), { 'payable_id': device.id });
+
+				var rentBillTotal = _.reduce(rentBills, function (initial, bill) {
+					return initial + Number(bill.bill_amount);
+				}, 0);
+
+				var rentPaymentTotal = _.reduce(rentPayments, function (initial, payment) {
+					return initial + Number(payment.amount);
+				}, 0);
+
+				if (rentBillTotal > rentPaymentTotal) {
+					device.balance_due = rentBillTotal - rentPaymentTotal;
+				}
+			}).bind(this));
+
+			return devices;
 		},
 
 		deliquentRent: function deliquentRent() {
@@ -176,16 +249,19 @@ Vue.component('ytd-stats', {
 			return totalBills - this.paidRent();
 		},
 
-		vacantRent: function vacantRent() {
-			var bills = _.filter(this.rentBills, function (bill) {
+		vacantRentBills: function vacantRentBills() {
+			return _.filter(this.rentBills, function (bill) {
 				return bill.vacant;
 			});
+		},
+
+		vacantRent: function vacantRent() {
+			var bills = this.vacantRentBills();
 
 			return _.reduce(bills, function (initial, bill) {
 				return initial + Number(bill.bill_amount);
 			}, 0);
 		}
-
 	}
 });
 
@@ -323,6 +399,23 @@ Vue.component('ts-select', {
                 {{ item.text }}\
             </option>\
         </select>\
+        <span class="help-block" v-show="form.errors.has(name)">\
+            <strong>{{ form.errors.get(name) }}</strong>\
+        </span>\
+    </div>\
+</div>'
+});
+
+/**
+ * Textarea input component for Bootstrap.
+ */
+Vue.component('ts-textarea', {
+    props: ['display', 'form', 'name', 'items', 'input', 'show'],
+
+    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    <label class="col-md-3 control-label">{{ display }}</label>\
+    <div class="col-md-9">\
+        <textarea v-model="input" class="form-control" rows="4"></textarea>\
         <span class="help-block" v-show="form.errors.has(name)">\
             <strong>{{ form.errors.get(name) }}</strong>\
         </span>\
@@ -745,7 +838,7 @@ Vue.component('portfolio-table', {
 				isSortable: false
 			}, {
 				name: 'roi',
-				label: 'ROI',
+				label: 'ROI YTD',
 				width: 'col-sm-2',
 				isSortable: true
 			}, {

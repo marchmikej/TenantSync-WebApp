@@ -2,6 +2,12 @@ Vue.component('ytd-stats', {
 
 	data: function() {
 		return {
+			showStat: {
+				paid_rent: false,
+				deliquent_rent: false,
+				vacant_rent: false,
+			},
+
 			properties: [],
 			
 			transactions: [],
@@ -21,8 +27,16 @@ Vue.component('ytd-stats', {
 		},
 	},
 
+	events: {
+		'modal-hidden': function() {
+			this.hideStats();
+		}
+	},
+
 	ready: function() {
 		this.fetchRentBills();
+
+		this.fetchTransactions();
 
 		this.fetchProperties();
 	},
@@ -31,6 +45,8 @@ Vue.component('ytd-stats', {
 		fetchRentBills: function() {
 			var data = {
 				from: '-1 year',
+
+				with: ['device'],
 			};
 
 			this.$http.get('/api/rent-bills', data)
@@ -47,14 +63,34 @@ Vue.component('ytd-stats', {
 			return this.$http.get('/api/properties', data)
 				.success(function(properties) {
 					this.properties = properties;
-					this.getTransactions();
 				});
 		},
 
-		getTransactions: function() {
-			var transactions = _.pluck(this.properties, 'transactions');
+		fetchTransactions: function() {
+			var data = {
+				from: '-1 year',
 
-			this.transactions = _.flatten(transactions, true);
+				set: ['address']
+			};
+
+			this.$http.get('/api/transactions', data)
+				.success(function(transactions) {
+					this.transactions = transactions;
+				});
+		},
+
+		toggleStat: function(stat) {
+			this.showStat[stat] = !this.showStat[stat];
+
+			this.$broadcast('show-modal');
+		},
+
+		hideStats: function() {
+			for(var i = 0; i < _.size(this.showStat); i++) {
+				var key = Object.keys(this.showStat)[i];
+
+				this.showStat[key] = false;
+			}
 		},
 
 		averageRoi: function() {
@@ -67,22 +103,60 @@ Vue.component('ytd-stats', {
 			return numeral(roiAsFraction).format('0%');
 		},
 
-		paidRent: function() {
-			var transactions = _.filter(this.transactions, function(transaction) {
-				var from = Number(moment().subtract(1, 'year').format('X'));
+		paidRentTransactions: function() {
+			return _.filter(this.transactions, function(transaction) {
+				var from = Number(moment().subtract(1, 'month').format('X'));
 
 				var transactionDate = Number(moment(transaction.date).format('X'));
 
-				if(from <= transactionDate && transaction.payable_type == 'device') {
+				if(from < transactionDate && transaction.payable_type == 'TenantSync\\Models\\Device') {
 					return true;
 				}
 
 				return false;
 			});
+		},
+
+		paidRent: function() {
+			var transactions = this.paidRentTransactions();
 
 			return _.reduce(transactions, function(initial, transaction) {
-				return initial + Number(transaction.amount);
+				return initial + Number(transaction.amount)  ;
 			}, 0);
+		},
+
+		deliquentDevices: function() {
+			var deviceListWithDuplicates = _.pluck(this.rentBills, 'device');
+
+			var devices = [];
+
+			_.each(deviceListWithDuplicates, function(device) {
+				if(_.find(devices, {'id': device.id})) {
+					return false;
+				}
+
+				return devices.push(device);
+			});
+
+			_.each(devices, function(device) {
+				var rentBills = _.where(this.rentBills, {'device_id': device.id});
+
+				var rentPayments = _.where(this.paidRentTransactions(), {'payable_id': device.id});
+
+				var rentBillTotal = _.reduce(rentBills, function(initial, bill) {
+					return initial + Number(bill.bill_amount);
+				}, 0);
+
+				var rentPaymentTotal = _.reduce(rentPayments, function(initial, payment) {
+					return initial + Number(payment.amount);
+				}, 0);
+
+				if(rentBillTotal > rentPaymentTotal) {
+					device.balance_due = rentBillTotal - rentPaymentTotal;
+				}
+			}.bind(this));
+
+			return devices;
 		},
 
 		deliquentRent: function() {
@@ -93,15 +167,18 @@ Vue.component('ytd-stats', {
 			return totalBills - this.paidRent();
 		},
 
-		vacantRent: function() {
-			var bills = _.filter(this.rentBills, function(bill) {
+		vacantRentBills: function() {
+			return _.filter(this.rentBills, function(bill) {
 				return bill.vacant;
 			});
+		},
+
+		vacantRent: function() {
+			var bills = this.vacantRentBills();
 
 			return _.reduce(bills, function(initial, bill) {
 				return initial + Number(bill.bill_amount);
 			}, 0);
 		},
-
 	},
 })

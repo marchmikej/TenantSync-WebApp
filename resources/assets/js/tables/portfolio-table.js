@@ -23,7 +23,7 @@ Vue.component('portfolio-table', {
 				},
 				{
 					name: 'roi',
-					label: 'ROI',
+					label: 'ROI YTD',
 					width: 'col-sm-2',
 					isSortable: true
 				},
