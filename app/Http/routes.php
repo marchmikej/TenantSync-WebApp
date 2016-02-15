@@ -31,6 +31,9 @@ Route::resource('api/rent-bills', 'Api\RentBillController');
 
 Route::resource('api/messages', 'Api\MessageController');
 
+Route::patch('api/maintenance/{id}', 'Api\MaintenanceController@update');
+Route::resource('api/maintenance', 'Api\MaintenanceController');
+
 
 
 Route::get('api/maintenance', 'Api\DeviceApiController@allRequests');
