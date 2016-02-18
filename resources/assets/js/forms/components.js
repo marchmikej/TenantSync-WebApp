@@ -4,7 +4,7 @@
 Vue.component('ts-text', {
     props: ['display', 'form', 'name', 'input', 'show'],
 
-    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    template: '<div><div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-3 control-label">{{ display }}</label>\
     <div class="col-md-9">\
         <input type="text" class="form-control" v-model="input">\
@@ -12,7 +12,7 @@ Vue.component('ts-text', {
             <strong>{{ form.errors.get(name) }}</strong>\
         </span>\
     </div>\
-</div>'
+</div></div>'
 });
 
 /**
@@ -21,7 +21,7 @@ Vue.component('ts-text', {
 Vue.component('ts-date', {
     props: ['display', 'form', 'name', 'input', 'show'],
 
-    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    template: '<div><div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-3 control-label">{{ display }}</label>\
     <div class="col-md-9">\
         <input type="date" class="form-control" v-model="input">\
@@ -29,7 +29,7 @@ Vue.component('ts-date', {
             <strong>{{ form.errors.get(name) }}</strong>\
         </span>\
     </div>\
-</div>'
+</div></div>'
 });
 
 
@@ -39,7 +39,7 @@ Vue.component('ts-date', {
 Vue.component('ts-email', {
     props: ['display', 'form', 'name', 'input', 'show'],
 
-    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    template: '<div><div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-3 control-label">{{ display }}</label>\
     <div class="col-md-9">\
         <input type="email" class="form-control" v-model="input">\
@@ -47,7 +47,7 @@ Vue.component('ts-email', {
             <strong>{{ form.errors.get(name) }}</strong>\
         </span>\
     </div>\
-</div>'
+</div></div>'
 });
 
 
@@ -57,7 +57,7 @@ Vue.component('ts-email', {
 Vue.component('ts-password', {
     props: ['display', 'form', 'name', 'input', 'show'],
 
-    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    template: '<div><div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-3 control-label">{{ display }}</label>\
     <div class="col-md-9">\
         <input type="password" class="form-control" v-model="input">\
@@ -65,7 +65,7 @@ Vue.component('ts-password', {
             <strong>{{ form.errors.get(name) }}</strong>\
         </span>\
     </div>\
-</div>'
+</div></div>'
 });
 
 /**
@@ -74,7 +74,7 @@ Vue.component('ts-password', {
 Vue.component('ts-checkbox', {
     props: ['display', 'form', 'name', 'input', 'show'],
 
-    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    template: '<div><div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-3 control-label">{{ display }}</label>\
     <div class="col-md-9">\
         <input type="checkbox" class="form-control" v-model="input">\
@@ -82,7 +82,7 @@ Vue.component('ts-checkbox', {
             <strong>{{ form.errors.get(name) }}</strong>\
         </span>\
     </div>\
-</div>'
+</div></div>'
 });
 
 
@@ -92,19 +92,15 @@ Vue.component('ts-checkbox', {
 Vue.component('ts-select', {
     props: ['display', 'form', 'name', 'items', 'input', 'show'],
 
-    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    template: '<div><div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-3 control-label">{{ display }}</label>\
-    <div class="col-md-8">\
-        <select class="form-control" v-model="input">\
-            <option v-for="item in items" :value="item.value">\
-                {{ item.text }}\
-            </option>\
-        </select>\
+    <div class="col-md-9">\
+            <slot></slot>\
         <span class="help-block" v-show="form.errors.has(name)">\
             <strong>{{ form.errors.get(name) }}</strong>\
         </span>\
     </div>\
-</div>'
+</div></div>'
 });
 
 /**
@@ -113,7 +109,7 @@ Vue.component('ts-select', {
 Vue.component('ts-textarea', {
     props: ['display', 'form', 'name', 'items', 'input', 'show'],
 
-    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    template: '<div><div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-3 control-label">{{ display }}</label>\
     <div class="col-md-9">\
         <textarea v-model="input" class="form-control" rows="4"></textarea>\
@@ -121,5 +117,5 @@ Vue.component('ts-textarea', {
             <strong>{{ form.errors.get(name) }}</strong>\
         </span>\
     </div>\
-</div>'
+</div></div>'
 });

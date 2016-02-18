@@ -55,4 +55,19 @@ trait AuthorizesUser {
 		return !! $result;
 	}
 
+	public function hasRecurring($transaction)
+	{
+		if($this->role == 'landlord') {
+			return $this->owns($transaction);
+		}
+
+		$id = $transaction->id;
+
+		$result = array_filter($this->manager->recurringTransactions(), function($transaction) use ($id) {
+			return $transaction->id == $id;
+		});
+
+		return !! $result;
+	}
+
 }

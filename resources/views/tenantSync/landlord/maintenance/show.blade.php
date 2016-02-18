@@ -89,31 +89,6 @@
 							</div>
 						</ts-textarea>
 
-						<!-- <div class="form-group">
-							<label for="response" class="control-label">Additional response</label>
-							<textarea 
-								v-model="forms.maintenanceRequest.response" 
-								class="form-control" 
-								name="response"  
-								placeholder="Type your response here..." 
-								cols="30" 
-								rows="3"
-							>
-								{{ $maintenanceRequest->response }}
-							</textarea>
-						</div> -->
-				
-						<!-- <div class="form-group">
-							<label for="cost" class="control-label">Cost</label>
-							<input 
-								v-model="forms.maintenanceRequest.cost" 
-								class="form-control" 
-								type="text"  
-								name="cost" 
-								placeholder="Cost $0.00"
-							>
-						</div> -->
-
 						<ts-text inline-template
 							:name="'cost'"
 							:input.sync="forms.maintenanceRequest.cost"
@@ -147,8 +122,6 @@
         	el: '#app',
 
         	data: {
-        		userRole: TenantSync.user.role,
-
         		forms: {
         			maintenanceRequest: new TSForm({
         				status: null,
@@ -163,19 +136,24 @@
         	},
 
         	ready: function() {
-        		this.forms.maintenanceRequest.id = new URI(document.URL).segment(2);
         		this.fetchMaintenanceRequest();
         	},
 
         	methods: {
         		fetchMaintenanceRequest: function() {
-        			this.$http.get('/'+ this.userRole +'/api/maintenance/'+ this.forms.maintenanceRequest.id)
+        			var maintenanceRequestId = new URI(document.URL).segment(2);
+
+        			var data = {
+        				with: ['transaction'],
+        			};
+
+        			this.$http.get('/api/maintenance/'+ maintenanceRequestId, data)
 	        			.success(function(maintenanceRequest) {
 	        				this.forms.maintenanceRequest.id =  maintenanceRequest.id;
 
 	        				this.forms.maintenanceRequest.response =  maintenanceRequest.response;
 
-	        				this.forms.maintenanceRequest.cost =  maintenanceRequest.cost;
+	        				this.forms.maintenanceRequest.cost =  maintenanceRequest.transaction ? maintenanceRequest.transaction.amount : 0.00;
 
 	        				this.forms.maintenanceRequest.status = this.toTitleCase(maintenanceRequest.status);
 
@@ -197,12 +175,13 @@
 	        					'Updated!',
 	        						'You have updated this maintenance request.'
 	        				);
-	        			})
+	        			}.bind(this))
 	        			.catch(function(errors) {
 	        				swal(
 	        					'Uh Oh!',
 	        						'There was a problem with your input'
 	        				);
+	        				console.log(errors);
 	        			});
         		},
 

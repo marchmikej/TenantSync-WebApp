@@ -28,24 +28,21 @@ require('./components/ytd-stats.js');
 'use strict';
 
 Vue.component('modal', {
-	props: ['title'],
+	props: ['title', 'id'],
 
-	template: '<div v-if="visible" class="vue-modal row">\
+	template: '<div><div v-if="visible" class="vue-modal row">\
 	<div id="modal" class="modal-dialog">\
-		<div class="modal-content col-sm-12 p-b">\
+		<div class="modal-content col-sm-12 p-b m-b">\
 			<div class="modal-header row">\
 	        	<button @click="hide" class="col-sm-1 icon icon-cross btn btn-clear" :class="{\'col-sm-offset-11\' : !title}"></button>\
 	        	<h4 v-if="title" class="modal-title">{{ title}}</h4>\
 	      	</div>\
 		  	<div class="modal-body">\
-		  		<slot name="one"></slot>\
-		  		<slot name="two"></slot>\
-		  		<slot name="three"></slot>\
-		  		<slot name="four"></slot>\
+		  		<slot></slot>\
 		  	</div>\
 		</div><!-- /.modal-content -->\
 	</div><!-- /.modal-dialog -->\
-</div>',
+</div></div>',
 
 	data: function data() {
 		return {
@@ -54,8 +51,10 @@ Vue.component('modal', {
 	},
 
 	events: {
-		'show-modal': function showModal() {
-			this.show();
+		'show-modal': function showModal(id) {
+			if (id == this.id) {
+				this.show();
+			}
 		},
 
 		'hide-modal': function hideModal() {
@@ -306,7 +305,7 @@ require('./components');
 Vue.component('ts-text', {
     props: ['display', 'form', 'name', 'input', 'show'],
 
-    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    template: '<div><div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-3 control-label">{{ display }}</label>\
     <div class="col-md-9">\
         <input type="text" class="form-control" v-model="input">\
@@ -314,7 +313,7 @@ Vue.component('ts-text', {
             <strong>{{ form.errors.get(name) }}</strong>\
         </span>\
     </div>\
-</div>'
+</div></div>'
 });
 
 /**
@@ -323,7 +322,7 @@ Vue.component('ts-text', {
 Vue.component('ts-date', {
     props: ['display', 'form', 'name', 'input', 'show'],
 
-    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    template: '<div><div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-3 control-label">{{ display }}</label>\
     <div class="col-md-9">\
         <input type="date" class="form-control" v-model="input">\
@@ -331,7 +330,7 @@ Vue.component('ts-date', {
             <strong>{{ form.errors.get(name) }}</strong>\
         </span>\
     </div>\
-</div>'
+</div></div>'
 });
 
 /**
@@ -340,7 +339,7 @@ Vue.component('ts-date', {
 Vue.component('ts-email', {
     props: ['display', 'form', 'name', 'input', 'show'],
 
-    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    template: '<div><div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-3 control-label">{{ display }}</label>\
     <div class="col-md-9">\
         <input type="email" class="form-control" v-model="input">\
@@ -348,7 +347,7 @@ Vue.component('ts-email', {
             <strong>{{ form.errors.get(name) }}</strong>\
         </span>\
     </div>\
-</div>'
+</div></div>'
 });
 
 /**
@@ -357,7 +356,7 @@ Vue.component('ts-email', {
 Vue.component('ts-password', {
     props: ['display', 'form', 'name', 'input', 'show'],
 
-    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    template: '<div><div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-3 control-label">{{ display }}</label>\
     <div class="col-md-9">\
         <input type="password" class="form-control" v-model="input">\
@@ -365,7 +364,7 @@ Vue.component('ts-password', {
             <strong>{{ form.errors.get(name) }}</strong>\
         </span>\
     </div>\
-</div>'
+</div></div>'
 });
 
 /**
@@ -374,7 +373,7 @@ Vue.component('ts-password', {
 Vue.component('ts-checkbox', {
     props: ['display', 'form', 'name', 'input', 'show'],
 
-    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    template: '<div><div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-3 control-label">{{ display }}</label>\
     <div class="col-md-9">\
         <input type="checkbox" class="form-control" v-model="input">\
@@ -382,7 +381,7 @@ Vue.component('ts-checkbox', {
             <strong>{{ form.errors.get(name) }}</strong>\
         </span>\
     </div>\
-</div>'
+</div></div>'
 });
 
 /**
@@ -391,19 +390,15 @@ Vue.component('ts-checkbox', {
 Vue.component('ts-select', {
     props: ['display', 'form', 'name', 'items', 'input', 'show'],
 
-    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    template: '<div><div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-3 control-label">{{ display }}</label>\
-    <div class="col-md-8">\
-        <select class="form-control" v-model="input">\
-            <option v-for="item in items" :value="item.value">\
-                {{ item.text }}\
-            </option>\
-        </select>\
+    <div class="col-md-9">\
+            <slot></slot>\
         <span class="help-block" v-show="form.errors.has(name)">\
             <strong>{{ form.errors.get(name) }}</strong>\
         </span>\
     </div>\
-</div>'
+</div></div>'
 });
 
 /**
@@ -412,7 +407,7 @@ Vue.component('ts-select', {
 Vue.component('ts-textarea', {
     props: ['display', 'form', 'name', 'items', 'input', 'show'],
 
-    template: '<div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    template: '<div><div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
     <label class="col-md-3 control-label">{{ display }}</label>\
     <div class="col-md-9">\
         <textarea v-model="input" class="form-control" rows="4"></textarea>\
@@ -420,7 +415,7 @@ Vue.component('ts-textarea', {
             <strong>{{ form.errors.get(name) }}</strong>\
         </span>\
     </div>\
-</div>'
+</div></div>'
 });
 
 },{}],6:[function(require,module,exports){
@@ -1101,7 +1096,8 @@ Vue.component('transactions-table', {
 			}],
 
 			forms: {
-				transaction: {}
+				transaction: {},
+				recurringTransaction: {}
 			},
 
 			transactions: [],
@@ -1129,6 +1125,27 @@ Vue.component('transactions-table', {
 
 		'modal-hidden': function modalHidden() {
 			this.refreshForm();
+		},
+
+		'recurring-modal-generated': function recurringModalGenerated(transaction) {
+
+			this.forms.recurringTransaction = new TSForm({
+				id: transaction.id,
+				user_id: transaction.user_id,
+				amount: transaction.amount,
+				description: transaction.description,
+				schedule: transaction.schedule,
+				day: transaction.day,
+				payable_type: this.getTransactionPayable(transaction),
+				payable_id: transaction.payable_id,
+				payable_search: null,
+				payable_selected: transaction.address,
+				last_ran: moment(transaction.last_ran).format(dateString)
+			});
+		},
+
+		'delete-recurring': function deleteRecurring(id) {
+			this.deleteRecurringTransaction(id);
 		}
 	},
 
@@ -1138,6 +1155,7 @@ Vue.component('transactions-table', {
 			var data = {
 				set: ['address']
 			};
+
 			this.$http.get('/api/transactions', data).success(function (transactions) {
 				_.each(transactions, function (transaction) {
 					transaction.amount = Number(transaction.amount);
@@ -1153,6 +1171,17 @@ Vue.component('transactions-table', {
 
 			this.$http.get('/api/properties', data).success(function (properties) {
 				this.properties = properties;
+			});
+		},
+
+		submitRecurringTransaction: function submitRecurringTransaction() {
+			var that = this;
+
+			TS.patch('/api/transactions/recurring/' + this.forms.recurringTransaction.id, this.forms.recurringTransaction).then(function () {
+				swal('Success!', 'Recurring transaction updated successfully!');
+				that.$dispatch('transactions-updated');
+			})['catch'](function () {
+				swal('Error!', 'There was a problem with your input.');
 			});
 		},
 
@@ -1172,9 +1201,10 @@ Vue.component('transactions-table', {
 		createTransaction: function createTransaction() {
 			var that = this;
 			TS.post('/api/transactions', this.forms.transaction).then(function (transaction) {
-				that.fetchTransactions();
 				that.$broadcast('hide-modal');
 				that.refreshForm();
+				that.fetchTransactions();
+				that.$dispatch('transactions-updated');
 			});
 		},
 
@@ -1185,6 +1215,15 @@ Vue.component('transactions-table', {
 				that.$broadcast('hide-modal');
 				that.refreshForm();
 				that.fetchTransactions();
+				that.$dispatch('transactions-updated');
+			});
+		},
+
+		deleteRecurringTransaction: function deleteRecurringTransaction(id) {
+			var that = this;
+
+			TS['delete']('/api/transactions/recurring/' + id, this.forms.transaction).then(function () {
+				that.$dispatch('transactions-updated');
 			});
 		},
 
@@ -1193,6 +1232,7 @@ Vue.component('transactions-table', {
 
 			TS['delete']('/api/transactions/' + id, this.forms.transaction).then(function () {
 				that.fetchTransactions();
+				that.$dispatch('transactions-updated');
 			});
 		},
 
@@ -1219,7 +1259,7 @@ Vue.component('transactions-table', {
 		},
 
 		showModal: function showModal() {
-			this.$broadcast('show-modal');
+			this.$broadcast('show-modal', 'transaction-modal');
 		},
 
 		populateForm: function populateForm(transactionId) {
@@ -1227,8 +1267,7 @@ Vue.component('transactions-table', {
 			this.forms.transaction.transaction = this.transactions[transactionId];
 			this.forms.transaction.description = this.transactions[transactionId].description ? this.transactions[transactionId].description : '';
 			this.forms.transaction.date = this.transactions[transactionId].date;
-			this.forms.transaction.payable_id = this.transactions[transactionId].payable_id, this.forms.transaction.payable_type = this.getTransactionPayable(this.transactions[transactionId]), this.forms.transaction.payable_selected = this.transactions[transactionId].address, this.forms.transaction.schedule = this.transactions[transactionId].recurring ? this.transactions[transactionId].recurring.schedule : null;
-			this.forms.transaction.recurring = this.transactions[transactionId].recurring ? true : false;
+			this.forms.transaction.payable_id = this.transactions[transactionId].payable_id, this.forms.transaction.payable_type = this.getTransactionPayable(this.transactions[transactionId]), this.forms.transaction.payable_selected = this.transactions[transactionId].address;
 			return this.forms.transaction;
 		},
 
@@ -1244,7 +1283,9 @@ Vue.component('transactions-table', {
 				payable_search: null,
 				payable_selected: null,
 				recurring: false,
-				schedule: null
+				recurring_amount: null,
+				schedule: null,
+				day: null
 			});
 		},
 
@@ -1252,17 +1293,23 @@ Vue.component('transactions-table', {
 			this.initializeForm();
 		},
 
-		setPayable: function setPayable(type, id, string) {
-			this.forms.transaction.is_rent == false;
-			this.forms.transaction.payable_type = type;
+		setPayable: function setPayable(form, type, id, string) {
+			form.is_rent = false;
+
+			form.payable_type = type;
+
 			if (type == 'user') {
-				this.forms.transaction.payable_selected = 'General';
-				this.forms.transaction.payable_id = TenantSync.landlord;
+				form.payable_selected = 'General';
+
+				form.payable_id = TenantSync.landlord;
+
 				return true;
 			}
+			form.payable_selected = string;
 
-			this.forms.transaction.payable_selected = string;
-			this.forms.transaction.payable_id = id;
+			form.payable_id = id;
+			console.log(form);
+
 			return true;
 		},
 

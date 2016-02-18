@@ -26,7 +26,7 @@ class CreateTransactionRequest extends Request
         return [
             'payable_id' => 'required|numeric',
             'payable_type' => 'required',
-            'date' => 'required|date',
+            //'date' => 'required|date|before:today',
             'amount' => 'required|numeric',
             'description' => 'required',
         ];

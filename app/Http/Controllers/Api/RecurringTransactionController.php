@@ -9,7 +9,7 @@ use TenantSync\Models\RecurringTransaction;
 use TenantSync\Models\Transaction;
 use TenantSync\Mutators\TransactionMutator;
 
-class TransactionController extends Controller
+class RecurringTransactionController extends Controller
 {
 
     public function __construct()
@@ -20,7 +20,7 @@ class TransactionController extends Controller
 
         $this->set = isset($this->input['set']) ? $this->input['set'] : [];
         
-        $this->fromDate = isset($this->input['from']) ? $this->input['from'] : 'January 1 2000';
+        // $this->fromDate = isset($this->input['from']) ? $this->input['from'] : 'January 1 2000';
     }
 
     /**
@@ -30,7 +30,7 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        $transactions = Transaction::getTransactionsForUser($this->user, $this->with, $this->fromDate);
+        $transactions = RecurringTransaction::getTransactionsForUser($this->user, $this->with);
 
         $transactions = TransactionMutator::set($this->set, $transactions);
 
@@ -53,20 +53,10 @@ class TransactionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateTransactionRequest $request)
+    public function store() //CreateRecurringTransactionRequest $request,
     {
-        \DB::transaction(function() {
-            $this->input['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $this->input['date'])));
-
-            $transaction = Transaction::create($this->input);
-
-            if($this->input['recurring']) {
-                $this->input['last_ran'] = $this->input['date'];
-
-                RecurringTransaction::create($this->input);
-            }
-
-            return $transaction;
+        \DB::transaction(function() use ($id) {
+            
         });
     }
 
@@ -99,27 +89,16 @@ class TransactionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CreateTransactionRequest $request, $id)
+    public function update($id) //CreateRecurringTransactionRequest $request,
     {
         \DB::transaction(function() use ($id) {
-            $transaction = Transaction::find($id);
+            $transaction = RecurringTransaction::find($id);
 
-            if(Gate::denies('has-transaction', $transaction))
-            {
-                return abort(403, "That's not yours");
+            if(Gate::denies('has-transaction', $transaction)) {
+                abort(403, 'Thats not yours!');
             }
 
-            $this->input['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $this->input['date'])));
-
-            $transaction->update([
-                'amount' => $this->input['amount'],
-                'description' => $this->input['description'],
-                'date' => $this->input['date'],
-                'payable_type' => $this->input['payable_type'],
-                'payable_id' => $this->input['payable_id']
-            ]);
-
-            return $transaction;
+            $transaction->update($this->input);
         });
     }
 
@@ -131,13 +110,13 @@ class TransactionController extends Controller
      */
     public function destroy($id)
     {
-        $transaction = Transaction::find($id);
+        $transaction = RecurringTransaction::find($id);
 
-        if(Gate::denies('has-transaction', $transaction))
+        if(Gate::denies('has-recurring', $transaction))
         {
             return abort(403, "Thats not yours!");
         }
 
-        return json_encode(Transaction::find($id)->delete());
+        return json_encode(RecurringTransaction::find($id)->delete());
     }
 }

@@ -45,14 +45,22 @@ class MaintenanceRequest extends Model {
 		return $this->belongsTo('TenantSync\Models\Transaction');
 	}
 
-	public function setAppointmentDateAttribute($date)
-	{
-		$this->attributes['appointment_date'] = date('Y-m-d H:i:s', strtotime($date));
-	}
-
 	public function device()
 	{
 		return $this->belongsTo('TenantSync\Models\Device');
+	}
+
+	public function getRequestsForUser($user, $with = [])
+	{
+		if($user->role == 'manager') {
+			return MaintenanceRequest::whereIn('device_id', $user->manager->devices()->keyBy('id')->keys()->toArray())->with($with)->get();
+		}
+		return $user->maintenanceRequests()->with($with)->get();
+	}
+
+	public function setAppointmentDateAttribute($date)
+	{
+		$this->attributes['appointment_date'] = date('Y-m-d H:i:s', strtotime($date));
 	}
 
 	public function cost()

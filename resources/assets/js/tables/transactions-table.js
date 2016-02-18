@@ -56,6 +56,7 @@ Vue.component('transactions-table', {
 
 			forms : {
 				transaction: {},
+				recurringTransaction: {},
 			},
 
 			transactions: [],
@@ -84,14 +85,36 @@ Vue.component('transactions-table', {
 		'modal-hidden': function() {
 			this.refreshForm();
 		},
+
+		'recurring-modal-generated': function(transaction) {
+
+			this.forms.recurringTransaction = new TSForm({
+				id: transaction.id,
+				user_id: transaction.user_id,
+				amount: transaction.amount,
+				description: transaction.description,
+				schedule: transaction.schedule,
+				day: transaction.day,
+				payable_type: this.getTransactionPayable(transaction),
+				payable_id: transaction.payable_id,
+				payable_search: null,
+				payable_selected: transaction.address,
+				last_ran: moment(transaction.last_ran).format(dateString),
+			});
+		},
+
+		'delete-recurring': function(id) {
+			this.deleteRecurringTransaction(id);
+		}
 	},
 
 	methods: {
 
 		fetchTransactions: function() {
 			var data = {
-				set: ['address']
+				set: ['address'],
 			};
+
 			this.$http.get('/api/transactions', data)
 				.success( function(transactions) {
 					_.each(transactions, function(transaction) { transaction.amount = Number(transaction.amount); });
@@ -107,6 +130,25 @@ Vue.component('transactions-table', {
 			this.$http.get('/api/properties', data)
 				.success( function(properties) {
 					this.properties = properties;
+				});
+		},
+
+		submitRecurringTransaction: function() {
+			var that = this;
+
+			TS.patch('/api/transactions/recurring/'+ this.forms.recurringTransaction.id, this.forms.recurringTransaction)
+				.then(function() {
+					swal(
+						'Success!',
+							'Recurring transaction updated successfully!'
+					);
+					that.$dispatch('transactions-updated');
+				})
+				.catch(function() {
+					swal(
+						'Error!',
+							'There was a problem with your input.'
+					);
 				});
 		},
 
@@ -130,9 +172,10 @@ Vue.component('transactions-table', {
 			var that = this;
 			TS.post('/api/transactions', this.forms.transaction)
 				.then( function(transaction){
-					that.fetchTransactions();
 					that.$broadcast('hide-modal');
 					that.refreshForm();
+					that.fetchTransactions();
+					that.$dispatch('transactions-updated');
 				});
 		},
 
@@ -144,6 +187,16 @@ Vue.component('transactions-table', {
 					that.$broadcast('hide-modal');
 					that.refreshForm();
 					that.fetchTransactions();
+					that.$dispatch('transactions-updated');
+				});
+		},
+
+		deleteRecurringTransaction: function(id) {
+			var that = this;
+
+			TS.delete('/api/transactions/recurring/' + id, this.forms.transaction)
+				.then( function() {
+					that.$dispatch('transactions-updated');
 				});
 		},
 
@@ -153,6 +206,7 @@ Vue.component('transactions-table', {
 			TS.delete('/api/transactions/' + id, this.forms.transaction)
 				.then( function() {
 					that.fetchTransactions();
+					that.$dispatch('transactions-updated');
 				});
 		},
 
@@ -180,7 +234,7 @@ Vue.component('transactions-table', {
 		},
 
 		showModal: function() {
-			this.$broadcast('show-modal');
+			this.$broadcast('show-modal', 'transaction-modal');
 		},
 
 		populateForm: function(transactionId) {
@@ -190,9 +244,7 @@ Vue.component('transactions-table', {
 			this.forms.transaction.date = this.transactions[transactionId].date;
 			this.forms.transaction.payable_id = this.transactions[transactionId].payable_id,
 			this.forms.transaction.payable_type = this.getTransactionPayable(this.transactions[transactionId]),
-			this.forms.transaction.payable_selected = this.transactions[transactionId].address,
-			this.forms.transaction.schedule = this.transactions[transactionId].recurring ? this.transactions[transactionId].recurring.schedule : null;
-			this.forms.transaction.recurring = this.transactions[transactionId].recurring ? true : false;
+			this.forms.transaction.payable_selected = this.transactions[transactionId].address;
 			return this.forms.transaction;
 		},
 
@@ -209,7 +261,9 @@ Vue.component('transactions-table', {
 				payable_search: null,
 				payable_selected: null,
 				recurring: false,
+				recurring_amount: null,
 				schedule: null,
+				day: null,
 			});
 		},
 
@@ -217,17 +271,23 @@ Vue.component('transactions-table', {
 			this.initializeForm();
 		},
 
-		setPayable: function(type, id, string) {
-			this.forms.transaction.is_rent == false;
-			this.forms.transaction.payable_type = type;
+		setPayable: function(form, type, id, string) {
+			form.is_rent = false;
+
+			form.payable_type = type;
+
 			if(type == 'user') {
-				this.forms.transaction.payable_selected = 'General';
-				this.forms.transaction.payable_id = TenantSync.landlord;
+				form.payable_selected = 'General';
+
+				form.payable_id = TenantSync.landlord;
+
 				return true;
 			}
+			form.payable_selected = string;
 
-			this.forms.transaction.payable_selected = string;
-			this.forms.transaction.payable_id = id;
+			form.payable_id = id;
+			console.log(form);
+
 			return true;
 		},
 

@@ -15,6 +15,9 @@ Route::get('test', 'HomeController@test');
 
 Route::resource('api/devices', 'Api\DeviceController');
 
+Route::patch('api/transactions/recurring/{id}', 'Api\RecurringTransactionController@update');
+Route::resource('api/transactions/recurring', 'Api\RecurringTransactionController');
+
 Route::patch('api/transactions/{id}', 'Api\TransactionController@update');
 Route::delete('api/transactions/{id}', 'Api\TransactionController@destroy');
 Route::resource('api/transactions', 'Api\TransactionController');

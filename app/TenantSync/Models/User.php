@@ -136,7 +136,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	public function recurringTransactions()
 	{
-		return $this->hasManyThrough('TenantSync\Models\RecurringTransaction', 'TenantSync\Models\Transaction');
+		return $this->hasMany('TenantSync\Models\RecurringTransaction');
 	}
 
 	public function orders()

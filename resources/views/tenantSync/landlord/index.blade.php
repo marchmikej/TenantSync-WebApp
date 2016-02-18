@@ -39,11 +39,11 @@
 		<modal>
 			<div slot="one">
 				<div v-if="showStat.paid_rent">
-					<div v-if="stats.paid_rent < 1">
+					<div v-if="stats.paid_rent == 0">
 						No results found.	
 					</div>
 
-					<div v-if="stats.paid_rent > 0" class="h-md col-sm-12 scrollable">
+					<div v-if="stats.paid_rent != 0" class="h-md col-sm-12 scrollable-y">
 
 						<div class="table-heading row">
 							<div class="col-sm-3">
@@ -59,7 +59,7 @@
 							</div>
 						</div>
 
-						<div class="table-body scrollable table-striped">
+						<div class="table-body table-striped">
 							<div v-for="transaction in paidRentTransactions()" class="table-row row">
 								<div :class="transaction.amount > 0 ? 'text-success' : 'text-danger'" class="col-sm-3">
 									@{{ transaction.amount }}
@@ -79,11 +79,11 @@
 				</div>
 				
 				<div v-if="showStat.deliquent_rent">
-					<div v-if="stats.deliquent_rent < 1">
+					<div v-if="stats.deliquent_rent == 0">
 						No results found.	
 					</div>
 
-					<div v-if="stats.deliquent_rent > 0" class="h-md col-sm-12 scrollable">
+					<div v-if="stats.deliquent_rent != 0" class="h-md col-sm-12 scrollable-y">
 						<div class="table-heading row">
 							<div class="col-sm-6">
 								Address
@@ -94,7 +94,7 @@
 							</div>
 						</div>
 
-						<div class="table-body scrollable table-striped">
+						<div class="table-body table-striped">
 							<div v-for="device in deliquentDevices()" class="table-row row">
 								<div class="col-sm-6">
 									<a :href="'/'+ user().role +'/device/'+ device.id">
@@ -111,11 +111,11 @@
 				</div>
 
 				<div v-if="showStat.vacant_rent">
-					<div v-if="stats.vacant_rent < 1">
+					<div v-if="stats.vacant_rent == 0">
 						No results found.	
 					</div>
 
-					<div v-if="stats.vacant_rent > 0" class="h-md col-sm-12 scrollable">
+					<div v-if="stats.vacant_rent != 0" class="h-md col-sm-12 scrollable-y">
 						<div class="table-heading row">
 							<div class="col-sm-6">
 								Address
@@ -126,7 +126,7 @@
 							</div>
 						</div>
 
-						<div class="table-body scrollable table-striped">
+						<div class="table-body table-striped">
 							<div v-for="bill in vacantRentBills()" class="table-row row">
 								<div class="col-sm-6">
 									<a :href="'/'+ user().role +'/device/'+ rentBill.device_id">
@@ -266,7 +266,7 @@ var vue = new Vue({
 			var transactions = this.paidRentTransactions();
 
 			return _.reduce(transactions, function(initial, transaction) {
-				return initial + Number(transaction.amount);
+				return initial + Number(transaction.amount)  ;
 			}, 0);
 		},
 

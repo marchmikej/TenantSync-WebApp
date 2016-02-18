@@ -1,15 +1,16 @@
 <?php namespace App\Http\Controllers\Api;
 
+use App\Events\DeviceMadeUpdate;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\RentPaymentRequest;
 use Illuminate\Http\Request;
+use TenantSync\Billing\RentPaymentGateway;
+use TenantSync\Landlord\LandlordGateway;
 use TenantSync\Models\Device;
+use TenantSync\Models\MaintenanceRequest;
 use TenantSync\Models\Message;
 use TenantSync\Models\RentPayment;
 use TenantSync\Models\Transaction;
-use App\Http\Controllers\Controller;
-use App\Events\DeviceMadeUpdate;
-use TenantSync\Landlord\LandlordGateway;
-use TenantSync\Billing\RentPaymentGateway;
-use TenantSync\Models\MaintenanceRequest;
 
 class DeviceApiController extends Controller {
 

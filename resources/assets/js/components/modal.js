@@ -1,22 +1,19 @@
 Vue.component('modal', {
-	props: ['title'],
+	props: ['title', 'id'],
 
-	template: '<div v-if="visible" class="vue-modal row">\
+	template: '<div><div v-if="visible" class="vue-modal row">\
 	<div id="modal" class="modal-dialog">\
-		<div class="modal-content col-sm-12 p-b">\
+		<div class="modal-content col-sm-12 p-b m-b">\
 			<div class="modal-header row">\
 	        	<button @click="hide" class="col-sm-1 icon icon-cross btn btn-clear" :class="{\'col-sm-offset-11\' : !title}"></button>\
 	        	<h4 v-if="title" class="modal-title">{{ title}}</h4>\
 	      	</div>\
 		  	<div class="modal-body">\
-		  		<slot name="one"></slot>\
-		  		<slot name="two"></slot>\
-		  		<slot name="three"></slot>\
-		  		<slot name="four"></slot>\
+		  		<slot></slot>\
 		  	</div>\
 		</div><!-- /.modal-content -->\
 	</div><!-- /.modal-dialog -->\
-</div>',
+</div></div>',
 
 	data: function() {
 		return {
@@ -25,8 +22,10 @@ Vue.component('modal', {
 	},
 
 	events: {
-		'show-modal' : function() {
-			this.show();
+		'show-modal' : function(id) {
+			if(id == this.id) {
+				this.show();
+			}
 		},
 
 		'hide-modal': function() {

@@ -24,7 +24,6 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(GateContract $gate)
     {
         $this->registerPolicies($gate);
-        //
 
         $gate->define('owned-by-user', function($user, $model) 
         {   
@@ -34,6 +33,11 @@ class AuthServiceProvider extends ServiceProvider
         $gate->define('has-transaction', function($user, $transaction) 
         {   
             return $user->hasTransaction($transaction);
+        });
+
+        $gate->define('has-recurring', function($user, $transaction) 
+        {   
+            return $user->hasRecurring($transaction);
         });
 
         $gate->define('has-property', function($user, $property) 

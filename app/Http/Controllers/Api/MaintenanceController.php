@@ -2,24 +2,31 @@
 
 namespace App\Http\Controllers\Api;
 
-use Gate;
 use App\Events\Event;
 use App\Events\LandlordRespondedToMaintenance;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateMaintenanceRequest;
+use Gate;
+use TenantSync\Models\MaintenanceRequest;
 use TenantSync\Models\Transaction;
 
 class MaintenanceController extends Controller {
 
 	public function __construct()
-	{
-		parent::__construct();
-	}
+    {
+        parent::__construct();
 
-	public function index()
-	{
-		// return all requests
-	}
+        $this->with = isset($this->input['with']) ? $this->input['with'] : [];
+        
+        $this->set = isset($this->input['set']) ? $this->input['set'] : [];
+    }
+
+    public function index()
+    {
+        $devices = MaintenanceRequest::getRequestsForUser($this->user, $this->with);
+
+        return $devices;
+    }
 
 	/**
 	 * Update the specified resource in storage.
@@ -49,10 +56,16 @@ class MaintenanceController extends Controller {
 		}
 
 		$maintenanceRequest->status = 'awaiting_approval';
-		
+		var_export(! count($maintenanceRequest->transaction));die();
 		if(! count($maintenanceRequest->transaction))
 		{
-			$transaction = Transaction::create(['user_id' => $maintenanceRequest->user_id, 'description' => 'Maintenance Request '.$maintenanceRequest->id, 'payable_type' => 'device', 'payable_id' => $maintenanceRequest->device->id, 'date' => date('Y-m-d', time())]);
+			$transaction = Transaction::create([
+				'user_id' => $maintenanceRequest->user_id, 
+				'description' => 
+				'Maintenance Request '.$maintenanceRequest->id, 
+				'payable_type' => 'property', 
+				'payable_id' => $maintenanceRequest->device->property->id, 
+				'date' => date('Y-m-d', time())]);
 			$maintenanceRequest->update(['transaction_id' => $transaction->id]);
 		}
 
@@ -65,5 +78,17 @@ class MaintenanceController extends Controller {
 		$maintenanceRequest->save();
 
 		return 'success';
+	}
+
+	public function show($id)
+	{
+		$maintenanceRequest = MaintenanceRequest::with($this->with)->find($id);
+
+		if(Gate::denies('has-device', $maintenanceRequest->device))
+		{
+			return abort(403, "Thats not yours!");
+		}
+
+		return $maintenanceRequest;
 	}
 }

@@ -73,7 +73,7 @@ class Manager extends Model {
 			return $device->id;
 		}, $this->devices()->toArray());
 
-		return $transactions = \DB::table('transactions')
+		return collect(\DB::table('transactions')
 			->where(function($queryContainer) use ($devices) {
 				$queryContainer
 				->where(function($query) {
@@ -85,7 +85,28 @@ class Manager extends Model {
 						->whereIn('payable_id', $devices);
 				});
 			})
-			->get();
+			->get());
+	}
+
+	public function recurringTransactions()
+	{
+		$devices = array_map(function($device) {
+			return $device->id;
+		}, $this->devices()->toArray());
+
+		return collect(\DB::table('recurring_transactions')
+			->where(function($queryContainer) use ($devices) {
+				$queryContainer
+				->where(function($query) {
+					$query->where(['payable_type' => 'property'])
+						->whereIn('payable_id', $this->properties->keyBy('id')->keys()->toArray());
+				})
+				->orWhere(function($query) use ($devices) {
+					$query->where(['payable_type' => 'device'])
+						->whereIn('payable_id', $devices);
+				});
+			})
+			->get());
 	}
 
 	public function rentBills()
