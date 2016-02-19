@@ -155,7 +155,7 @@ class DeviceApiController extends Controller {
 	{
 		if($this->deviceIsValid($this->device))
 		{
-			$messages = Message::where(['device_id' => $this->device->id])->orderBy('created_at','asc')->get(['body', 'is_from_device', 'created_at']);
+			$messages = Message::where(['device_id' => $this->device->id])->orderBy('created_at','asc')->get(['body', 'from_device', 'created_at']);
 			return response()->json($messages);
 		}
 		else
