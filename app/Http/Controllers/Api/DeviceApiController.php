@@ -174,7 +174,7 @@ class DeviceApiController extends Controller {
                 ->where('update_key', '=', $this->input['update_key'])
                 ->count();
             if($messageCount == 0) {
-				if(Message::create(['user_id' => $this->device->owner->id, 'device_id' => $this->device->id, 'body' => $this->input['message'], 'update_key' => $this->input['update_key'], 'is_from_device' => 1]))
+				if(Message::create(['user_id' => $this->device->owner->id, 'device_id' => $this->device->id, 'body' => $this->input['message'], 'update_key' => $this->input['update_key'], 'from_device' => 1]))
 				{
 					\Event::fire(new DeviceMadeUpdate($this->device->owner->id, $this->device->id, $this->input['message'],"landlord/device"));
 					return 'success';
