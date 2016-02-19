@@ -203,7 +203,7 @@ class DeviceApiController extends Controller {
 
 	public function rentStatus()
 	{
-		return response()->json(['rent_amount' => $this->device->rent_amount, 'balance_due' => $this->device->balance_due]);
+		return response()->json(['rent_amount' => $this->device->rent_amount, 'balance_due' => $this->device->balance_due()]);
 	}
 
 	public function payRent(RentPaymentRequest $request)
@@ -218,7 +218,7 @@ class DeviceApiController extends Controller {
 				if($response->Result == "Approved")
 				{
 					$payment = Transaction::create(['amount' => $this->input['amount'], 'user_id' => $this->device->owner->id, 'payable_type' => 'device', 'payable_id' => $this->device->id, 'description' => 'Rent Payment', 'date' => date('Y-m-d', time()), 'reference_number' => $response->RefNum]);
-					(new RentPaymentGateway($this->device))->processPayment($payment->amount, $payment);
+					//(new RentPaymentGateway($this->device))->processPayment($payment->amount, $payment);
 				}
 				return json_encode(['RefNum' => $response->RefNum, 'Error' => $response->Error, 'Result' => $response->Result]);
 			}
