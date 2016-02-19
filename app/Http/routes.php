@@ -13,6 +13,7 @@
 Route::get('test', 'HomeController@test');
 
 
+Route::resource('api/devices/{id}/messages', 'Api\MessageController@getMessagesForDevice');
 Route::resource('api/devices', 'Api\DeviceController');
 
 Route::patch('api/transactions/recurring/{id}', 'Api\RecurringTransactionController@update');
@@ -32,6 +33,7 @@ Route::resource('api/managers', 'Api\ManagerController');
 
 Route::resource('api/rent-bills', 'Api\RentBillController');
 
+Route::delete('api/messages', 'Api\MessageController@destroy');
 Route::resource('api/messages', 'Api\MessageController');
 
 Route::patch('api/maintenance/{id}', 'Api\MaintenanceController@update');
@@ -39,16 +41,16 @@ Route::resource('api/maintenance', 'Api\MaintenanceController');
 
 
 
-Route::get('api/maintenance', 'Api\DeviceApiController@allRequests');
-Route::post('api/maintenance/{id?}', 'Api\DeviceApiController@storeRequest');
-Route::get('api/device', 'Api\DeviceApiController@showDevice');
-Route::post('api/device', 'Api\DeviceApiController@UpdateRoutingId');
-Route::get('api/message', 'Api\DeviceApiController@getMessages');
-Route::post('api/message', 'Api\DeviceApiController@createMessage');
-Route::post('api/pay', 'Api\DeviceApiController@payRent');
-Route::post('api/rent-status', 'Api\DeviceApiController@rentStatus');
-Route::post('api/receivingnotifications', 'Api\PhoneAppController@receivingNotifications');
-Route::post('api/loginapp', 'Api\PhoneAppController@isUser');
+Route::get('device-api/maintenance', 'Api\DeviceApiController@allRequests');
+Route::post('device-api/maintenance/{id?}', 'Api\DeviceApiController@storeRequest');
+Route::get('device-api/device', 'Api\DeviceApiController@showDevice');
+Route::post('device-api/device', 'Api\DeviceApiController@UpdateRoutingId');
+Route::get('device-api/message', 'Api\DeviceApiController@getMessages');
+Route::post('device-api/message', 'Api\DeviceApiController@createMessage');
+Route::post('device-api/pay', 'Api\DeviceApiController@payRent');
+Route::get('device-api/rent-status', 'Api\DeviceApiController@rentStatus');
+Route::post('device-api/receivingnotifications', 'Api\PhoneAppController@receivingNotifications');
+Route::post('device-api/loginapp', 'Api\PhoneAppController@isUser');
 
 Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index');

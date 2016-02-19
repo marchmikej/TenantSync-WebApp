@@ -22,9 +22,150 @@ require('./tables/transactions-table.js');
 require('./components/modal.js');
 
 // Get the Stat components
-require('./components/ytd-stats.js');
+require('./components/portfolio-stats.js');
+require('./components/accounting-stats.js');
+require('./components/recent-maintenance.js');
+require('./components/recent-messages.js');
 
-},{"./components/modal.js":2,"./components/ytd-stats.js":3,"./forms/bootstrap.js":4,"./forms/transaction-form.js":9,"./tables/devices-table.js":10,"./tables/most-expensive-property-table.js":11,"./tables/portfolio-table.js":12,"./tables/property-manager-table.js":13,"./tables/table-headers.js":14,"./tables/transactions-table.js":15,"./vue-helpers.js":16}],2:[function(require,module,exports){
+},{"./components/accounting-stats.js":2,"./components/modal.js":3,"./components/portfolio-stats.js":4,"./components/recent-maintenance.js":5,"./components/recent-messages.js":6,"./forms/bootstrap.js":7,"./forms/transaction-form.js":12,"./tables/devices-table.js":13,"./tables/most-expensive-property-table.js":14,"./tables/portfolio-table.js":15,"./tables/property-manager-table.js":16,"./tables/table-headers.js":17,"./tables/transactions-table.js":18,"./vue-helpers.js":19}],2:[function(require,module,exports){
+'use strict';
+
+Vue.component('accounting-stats', {
+
+	data: function data() {
+		return {
+			showStat: {
+				net_income: false,
+				expenses: false,
+				recurring: false,
+				revenue: false
+			},
+
+			forms: {
+				recurringTransaction: {}
+			},
+
+			transactions: [],
+
+			recurringTransactions: []
+		};
+	},
+
+	ready: function ready() {
+		this.fetchTransactions();
+		this.fetchRecurringTransactions();
+	},
+
+	events: {
+		'modal-hidden': function modalHidden() {
+			this.hideStats();
+		},
+
+		'transactions-updated': function transactionsUpdated() {
+			this.fetchTransactions();
+			this.fetchRecurringTransactions();
+		}
+	},
+
+	computed: {
+		stats: function stats() {
+			return {
+				net_income: this.netIncome(),
+				expenses: this.expenses(),
+				recurring: this.recurring(),
+				revenue: this.revenue()
+			};
+		}
+	},
+
+	methods: {
+		fetchTransactions: function fetchTransactions() {
+			var data = {
+				from: '-1 month',
+				set: 'address'
+			};
+
+			this.$http.get('/api/transactions', data).success(function (transactions) {
+				this.transactions = transactions;
+			});
+		},
+
+		fetchRecurringTransactions: function fetchRecurringTransactions() {
+			var data = {
+				set: ['address']
+			};
+
+			this.$http.get('/api/transactions/recurring', data).success(function (recurringTransactions) {
+				this.recurringTransactions = recurringTransactions;
+			});
+		},
+
+		toggleStat: function toggleStat(stat) {
+			this.showStat[stat] = !this.showStat[stat];
+
+			this.$dispatch('show-modal', 'stat-modal');
+		},
+
+		hideStats: function hideStats() {
+			for (var i = 0; i < _.size(this.showStat); i++) {
+				var key = Object.keys(this.showStat)[i];
+
+				this.showStat[key] = false;
+			}
+		},
+
+		generateRecurringModal: function generateRecurringModal(id) {
+			this.$dispatch('recurring-modal-generated', _.find(this.recurringTransactions, { id: id }));
+			this.$dispatch('show-modal', 'recurring-modal');
+		},
+
+		deleteRecurringTransaction: function deleteRecurringTransaction(id) {
+			this.$dispatch('delete-recurring', id);
+		},
+
+		netIncome: function netIncome() {
+			return _.reduce(this.transactions, function (initial, transaction) {
+				return initial + Number(transaction.amount);
+			}, 0);
+		},
+
+		expenseTransactions: function expenseTransactions() {
+			return _.filter(this.transactions, function (transaction) {
+				return Number(transaction.amount) < 0;
+			});
+		},
+
+		expenses: function expenses() {
+			var transactions = this.expenseTransactions();
+
+			return _.reduce(transactions, function (initial, transaction) {
+				return initial + Number(transaction.amount);
+			}, 0);
+		},
+
+		recurring: function recurring() {
+			return _.reduce(this.recurringTransactions, function (initial, transaction) {
+				return initial + Number(transaction.amount);
+			}, 0);
+		},
+
+		revenueTransactions: function revenueTransactions() {
+			return _.filter(this.transactions, function (transaction) {
+				return Number(transaction.amount) > 0;
+			});
+		},
+
+		revenue: function revenue() {
+			var transactions = this.revenueTransactions();
+
+			return _.reduce(transactions, function (initial, transaction) {
+				return initial + Number(transaction.amount);
+			}, 0);
+		}
+	}
+});
+
+},{}],3:[function(require,module,exports){
 'use strict';
 
 Vue.component('modal', {
@@ -79,10 +220,10 @@ Vue.component('modal', {
 
 });
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 'use strict';
 
-Vue.component('ytd-stats', {
+Vue.component('portfolio-stats', {
 
 	data: function data() {
 		return {
@@ -186,7 +327,7 @@ Vue.component('ytd-stats', {
 
 		paidRentTransactions: function paidRentTransactions() {
 			return _.filter(this.transactions, function (transaction) {
-				var from = Number(moment().subtract(1, 'month').format('X'));
+				var from = Number(moment().subtract(1, 'year').format('X'));
 
 				var transactionDate = Number(moment(transaction.date).format('X'));
 
@@ -264,7 +405,180 @@ Vue.component('ytd-stats', {
 	}
 });
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
+'use strict';
+
+Vue.component('recent-maintenance', {
+
+	data: function data() {
+		return {
+
+			maintenanceRequests: [],
+
+			forms: {
+				message: new TSForm({
+					device_id: [],
+					body: '',
+					search: null
+				})
+			}
+		};
+	},
+
+	ready: function ready() {
+		this.fetchMaintenance();
+	},
+
+	methods: {
+		fetchMaintenance: function fetchMaintenance() {
+			var data = {
+				'with': ['device'],
+				limit: 5
+			};
+
+			this.$http.get('/api/maintenance/', data).success(function (maintenance) {
+				this.maintenanceRequests = maintenance;
+			});
+		}
+	}
+});
+
+},{}],6:[function(require,module,exports){
+'use strict';
+
+Vue.component('recent-messages', {
+
+	data: function data() {
+		return {
+			messages: [],
+
+			properties: [],
+
+			numeral: window.numeral,
+
+			forms: {
+				message: new TSForm({
+					device_id: [],
+					body: '',
+					search: null
+				})
+			}
+		};
+	},
+
+	ready: function ready() {
+		this.fetchMessages();
+		this.fetchProperties();
+	},
+
+	events: {
+		'modal-hidden': function modalHidden() {
+			this.forms.message.device_id = [], this.forms.message.body = '', this.forms.message.search = null;
+		}
+	},
+
+	methods: {
+
+		fetchMessages: function fetchMessages() {
+			var data = {
+				limit: 5,
+				'with': ['device']
+			};
+
+			this.$http.get('/api/messages', data).success(function (messages) {
+				this.messages = messages;
+			});
+		},
+
+		fetchProperties: function fetchProperties() {
+			var data = {
+				'with': ['devices']
+			};
+
+			this.$http.get('/api/properties', data).success(function (properties) {
+				this.properties = properties;
+			});
+		},
+
+		newMessage: function newMessage() {
+			this.$broadcast('show-modal', 'message-modal');
+		},
+
+		sendMessage: function sendMessage() {
+			TS.post('/api/messages', this.forms.message).then((function (response) {
+				swal('Success!', 'Your message has been sent');
+				this.$broadcast('hide-modal');
+			}).bind(this));
+		},
+
+		toggleAllDevices: function toggleAllDevices(event) {
+			if (event.target.checked) {
+				$('[data-name^=property').each(function (index, element) {
+
+					if (!element.checked) {
+						element.click();
+					}
+
+					return true;
+				});
+
+				return true;
+			}
+
+			$('#message-form input[type="checkbox"]').each((function (index, element) {
+				this.removeDeviceFromMessage(element);
+			}).bind(this));
+		},
+
+		toggleDevicesInProperty: function toggleDevicesInProperty(event) {
+			var checkbox = event.target;
+
+			var selector = checkbox.parentElement.parentElement;
+
+			$(selector).find(':checkbox').each((function (index, element) {
+				if (element.dataset.name == event.target.dataset.name) {
+					return true;
+				}
+
+				if (event.target.checked === true) {
+					if (!element.checked) {
+						this.addDeviceToMessage(element);
+					}
+
+					return true;
+				}
+
+				this.removeDeviceFromMessage(element);
+			}).bind(this));
+		},
+
+		toggleDeviceForMessage: function toggleDeviceForMessage(event) {
+			var element = event.target;
+
+			if (element.checked) {
+				this.addDeviceToMessage(element);
+
+				return true;
+			}
+
+			this.removeDeviceFromMessage(element);
+		},
+
+		addDeviceToMessage: function addDeviceToMessage(element) {
+			this.forms.message.device_id.push(Number(element.dataset.id));
+
+			return element.checked = true;
+		},
+
+		removeDeviceFromMessage: function removeDeviceFromMessage(element) {
+			this.forms.message.device_id.$remove(Number(element.dataset.id));
+
+			element.checked = false;
+		}
+	}
+});
+
+},{}],7:[function(require,module,exports){
 /**
  * Initialize the Spark form extension points.
  */
@@ -296,7 +610,7 @@ $.extend(TS, require('./http'));
  */
 require('./components');
 
-},{"./components":5,"./errors":6,"./http":7,"./instance":8}],5:[function(require,module,exports){
+},{"./components":8,"./errors":9,"./http":10,"./instance":11}],8:[function(require,module,exports){
 /**
  * Text field input component for Bootstrap.
  */
@@ -418,7 +732,7 @@ Vue.component('ts-textarea', {
 </div></div>'
 });
 
-},{}],6:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /**
  * Spark form error collection class.
  */
@@ -483,7 +797,7 @@ window.TSFormErrors = function () {
     };
 };
 
-},{}],7:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -529,7 +843,7 @@ module.exports = {
     }
 };
 
-},{}],8:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /**
  * SparkForm helper class. Used to set common properties on all forms.
  */
@@ -556,7 +870,7 @@ window.TSForm = function (data) {
     };
 };
 
-},{}],9:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 Vue.component('transaction-form', {
@@ -657,7 +971,7 @@ Vue.component('transaction-form', {
 
 });
 
-},{"./components.js":5}],10:[function(require,module,exports){
+},{"./components.js":8}],13:[function(require,module,exports){
 'use strict';
 
 Vue.component('devices-table', {
@@ -746,7 +1060,7 @@ Vue.component('devices-table', {
 
 });
 
-},{}],11:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 Vue.component('most-expensive-property-table', {
@@ -807,7 +1121,7 @@ Vue.component('most-expensive-property-table', {
 
 });
 
-},{}],12:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 Vue.component('portfolio-table', {
@@ -890,7 +1204,7 @@ Vue.component('portfolio-table', {
 	}
 });
 
-},{}],13:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 Vue.component('property-manager-table', {
@@ -987,7 +1301,7 @@ Vue.component('property-manager-table', {
 
 });
 
-},{}],14:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 Vue.component('table-headers', {
@@ -1043,15 +1357,11 @@ Vue.component('table-headers', {
 	}
 });
 
-},{}],15:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 Vue.component('transactions-table', {
 	props: ['userRole'],
-
-	// components: {
-	// 	'table-headers': require('./table-headers'),
-	// },
 
 	data: function data() {
 		return {
@@ -1128,7 +1438,6 @@ Vue.component('transactions-table', {
 		},
 
 		'recurring-modal-generated': function recurringModalGenerated(transaction) {
-
 			this.forms.recurringTransaction = new TSForm({
 				id: transaction.id,
 				user_id: transaction.user_id,
@@ -1222,7 +1531,7 @@ Vue.component('transactions-table', {
 		deleteRecurringTransaction: function deleteRecurringTransaction(id) {
 			var that = this;
 
-			TS['delete']('/api/transactions/recurring/' + id, this.forms.transaction).then(function () {
+			this.$http['delete']('/api/transactions/recurring/' + id).success(function () {
 				that.$dispatch('transactions-updated');
 			});
 		},
@@ -1284,7 +1593,7 @@ Vue.component('transactions-table', {
 				payable_selected: null,
 				recurring: false,
 				recurring_amount: null,
-				schedule: null,
+				schedule: 'day',
 				day: null
 			});
 		},
@@ -1330,7 +1639,7 @@ Vue.component('transactions-table', {
 
 });
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 Vue.config.debug = true;
@@ -1356,17 +1665,23 @@ Vue.mixin({
 			return strings.join(' ');
 		},
 
-		confirm: function confirm(action, object, id) {
+		confirm: function confirm(options) {
+			var method = options.method;
+
+			var id = options.id;
+
+			// var data = options.data;
+
 			swal({
 				title: 'Just Checking',
-				text: 'Are you sure you want to ' + action + ' this ' + object.toLowerCase() + '?',
+				text: 'Are you sure you want to do this?',
 				type: 'warning',
 				showCancelButton: true,
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#d33',
 				confirmButtonText: 'Yes',
 				closeOnConfirm: true }, (function (confirmed) {
-				return confirmed ? this[action + object](id) : false;
+				return confirmed ? this[method](id) : false;
 			}).bind(this));
 		},
 

@@ -117,4 +117,12 @@ class Device extends Model {
 	{
 		return $this->property->address . ', ' . $this->location;
 	}
+
+	public function balance()
+	{
+		$rentBills = array_sum($this->rentBills->pluck('bill_amount')->toArray());
+		$transactions = array_sum($this->transactions->pluck('amount')->toArray());
+
+		return $rentBills - $transactions;
+	}
 }

@@ -50,12 +50,15 @@ class MaintenanceRequest extends Model {
 		return $this->belongsTo('TenantSync\Models\Device');
 	}
 
-	public function getRequestsForUser($user, $with = [])
+	public static function getRequestsForUser($user, $options = [])
 	{
 		if($user->role == 'manager') {
-			return MaintenanceRequest::whereIn('device_id', $user->manager->devices()->keyBy('id')->keys()->toArray())->with($with)->get();
+			return MaintenanceRequest::whereIn('device_id', $user->manager->devices()->keyBy('id')->keys()->toArray())
+				->with($options['with'])
+				->limit($options['limit'])
+				->get();
 		}
-		return $user->maintenanceRequests()->with($with)->get();
+		return $user->maintenanceRequests()->with($options['with'])->limit($options['limit'])->get();
 	}
 
 	public function setAppointmentDateAttribute($date)

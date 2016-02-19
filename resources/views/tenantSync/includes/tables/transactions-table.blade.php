@@ -19,8 +19,8 @@
 						<div class="col-sm-6">@{{ transaction.description }}</div>
 						<div class="col-sm-1">@{{ (transaction.date.substring(5) + '/' + transaction.date.substring(2, 4)).replace('-', '/') }}</div>
 						<div class="col-sm-1">
-							<button @click=" generateModal( transaction.id )" class="btn btn-clear p-a-0"><span class="text-primary icon icon-edit"></span></button>
-							<button @click=" confirm('delete', 'Transaction', transaction.id )" class="btn btn-clear p-y-0 p-r-0"><span class="text-danger icon icon-cross"></span></button>
+							<button @click="generateModal( transaction.id )" class="btn btn-clear p-a-0"><span class="text-primary icon icon-edit"></span></button>
+							<button @click="confirm({method:'deleteTransaction', id: transaction.id})" class="btn btn-clear p-y-0 p-r-0"><span class="text-danger icon icon-cross"></span></button>
 						</div>
 					</div>
 				</div>

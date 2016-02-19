@@ -25,4 +25,16 @@ class Message extends Model {
 		return $this->belongsTo('TenantSync\Models\Device');
 	}
 
+	public static function getMessagesForUser($user, $options = [])
+	{
+		if ($user->role == 'manager') {
+			$devices = array_map(function($device) {
+				return $device->id;
+			}, $user->manager->devices()->pluck('id')->toArray());
+			return Message::whereIn('device_id', $devices)->with($options['with'])->limit($options['limit'])->get();
+		}
+
+		return $user->messages()->with($options['with'])->limit($options['limit'])->get();
+	}
+
 }

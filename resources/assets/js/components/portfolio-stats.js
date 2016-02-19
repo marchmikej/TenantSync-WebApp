@@ -1,4 +1,4 @@
-Vue.component('ytd-stats', {
+Vue.component('portfolio-stats', {
 
 	data: function() {
 		return {
@@ -105,7 +105,7 @@ Vue.component('ytd-stats', {
 
 		paidRentTransactions: function() {
 			return _.filter(this.transactions, function(transaction) {
-				var from = Number(moment().subtract(1, 'month').format('X'));
+				var from = Number(moment().subtract(1, 'year').format('X'));
 
 				var transactionDate = Number(moment(transaction.date).format('X'));
 

@@ -23,10 +23,16 @@ Vue.mixin({
 			return strings.join(' ');
 		},
 
-		confirm: function(action, object, id) {
+		confirm: function(options) {
+			var method = options.method;
+			
+			var id = options.id;
+
+			// var data = options.data;
+			
 			swal({   
 				title: 'Just Checking',   
-				text: 'Are you sure you want to '+ action +' this '+ object.toLowerCase() +'?',   
+				text: 'Are you sure you want to do this?',   
 				type: 'warning',   
 				showCancelButton: true,   
 				confirmButtonColor: '#3085d6',   
@@ -34,7 +40,7 @@ Vue.mixin({
 				confirmButtonText: 'Yes',   
 				closeOnConfirm: true }, 
 				function(confirmed) { 
-					return confirmed ? this[action + object](id) : false;
+					return confirmed ? this[method](id) : false;
 				}.bind(this));
 		},
 

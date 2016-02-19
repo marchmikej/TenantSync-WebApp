@@ -19,11 +19,13 @@ class MaintenanceController extends Controller {
         $this->with = isset($this->input['with']) ? $this->input['with'] : [];
         
         $this->set = isset($this->input['set']) ? $this->input['set'] : [];
+        
+        $this->limit = isset($this->input['limit']) ? $this->input['limit'] : null;
     }
 
     public function index()
     {
-        $devices = MaintenanceRequest::getRequestsForUser($this->user, $this->with);
+        $devices = MaintenanceRequest::getRequestsForUser($this->user, ['with' => $this->with, 'limit' => $this->limit]);
 
         return $devices;
     }

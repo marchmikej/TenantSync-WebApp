@@ -203,27 +203,44 @@ class DeviceApiController extends Controller {
 
 	public function rentStatus()
 	{
-		return response()->json(['rent_amount' => $this->device->rent_amount, 'balance_due' => $this->device->balance_due()]);
+		return response()->json(['rent_amount' => $this->device->rent_amount, 'balance_due' => $this->device->balance()]);
 	}
 
 	public function payRent(RentPaymentRequest $request)
 	{ 
-		\DB::transaction(function() {
-			//card number, expiration, card_holder, cvv2, payment_type
-			if($this->deviceIsValid($this->device))
-			{
-				$this->input['amount'] = $this->input['payment_amount'];
-				$response = $this->device->charge($this->input['amount'], $this->input);
-				// var_export($response);die();
-				if($response->Result == "Approved")
-				{
-					$payment = Transaction::create(['amount' => $this->input['amount'], 'user_id' => $this->device->owner->id, 'payable_type' => 'device', 'payable_id' => $this->device->id, 'description' => 'Rent Payment', 'date' => date('Y-m-d', time()), 'reference_number' => $response->RefNum]);
-					//(new RentPaymentGateway($this->device))->processPayment($payment->amount, $payment);
-				}
-				return json_encode(['RefNum' => $response->RefNum, 'Error' => $response->Error, 'Result' => $response->Result]);
+		// card number, expiration, card_holder, cvv2, payment_type
+		if($this->deviceIsValid($this->device))
+		{
+			$this->input['amount'] = $this->input['payment_amount'];
+
+			\DB::beginTransaction();
+
+			$payment = Transaction::create([
+				'amount' => $this->input['amount'], 
+				'user_id' => $this->device->owner->id, 
+				'payable_type' => 'device', 
+				'payable_id' => $this->device->id, 
+				'description' => 'Rent Payment', 
+				'date' => date('Y-m-d', time()), 
+			]);
+			// (new RentPaymentGateway($this->device))->processPayment($payment->amount, $payment);
+		
+			$response = $this->device->charge($this->input['amount'], $this->input);
+			
+			if($response->Result == "Approved") {
+				$payment->reference_number = $response->RefNum;
+				
+				$payment->save();
+
+				\DB::commit();
 			}
-			return json_encode(['errors', ['The device is not valid...']]);
-		});
+
+			\DB::rollback();
+
+			return json_encode(['RefNum' => $response->RefNum, 'Error' => $response->Error, 'Result' => $response->Result]);
+		}
+
+		return json_encode(['errors', ['The device is not valid...']]);
 	}
 
 }  

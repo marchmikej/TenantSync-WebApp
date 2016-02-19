@@ -18,7 +18,9 @@ class MessageController extends Controller
 
         $this->with = isset($this->input['with']) ? $this->input['with'] : [];
         
-        $this->set = isset($this->input['set']) ? $this->input['set'] : [];
+        // $this->set = isset($this->input['set']) ? $this->input['set'] : [];
+        
+        $this->limit = isset($this->input['limit']) ? $this->input['limit'] : null;
     }
 
     /**
@@ -28,11 +30,22 @@ class MessageController extends Controller
      */
     public function index()
     {
-        $messages = Message::getMessagesForUser($this->user, $this->with);
+        $messages = Message::getMessagesForUser($this->user, ['with' => $this->with, 'limit' => $this->limit]);
 
-        $messages = Message::set($this->set, $messages);
+        // $messages = MessageMutator::set($this->set, $messages);
 
         return $messages;
+    }
+
+    public function getMessagesForDevice($id)
+    {
+        $device = Device::find($id);
+
+        if(Gate::denies('has-device', $device)) {
+            abort(403, 'That\'s not yours!');
+        }
+
+        return $device->messages;
     }
 
     /**
@@ -53,22 +66,27 @@ class MessageController extends Controller
      */
     public function store()
     {
-        $deviceIds = $this->input['device_ids'];
+        $deviceId = $this->input['device_id'];
+
+        $deviceIds = is_array($deviceId) ? $deviceId : array($deviceId);
 
         $devices = Device::whereIn('id', $deviceIds)->get();
+
+        $messages = [];
 
         foreach ($devices as $device) {
             if(! Gate::allows('has-device', $device))
             {
                 continue;
             } 
+            
 
-            Message::create(['user_id' => $this->user->id,'device_id' => $device->id,'body' => $this->input['message'],]);
+            $messages[] = Message::create(['user_id' => $this->user->id,'device_id' => $device->id,'body' => $this->input['body'],]);
 
-            \Event::push('MessageCreatedByUser', $device->id, $this->input['message']);
+            \Event::push('MessageCreatedByUser', $device->id, $this->input['body']);
         }
 
-        return 'success';
+        return $messages;
     }
 
     /**
@@ -113,6 +131,14 @@ class MessageController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $message = Message::find($id);
+
+        if(Gate::denies('has-device', $message->device)) {
+            abort(403, 'That\'s not yours');
+        }
+
+        $message->delete();
+
+        return 'success';
     }
 }

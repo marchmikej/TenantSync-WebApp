@@ -1,10 +1,6 @@
 Vue.component('transactions-table', {
 	props: ['userRole'],
 
-	// components: {
-	// 	'table-headers': require('./table-headers'),
-	// },
-
 	data: function() {
 		return {
 			sortKey: 'date',
@@ -87,7 +83,6 @@ Vue.component('transactions-table', {
 		},
 
 		'recurring-modal-generated': function(transaction) {
-
 			this.forms.recurringTransaction = new TSForm({
 				id: transaction.id,
 				user_id: transaction.user_id,
@@ -194,8 +189,8 @@ Vue.component('transactions-table', {
 		deleteRecurringTransaction: function(id) {
 			var that = this;
 
-			TS.delete('/api/transactions/recurring/' + id, this.forms.transaction)
-				.then( function() {
+			this.$http.delete('/api/transactions/recurring/' + id)
+				.success( function() {
 					that.$dispatch('transactions-updated');
 				});
 		},
@@ -262,7 +257,7 @@ Vue.component('transactions-table', {
 				payable_selected: null,
 				recurring: false,
 				recurring_amount: null,
-				schedule: null,
+				schedule: 'day',
 				day: null,
 			});
 		},

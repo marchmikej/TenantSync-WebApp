@@ -19,6 +19,9 @@ require('./tables/transactions-table.js');
 require('./components/modal.js');
 
 // Get the Stat components
-require('./components/ytd-stats.js');
+require('./components/portfolio-stats.js');
+require('./components/accounting-stats.js');
+require('./components/recent-maintenance.js');
+require('./components/recent-messages.js');
 
 

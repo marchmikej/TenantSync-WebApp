@@ -26,6 +26,7 @@ class DeviceController extends Controller {
 	public function index()
 	{
 		$devices = Device::where(['user_id' => $this->user->id])->get();
+
 		return view('TenantSync::landlord/device/index', compact('devices'));
 	}
 
@@ -94,6 +95,12 @@ class DeviceController extends Controller {
 		{
 			return abort(403, "Thats not yours!");
 		}
+
+		\JavaScript::put([
+	        'device' => $device,
+	        'deviceMessages' => $device->messages,
+	    ]);
+
 		return view('TenantSync::landlord/device/show', compact('device'));
 	}
 

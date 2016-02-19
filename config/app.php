@@ -151,6 +151,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\ViewServiceProvider::class,
         //Barryvdh\Debugbar\ServiceProvider::class,
+        Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
 
     ],
 

@@ -51,23 +51,34 @@
 					<div class="row card">
 						<div class="col-sm-12 p-x">
 							<h4 class="card-header">Chat</h4>
-							<div class="row h-sm scrollable" id="chat">
-								@foreach( $device->messages as $message)
-									
-											<p class="well {{ ($message->is_from_device) ? 'well-blue text-white m-r-md' : 'm-l-md' }}">
-												{{ $message->body }}
-											</p>
-									
-								@endforeach
+							<div class="row h-sm scrollable" id="chat">									
+								<p 
+									v-for="message in messages"
+									:class="['well', message.from_device ? 'well-blue text-white m-r-md' : 'm-l-md']"
+									style="position: relative;"
+								>
+									<button 
+										@click="confirm({method: 'deleteMessage', id: message.id})"
+										class="btn btn-clear p-a-0 m-a-0 text-danger icon icon-cross"
+										style="position: absolute; top: 0px; right: 1px;"
+									></button>
+									@{{ message.body }}
+								</p>	
 							</div>
 							<div class="row">
-								<form class="form row" action="/landlord/device/message" method="POST">
+								<form class="form row" >
 									<input type="hidden" name="_token" value="{{ csrf_token() }}">
 									<input type="hidden" name="device_id" value="{{ $device->id }}">
 									<div class="form-group">
 										<div class="col-sm-12 p-l">
-											<textarea name="message" id="" cols="" rows="2" class="form-control" placeholder="Type your reply here..."></textarea>
-											<button class="form-control btn btn-primary">Reply</button>
+											<textarea 
+												@keydown.enter="sendMessage()" 
+												v-model="forms.message.body" 
+												name="message" 
+												rows="2" 
+												class="form-control"
+											></textarea>
+											<button @click.prevent="sendMessage()" class="form-control btn btn-primary">Reply</button>
 										</div>
 									</div>
 								</form>
@@ -160,50 +171,84 @@
 @endsection 
 
 @section('scripts')
-
-<script>
-	var element = document.getElementById("chat");
-	element.scrollTop = element.scrollHeight;
-
-	function updateScroll(){
-	    var element = document.getElementById("chat");
-	    element.scrollTop = element.scrollHeight;
-
-	    //call updateScroll when new content is added
-	}
-</script>
-
 <script>
 	vue = new Vue({
 	
 		el: "#app",
 
 		data: {
-			device: {
+			device: app.device,
 
+			maintenanceRequests: [],
+
+			messages: app.deviceMessages,
+
+			forms: {
+				message: new TSForm({
+					device_id: app.device.id,
+					body: null,
+				})
+			}
+		},
+
+		events: {
+			'messages-updated': function() {
+				this.fetchMessages();
 			},
-			maintenanceRequests: {},
-			
 		},
 
 		ready: function() {
 			this.fetchMaintenance();
+			this.fetchMessages();
 		},
 
 		methods: {
 			fetchMaintenance: function() {
 				this.$http.get('/landlord/maintenance/all')
-				.success(function(maintenanceRequests) {
-					this.maintenanceRequests = maintenanceRequests;
-				});
+					.success(function(maintenanceRequests) {
+						this.maintenanceRequests = maintenanceRequests;
+					});
+			},
+
+			fetchMessages: function() {
+				this.$http.get('/api/devices/'+ this.device.id +'/messages')
+					.success(function(messages) {
+						this.messages = messages;
+						
+					})
+					.then(function() {
+						this.scrollToLatestMessage();
+					});
+			},
+
+			deleteMessage: function(id) {
+				this.$http.delete('/api/messages/'+ id)
+					.success(function(response) {
+						var message = _.find(this.messages, {id: id}); 
+
+						this.messages.$remove(message);
+					});
+			},
+
+			sendMessage: function() {
+				var that = this;
+				TS.post('/api/messages', this.forms.message)
+					.then(function(response) {
+						that.$emit('messages-updated');
+						that.forms.message.body = null;
+					});
 			},
 
 			submitForm: function() {
 				$('#device-form').submit();
-			}
+			},
+
+			scrollToLatestMessage: function() {
+				var element = document.getElementById("chat");
+				element.scrollTop = element.scrollHeight;
+			},
 		}
 	})
 </script>
-
 @endsection
 
