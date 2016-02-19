@@ -58,7 +58,7 @@ class MaintenanceController extends Controller {
 		}
 
 		$maintenanceRequest->status = 'awaiting_approval';
-		var_export(! count($maintenanceRequest->transaction));die();
+		//var_export(! count($maintenanceRequest->transaction));die();
 		if(! count($maintenanceRequest->transaction))
 		{
 			$transaction = Transaction::create([
