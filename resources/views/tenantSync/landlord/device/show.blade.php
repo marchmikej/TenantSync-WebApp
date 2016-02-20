@@ -54,13 +54,13 @@
 							<div class="row h-sm scrollable" id="chat">									
 								<p 
 									v-for="message in messages"
-									:class="['well', message.from_device ? 'well-blue text-white m-r-md' : 'm-l-md']"
+									:class="['chat', message.from_device ? 'chat-blue' : 'chat-gray']"
 									style="position: relative;"
 								>
 									<button 
 										@click="confirm({method: 'deleteMessage', id: message.id})"
-										class="btn btn-clear p-a-0 m-a-0 text-danger icon icon-cross"
-										style="position: absolute; top: 0px; right: 1px;"
+										class="btn btn-clear icon icon-cross"
+										:class="[message.from_device ? 'chat-close-l' : 'chat-close-r']"
 									></button>
 									@{{ message.body }}
 								</p>	

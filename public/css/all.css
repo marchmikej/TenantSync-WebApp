@@ -6088,7 +6088,10 @@ button.list-group-item-danger.active:focus {
   padding-bottom: 75%;
 }
 
-.well {
+.well,
+.chat,
+.chat-gray,
+.chat-blue {
   min-height: 20px;
   padding: 19px;
   margin-bottom: 20px;
@@ -12625,6 +12628,17 @@ td .form-control {
   }
 }
 
+.well,
+.chat,
+.chat-gray,
+.chat-blue {
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffe8e8e8', endColorstr='#fff5f5f5', GradientType=0);
+  background-repeat: repeat-x;
+  border-color: #dcdcdc;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1);
+  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
 #chat {
   padding: 0px 5px;
 }
@@ -12633,13 +12647,41 @@ td .form-control {
   padding: 10px;
 }
 
-.well {
+.chat,
+.chat-gray,
+.chat-blue {
   border: none;
   box-shadow: none;
+  padding: 15px;
 }
 
-.well-blue {
+.chat-gray {
+  margin-left: 5%;
+  background-color: #f5f5f5;
+}
+
+.chat-blue {
+  margin-right: 5%;
+  color: #fff;
   background-color: #25aae1;
+}
+
+.chat-close,
+.chat-close-l,
+.chat-close-r {
+  padding: 0 0 0 0;
+  margin: 0 0 0 0;
+  position: absolute;
+  top: 0px;
+  color: #E64759;
+}
+
+.chat-close-l {
+  left: 1px;
+}
+
+.chat-close-r {
+  right: 1px;
 }
 
 .well-white {
