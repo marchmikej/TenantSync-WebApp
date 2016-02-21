@@ -25,7 +25,7 @@ trait AuthorizesUser {
 
 		$id = $transaction->id;
 
-		$result = array_filter($this->manager->transactions(), function($transaction) use ($id) {
+		$result = array_filter($this->manager->transactions()->toArray(), function($transaction) use ($id) {
 			return $transaction->id == $id;
 		});
 
@@ -38,7 +38,7 @@ trait AuthorizesUser {
 			return $this->owns($property);
 		}
 
-		return !! $this->manager->properties->find($property->id);
+		return !! $this->manager->properties()->find($property->id);
 	}
 
 	public function hasDevice($device)
@@ -63,7 +63,7 @@ trait AuthorizesUser {
 
 		$id = $transaction->id;
 
-		$result = array_filter($this->manager->recurringTransactions(), function($transaction) use ($id) {
+		$result = array_filter($this->manager->recurringTransactions()->toArray(), function($transaction) use ($id) {
 			return $transaction->id == $id;
 		});
 

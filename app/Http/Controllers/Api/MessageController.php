@@ -37,7 +37,7 @@ class MessageController extends Controller
         return $messages;
     }
 
-    public function getMessagesForDevice($id)
+    public function forDevice($id)
     {
         $device = Device::find($id);
 

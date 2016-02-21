@@ -40,26 +40,38 @@ class UpdateDeviceAlarms extends Command implements SelfHandling
      */
     public function handle()
     {
-        \Log::info('Running UpdateDeviceAlarms: ');
+        \Log::info('Running UpdateDeviceAlarms: \n');
 
-        $rentBills = RentBill::where(['paid' => 0, 'vacant' => 0])->get();
-        $deliquentDevices = array();   
-        foreach($rentBills as $bill) {
-            if(strtotime($bill->rent_month. ' + ' .$bill->device->grace_period. ' days') < time()) {
-                array_push($deliquentDevices, $bill->device->id);
+        $devices = Device::all();
+
+        $deliquentDevices = array();
+
+        foreach($devices as $device) {
+            $balance = $device->balance();
+
+            if($balance < 0) {
+                continue;
+            }
+
+            $latestBill = RentBill::where(['device_id' => $device->id])->orderBy('created_at', 'desc')->first();
+
+            if(strtotime($latestBill->rent_month. ' + ' .$device->grace_period. ' days') < time()) {
+                array_push($deliquentDevices, $device->id);
             }
         }
+
         Device::whereIn('id', $deliquentDevices)->update(['alarm_id' => 1]);
+
         Device::whereNotIn('id', $deliquentDevices)->update(['alarm_id' => 0]);
 
-        $data = array();
-        \Mail::send('emails.processran', $data, function($message) {
-            $message->to('marchmikej@gmail.com', 'Code Ran')->subject('UpdateDeviceAlarms Ran');
-            $message->from('admin@tenantsync.com', 'TenantSync');
-        });
-        \Mail::send('emails.processran', $data, function($message) {
-            $message->to('mitchjam1928@gmail.com', 'Code Ran')->subject('UpdateDeviceAlarms Ran');
-            $message->from('admin@tenantsync.com', 'TenantSync');
-        });
+        // $data = array();
+        // \Mail::send('emails.processran', $data, function($message) {
+        //     $message->to('marchmikej@gmail.com', 'Code Ran')->subject('UpdateDeviceAlarms Ran');
+        //     $message->from('admin@tenantsync.com', 'TenantSync');
+        // });
+        // \Mail::send('emails.processran', $data, function($message) {
+        //     $message->to('mitchjam1928@gmail.com', 'Code Ran')->subject('UpdateDeviceAlarms Ran');
+        //     $message->from('admin@tenantsync.com', 'TenantSync');
+        // });
     }
 }

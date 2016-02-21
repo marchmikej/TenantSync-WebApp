@@ -7,6 +7,7 @@ use App\Events\LandlordRespondedToMaintenance;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateMaintenanceRequest;
 use Gate;
+use TenantSync\Models\Device;
 use TenantSync\Models\MaintenanceRequest;
 use TenantSync\Models\Transaction;
 
@@ -28,6 +29,17 @@ class MaintenanceController extends Controller {
         $devices = MaintenanceRequest::getRequestsForUser($this->user, ['with' => $this->with, 'limit' => $this->limit]);
 
         return $devices;
+    }
+
+    public function forDevice($id) 
+    {
+    	$device = Device::find($id);
+
+        if(Gate::denies('has-device', $device)) {
+            abort(403, 'That\'s not yours!');
+        }
+
+        return $device->maintenanceRequests()->with($this->with)->get();
     }
 
 	/**
@@ -71,7 +83,7 @@ class MaintenanceController extends Controller {
 			$maintenanceRequest->update(['transaction_id' => $transaction->id]);
 		}
 
-		if(isset($this->input['cost']))
+		if(!empty($this->input['cost']))
 		{
 			$maintenanceRequest->transaction->update(['amount' => abs($this->input['cost']) * -1, 'date' => date('Y-m-d', strtotime($maintenanceRequest->appointment_date))]);
 		}
@@ -90,6 +102,22 @@ class MaintenanceController extends Controller {
 		{
 			return abort(403, "Thats not yours!");
 		}
+
+		return $maintenanceRequest;
+	}
+
+	public function closeMaintenance($id)
+	{
+		$maintenanceRequest = MaintenanceRequest::with($this->with)->find($id);
+
+		if(Gate::denies('has-device', $maintenanceRequest->device))
+		{
+			return abort(403, "Thats not yours!");
+		}
+
+		$maintenanceRequest->status = 'closed';
+
+		$maintenanceRequest->save();
 
 		return $maintenanceRequest;
 	}

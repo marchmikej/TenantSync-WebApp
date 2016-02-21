@@ -13,7 +13,8 @@
 Route::get('test', 'HomeController@test');
 
 
-Route::resource('api/devices/{id}/messages', 'Api\MessageController@getMessagesForDevice');
+Route::get('api/devices/{id}/messages', 'Api\MessageController@forDevice');
+Route::get('api/devices/{id}/maintenance', 'Api\MaintenanceController@forDevice');
 Route::resource('api/devices', 'Api\DeviceController');
 
 Route::patch('api/transactions/recurring/{id}', 'Api\RecurringTransactionController@update');
@@ -37,6 +38,7 @@ Route::delete('api/messages', 'Api\MessageController@destroy');
 Route::resource('api/messages', 'Api\MessageController');
 
 Route::patch('api/maintenance/{id}', 'Api\MaintenanceController@update');
+Route::patch('api/maintenance/{id}/close', 'Api\MaintenanceController@closeMaintenance');
 Route::resource('api/maintenance', 'Api\MaintenanceController');
 
 

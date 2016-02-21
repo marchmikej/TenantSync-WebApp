@@ -30,7 +30,7 @@ class Message extends Model {
 		if ($user->role == 'manager') {
 			$devices = array_map(function($device) {
 				return $device->id;
-			}, $user->manager->devices()->pluck('id')->toArray());
+			}, $user->manager->devices()->toArray());
 			return Message::whereIn('device_id', $devices)->with($options['with'])->limit($options['limit'])->get();
 		}
 

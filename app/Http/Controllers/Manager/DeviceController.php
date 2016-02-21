@@ -83,10 +83,16 @@ class DeviceController extends Controller {
 	public function show($id)
 	{
 		$device = Device::find($id);
+
 		if(Gate::denies('has-device', $device))
 		{
 			return abort(403, "Thats not yours!");
 		}
+
+		\JavaScript::put([
+	        'device' => $device,
+	        'deviceMessages' => $device->messages,
+	    ]);
 
 		return view('TenantSync::manager/device/show', compact('device'));
 	}

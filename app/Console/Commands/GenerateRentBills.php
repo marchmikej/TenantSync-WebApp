@@ -46,16 +46,25 @@ class GenerateRentBills extends Command
         \Log::info('Running GenerateRentBills: ');
 
         $devices = Device::all();
-        $devicesToBill = $devices->filter(function($device) 
-        {
+
+        $devicesToBill = $devices->filter(function($device) {
             if($device->rent_due != '0000-00-00') {
                 return date('Y-m-d', strtotime($device->rent_due)) == date('Y-m-d', time());
             }
+
             return false;
         });
-        foreach($devicesToBill as $device)
-        {
-            $bill = RentBill::create(['user_id' => $device->owner->id, 'device_id' => $device->id, 'rent_month' => date('Y-m-d', time()), 'bill_amount' => $device->rent_amount, 'balance_due' => $device->rent_amount, 'paid' => 0, 'vacant' => $device->vacant]);
+        foreach($devicesToBill as $device) {
+            $bill = RentBill::create([
+                'user_id' => $device->owner->id, 
+                'device_id' => $device->id, 
+                'rent_month' => date('Y-m-d', time()), 
+                'bill_amount' => $device->rent_amount, 
+                'balance_due' => $device->rent_amount, 
+                'paid' => 0, 
+                'vacant' => $device->vacant
+            ]);
+
             $device->rent_due = date('Y-m-d', strtotime($device->rent_due. ' +1 month'));
             // if(date('m', strtotime($device->rent_due) + strtotime('+1 month')) !== date('m', strtotime($device->rent_due)))
             // {
@@ -65,15 +74,6 @@ class GenerateRentBills extends Command
             $device->save();
         }
 
-        // $data = array();
-        // Mail::send('emails.processran', $data, function($message) {
-        //     $message->to('marchmikej@gmail.com', 'Code Ran')->subject('GenerateRentBills Ran');
-        //     $message->from('admin@tenantsync.com', 'TenantSync');
-        // });
-        // Mail::send('emails.processran', $data, function($message) {
-        //     $message->to('mitchjam1928@gmail.com', 'Code Ran')->subject('GenerateRentBills Ran');
-        //     $message->from('admin@tenantsync.com', 'TenantSync');
-        // });
         return 'Finished';
     }
 }

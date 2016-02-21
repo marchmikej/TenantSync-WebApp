@@ -4,7 +4,7 @@
 
 	<div id="maintenance">
 		<div class="row">
-			<h4 class="m-t-0 text-primary"><a href="/landlord/maintenance/{{ $maintenanceRequest->id }}"> {{ $maintenanceRequest->device->property->address . ', ' . $maintenanceRequest->device->location }}</a></h4>
+			<h4 class="m-t-0 text-primary">{{ $maintenanceRequest->device->property->address . ', ' . $maintenanceRequest->device->location }}</h4>
 			<div class="col-sm-12 card">
 				<div class="col-sm-6">
 					<h3 class="text-info m-t-0">Request</h3>
@@ -54,7 +54,7 @@
 		
 				<div class="col-sm-12">
 					<h3 class="text-info m-t-0 p-b">Appointment Date</h3>
-					<form id="maintenanceForm" action="/landlord/maintenance/{{ $maintenanceRequest->id }}" method="POST" class="form">
+					<form id="maintenanceForm" method="POST" class="form">
 						<input type="hidden" name="_token" value="{{ csrf_token() }}">
 						<input type="hidden" name="_method" value="PATCH">
 				
@@ -187,7 +187,7 @@
 
         		closeRequest: function() {
 
-        			this.$http.patch('/landlord/maintenance/' + {{ $maintenanceRequest->id }} + '/close')
+        			this.$http.patch('/api/maintenance/' + this.forms.maintenanceRequest.id + '/close')
 	        			.success(function(response) {
 	        				this.fetchMaintenanceRequest();
 	        				swal(

@@ -53,7 +53,7 @@ class Transaction extends Model {
         if($user->role == 'manager') {
             $transactions = array_map(function($transaction) {
                 return $transaction->id;
-            }, $user->manager->transactions());
+            }, $user->manager->transactions()->toArray());
 
             return self::whereIn('id', $transactions)->where('date', '>', date('Y-m-d', strtotime($fromDate)))->with($with)->get(); 
         }

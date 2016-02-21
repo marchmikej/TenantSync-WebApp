@@ -29,7 +29,6 @@ class MaintenanceController extends Controller {
 
 	public function all()
 	{
-		// var_export('hello');die();
 		return $this->manager->maintenanceRequests(['device', 'device.property']);
 	}
 

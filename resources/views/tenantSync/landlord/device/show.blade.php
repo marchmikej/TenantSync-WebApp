@@ -25,7 +25,7 @@
 	</div> -->
 
 			<div class="row">
-				<h4 class="text-primary"><a href="/landlord/properties/{{ $device->property->id }}">{{ $device->property->address . ', ' . $device->property->city }}</a></h4>
+				<h4 class="text-primary">{{ $device->property->address . ', ' . $device->property->city }}</h4>
 
 				<div class="col-sm-6 p-r-md">
 					<div class="card row">
@@ -40,7 +40,7 @@
 							<div class="table-body table-striped">
 								<div v-for="maintenance in maintenanceRequests" class="table-row row">
 									<div class="col-sm-2">@{{ maintenance.device.location }}</div>
-									<div class="col-sm-10"><a href="/landlord/maintenance/@{{ maintenance.id }}">@{{ maintenance.request }}</a></div>
+									<div class="col-sm-10"><a :href="'/'+ user().role +'/maintenance/'+ maintenance.id">@{{ maintenance.request }}</a></div>
 								</div>
 							</div>
 						</div>
@@ -94,7 +94,7 @@
 				<div class="col-sm-12 card">
 					<div class="col-sm-6">
 						<h3 class="card-header m-t-0">Info</h3>
-						<form id="device-form" action="/landlord/device/{{$device->id}}" method="POST" class="form form-horizontal">
+						<form id="device-form" :action="'/'+ user().role +'/device/'+ device.id" method="POST" class="form form-horizontal">
 							<input type="hidden" name="_token" value="{{ csrf_token() }}">
 							<input type="hidden" name="_method" value="PATCH">
 							<div class="form-group">
@@ -204,7 +204,11 @@
 
 		methods: {
 			fetchMaintenance: function() {
-				this.$http.get('/landlord/maintenance/all')
+				var data = {
+					with: ['device'],
+				};
+
+				this.$http.get('/api/devices/'+ this.device.id +'/maintenance', data)
 					.success(function(maintenanceRequests) {
 						this.maintenanceRequests = maintenanceRequests;
 					});

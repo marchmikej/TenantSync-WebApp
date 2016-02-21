@@ -58,7 +58,7 @@ class RecurringTransaction extends Model
         if($user->role == 'manager') {
             $transactions = array_map(function($transaction) {
                 return $transaction->id;
-            }, $user->manager->recurringTransactions());
+            }, $user->manager->recurringTransactions()->toArray());
 
             return self::whereIn('id', $transactions)->with($with)->get(); 
         }

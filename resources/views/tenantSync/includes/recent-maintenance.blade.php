@@ -15,7 +15,7 @@
 							@{{ maintenance.device.property.address + ', ' + maintenance.device.location }}
 						</div>
 						<div class="col-sm-8">
-							<a href="/landlord/maintenance/@{{ maintenance.id }}">
+							<a :href="'/'+ user().role +'/maintenance/'+ maintenance.id">
 								@{{ maintenance.request }}
 							</a>
 						</div>

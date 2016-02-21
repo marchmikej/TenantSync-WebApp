@@ -35,6 +35,12 @@ class RentBill extends Model
 
     public static function getRentBillsForUser($user, $with = [], $fromDate = '-1 month') 
     {   
+        if($user->role == 'manager') {
+            return RentBill::whereIn('device_id', $user->manager->devices()->pluck('id')->toArray())
+                ->where('rent_month', '>=', date('Y-m-d', strtotime($fromDate)))
+                ->with($with)->get();
+        }
+
         return $user->rentBills()->where('rent_month', '>=', date('Y-m-d', strtotime($fromDate)))->with($with)->get();
     }
 

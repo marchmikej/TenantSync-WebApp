@@ -1,7 +1,5 @@
 @extends('TenantSync::landlord/layout')
 
-
-
 @section('content')
 
 <div id="ledger" v-cloak>
