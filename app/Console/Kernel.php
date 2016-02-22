@@ -33,7 +33,6 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('command:GenerateRentBills')->daily();
         $schedule->command('command:UpdatePropertyValue')->dailyAt('18:45');
-        $schedule->command('command:UpdateDeviceAlarms')->everyMinute();
-        // $schedule->command('command:UpdateDeviceAlarms')->dailyAt('18:44');
+        $schedule->command('command:UpdateDeviceAlarms')->dailyAt('18:44');
     }
 }

@@ -142,6 +142,8 @@ class DeviceApiController extends Controller {
         		->where('appointment_date', '<>', "NULL")
         		->count();
 
+        	$device->last_contact = date('Y-m-d', time());
+
 			return response()->json([
 				'alarm_id' => $this->device->alarm_id,
 				'status' => $this->device->status,
