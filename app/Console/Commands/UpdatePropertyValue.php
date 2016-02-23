@@ -69,7 +69,7 @@ class UpdatePropertyValue extends Command
                 //found 
                 $zestimateint = (int) $data->response->results->result->zestimate->amount;
 
-                if($zestimateint <> $currentRow->value) {   
+                if($zestimateint <> $currentRow->value && $zestimateint <> 0) { 
                     DB::table('properties')
                         ->where('id', $currentRow->id)
                         ->update(
