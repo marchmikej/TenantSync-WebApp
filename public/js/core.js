@@ -42093,14 +42093,11 @@ module.exports = Vue;
 },{"jquery":2,"moment":3}],32:[function(require,module,exports){
 'use strict';
 
-window.$ = window.jQuery = window.jQuery = require('jquery');
-
 window.Vue = require('vue');
 
 require('vue-resource');
 
-},{"jquery":2,"vue":30,"vue-resource":15}],33:[function(require,module,exports){
-'use strict';
+window.$ = window.jQuery = require('jquery');
 
 window.numeral = require('numeral');
 
@@ -42121,7 +42118,7 @@ require('./sweetalert2/dist/sweetalert2.min.js');
 
 require('./select2/dist/js/select2.js');
 
-},{"../bower/datetimepicker/build/js/datetimepicker.min.js":31,"../theme/dist/toolkit.min.js":36,"./select2/dist/js/select2.js":34,"./sweetalert2/dist/sweetalert2.min.js":35,"fullcalendar":1,"moment":3,"numeral":4,"underscore":6,"urijs":9}],34:[function(require,module,exports){
+},{"../bower/datetimepicker/build/js/datetimepicker.min.js":31,"../theme/dist/toolkit.min.js":35,"./select2/dist/js/select2.js":33,"./sweetalert2/dist/sweetalert2.min.js":34,"fullcalendar":1,"jquery":2,"moment":3,"numeral":4,"underscore":6,"urijs":9,"vue":30,"vue-resource":15}],33:[function(require,module,exports){
 /*!
  * Select2 4.0.1
  * https://select2.github.io
@@ -47360,7 +47357,7 @@ require('./select2/dist/js/select2.js');
   return select2;
 });
 
-},{"jquery":2}],35:[function(require,module,exports){
+},{"jquery":2}],34:[function(require,module,exports){
 "use strict";
 
 !(function (e, t) {
@@ -47539,7 +47536,7 @@ require('./select2/dist/js/select2.js');
   })();
 })(window, document);
 
-},{}],36:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 "use strict";
 
 +(function (t) {
@@ -48515,6 +48512,6 @@ require('./select2/dist/js/select2.js');
   });
 })(window.jQuery);
 
-},{}]},{},[32,33]);
+},{}]},{},[32]);
 
 //# sourceMappingURL=core.js.map

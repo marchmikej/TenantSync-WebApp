@@ -156,6 +156,10 @@ Vue.component('portfolio-stats', {
 				}
 			}.bind(this));
 
+			devices = _.filter(devices, function(device) {
+				return device.balance_due;
+			});
+
 			return devices;
 		},
 

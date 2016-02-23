@@ -61,7 +61,7 @@ Vue.component('transactions-table', {
 
 			dates: {
 				from: moment().subtract(1, 'month').format(dateString),
-				to: moment().format(dateString)
+				to: moment().add(1, 'year').format(dateString)
 			},
 		}
 	},

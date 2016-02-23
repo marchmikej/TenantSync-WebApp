@@ -9,6 +9,7 @@ require('./forms/bootstrap.js');
 require('./forms/transaction-form.js');
 
 // Get all the table instances
+require('./tables/instance.js');
 require('./tables/devices-table.js');
 require('./tables/most-expensive-property-table.js');
 require('./tables/portfolio-table.js');

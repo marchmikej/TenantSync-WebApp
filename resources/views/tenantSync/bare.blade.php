@@ -100,6 +100,13 @@
 	<script src="/js/core.js"></script>
 	<script src="/js/app.js"></script>
 	@yield('scripts')
+	<script>
+		if(typeof vue === 'undefined') {
+			var vue = new Vue({
+				el: '#app',
+			});
+		}
+	</script>
 
 </body>
 </html>

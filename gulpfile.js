@@ -29,7 +29,6 @@ elixir(function(mix) {
 			'app.css',
 		], 'public/css', 'public/css')
 		.browserify([
-			'core.js',
 			'plugins.js'
 		], 
 		'public/js/core.js', null)

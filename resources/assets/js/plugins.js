@@ -1,3 +1,9 @@
+window.Vue = require('vue');
+
+require('vue-resource');
+
+window.$ = window.jQuery = require('jquery');
+
 window.numeral = require('numeral');
 
 window.moment = require('moment');

@@ -12,6 +12,7 @@ require('./forms/bootstrap.js');
 require('./forms/transaction-form.js');
 
 // Get all the table instances
+require('./tables/instance.js');
 require('./tables/devices-table.js');
 require('./tables/most-expensive-property-table.js');
 require('./tables/portfolio-table.js');
@@ -27,7 +28,7 @@ require('./components/accounting-stats.js');
 require('./components/recent-maintenance.js');
 require('./components/recent-messages.js');
 
-},{"./components/accounting-stats.js":2,"./components/modal.js":3,"./components/portfolio-stats.js":4,"./components/recent-maintenance.js":5,"./components/recent-messages.js":6,"./forms/bootstrap.js":7,"./forms/transaction-form.js":12,"./tables/devices-table.js":13,"./tables/most-expensive-property-table.js":14,"./tables/portfolio-table.js":15,"./tables/property-manager-table.js":16,"./tables/table-headers.js":17,"./tables/transactions-table.js":18,"./vue-helpers.js":19}],2:[function(require,module,exports){
+},{"./components/accounting-stats.js":2,"./components/modal.js":3,"./components/portfolio-stats.js":4,"./components/recent-maintenance.js":5,"./components/recent-messages.js":6,"./forms/bootstrap.js":7,"./forms/transaction-form.js":12,"./tables/devices-table.js":13,"./tables/instance.js":14,"./tables/most-expensive-property-table.js":15,"./tables/portfolio-table.js":16,"./tables/property-manager-table.js":17,"./tables/table-headers.js":18,"./tables/transactions-table.js":19,"./vue-helpers.js":20}],2:[function(require,module,exports){
 'use strict';
 
 Vue.component('accounting-stats', {
@@ -377,6 +378,10 @@ Vue.component('portfolio-stats', {
 					device.balance_due = rentBillTotal - rentPaymentTotal;
 				}
 			}).bind(this));
+
+			devices = _.filter(devices, function (device) {
+				return device.balance_due;
+			});
 
 			return devices;
 		},
@@ -732,6 +737,23 @@ Vue.component('ts-textarea', {
 </div></div>'
 });
 
+/**
+ * General Input field input component for Bootstrap.
+ */
+Vue.component('ts-input', {
+    props: ['display', 'form', 'name', 'input', 'show', 'type'],
+
+    template: '<div><div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    <label class="col-md-3 control-label">{{ display }}</label>\
+    <div class="col-md-9">\
+        <input :type="type" class="form-control" v-model="input">\
+        <span class="help-block" v-show="form.errors.has(name)">\
+            <strong>{{ form.errors.get(name) }}</strong>\
+        </span>\
+    </div>\
+</div></div>'
+});
+
 },{}],9:[function(require,module,exports){
 /**
  * Spark form error collection class.
@@ -974,7 +996,7 @@ Vue.component('transaction-form', {
 },{"./components.js":8}],13:[function(require,module,exports){
 'use strict';
 
-Vue.component('devices-table', {
+Vue.component('devices-table', TSTable.extend({
 
 	props: ['userRole'],
 
@@ -984,13 +1006,6 @@ Vue.component('devices-table', {
 
 	data: function data() {
 		return {
-			sortKey: 'rent_amount',
-
-			reverse: -1,
-
-			currentPage: 1,
-
-			search: null,
 
 			columns: [{
 				name: 'address',
@@ -1016,14 +1031,6 @@ Vue.component('devices-table', {
 
 			devices: []
 		};
-	},
-
-	events: {
-		'table-sorted': function tableSorted(sortKey) {
-			this.sortKey = sortKey;
-			this.reverse = this.sortKey == sortKey ? this.reverse * -1 : 1;
-			this.fetchDevices();
-		}
 	},
 
 	ready: function ready() {
@@ -1058,9 +1065,40 @@ Vue.component('devices-table', {
 		}
 	}
 
-});
+}));
 
 },{}],14:[function(require,module,exports){
+'use strict';
+
+window.TSTable = Vue.component('ts-table', {
+
+	data: function data() {
+		return {
+			sortKey: null,
+
+			reverse: -1,
+
+			currentPage: 1,
+
+			search: null,
+
+			range: {
+				from: moment().subtract(1, 'month').format(dateString),
+				to: moment().format(dateString)
+			}
+		};
+	},
+
+	events: {
+		'table-sorted': function tableSorted(sortKey) {
+			this.sortKey = sortKey;
+			this.reverse = this.sortKey == sortKey ? this.reverse * -1 : 1;
+		}
+	}
+
+});
+
+},{}],15:[function(require,module,exports){
 'use strict';
 
 Vue.component('most-expensive-property-table', {
@@ -1121,7 +1159,7 @@ Vue.component('most-expensive-property-table', {
 
 });
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 Vue.component('portfolio-table', {
@@ -1204,7 +1242,7 @@ Vue.component('portfolio-table', {
 	}
 });
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 Vue.component('property-manager-table', {
@@ -1301,7 +1339,7 @@ Vue.component('property-manager-table', {
 
 });
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 Vue.component('table-headers', {
@@ -1357,7 +1395,7 @@ Vue.component('table-headers', {
 	}
 });
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 Vue.component('transactions-table', {
@@ -1416,7 +1454,7 @@ Vue.component('transactions-table', {
 
 			dates: {
 				from: moment().subtract(1, 'month').format(dateString),
-				to: moment().format(dateString)
+				to: moment().add(1, 'year').format(dateString)
 			}
 		};
 	},
@@ -1639,7 +1677,7 @@ Vue.component('transactions-table', {
 
 });
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 Vue.config.debug = true;

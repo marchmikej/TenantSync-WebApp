@@ -298,6 +298,10 @@ var vue = new Vue({
 				}
 			}.bind(this));
 
+			devices = _.filter(devices, function(device) {
+				return device.balance_due;
+			});
+
 			return devices;
 		},
 

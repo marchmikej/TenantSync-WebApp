@@ -61,7 +61,7 @@ Vue.component('accounting-stats', {
 
 		fetchRecurringTransactions: function() {
 			var data = {
-				set: ['address']
+				set: ['address'],
 			};
 
 			this.$http.get('/api/transactions/recurring', data)

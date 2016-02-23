@@ -13,4 +13,9 @@ class DeviceMutator extends ModelMutator {
 	{
 		return $device->property->address . ', ' . $device->location;
 	}
+
+	public function balance($device)
+	{
+		return $device->balance();
+	}
 }

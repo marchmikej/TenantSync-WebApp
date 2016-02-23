@@ -31,10 +31,14 @@ class Message extends Model {
 			$devices = array_map(function($device) {
 				return $device->id;
 			}, $user->manager->devices()->toArray());
-			return Message::whereIn('device_id', $devices)->with($options['with'])->limit($options['limit'])->get();
+			return Message::whereIn('device_id', $devices)
+				->with($options['with'])
+				->orderBy('created_at', 'desc')
+				->limit($options['limit'])
+				->get();
 		}
 
-		return $user->messages()->with($options['with'])->limit($options['limit'])->get();
+		return $user->messages()->with($options['with'])->orderBy('created_at', 'desc')->limit($options['limit'])->get();
 	}
 
 }

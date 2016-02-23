@@ -34,6 +34,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\DeviceMadePayment' => [
             'App\Listeners\SendUserMadePaymentNotification',
         ],
+        'App\Events\UpdatedDeviceTransactions' => [
+            'App\Listeners\UpdateDeviceAlarm',
+        ],
     ];
 
     /**

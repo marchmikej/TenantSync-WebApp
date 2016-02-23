@@ -1,4 +1,4 @@
-Vue.component('devices-table', {
+Vue.component('devices-table', TSTable.extend({
 	
 	props: ['userRole'],
 
@@ -8,13 +8,6 @@ Vue.component('devices-table', {
 
 	data: function() {
 		return {
-			sortKey: 'rent_amount',
-
-			reverse: -1,
-
-			currentPage: 1,
-
-			search: null,
 
 			columns: [
 				{
@@ -47,14 +40,6 @@ Vue.component('devices-table', {
 		};
 	},
 
-	events: {
-		'table-sorted': function(sortKey) {
-			this.sortKey = sortKey;
-			this.reverse = (this.sortKey == sortKey) ? this.reverse * -1 : 1;
-			this.fetchDevices();
-		}
-	},
-
 	ready: function() {
 		this.fetchDevices();
 	},
@@ -85,4 +70,4 @@ Vue.component('devices-table', {
 		}
 	},
 
-});
+}));

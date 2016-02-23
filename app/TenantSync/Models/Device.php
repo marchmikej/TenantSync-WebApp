@@ -126,4 +126,16 @@ class Device extends Model {
 
 		return $rentBills - $transactions;
 	}
+
+	public function updateAlarm()
+	{		
+		if($this->balance() < 0) {
+			$this->alarm_id = 0;
+		}
+		else {
+			$this->alarm_id = 1;
+		}
+
+		$this->save();
+	}
 }

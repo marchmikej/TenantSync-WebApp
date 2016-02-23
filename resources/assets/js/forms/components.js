@@ -119,3 +119,20 @@ Vue.component('ts-textarea', {
     </div>\
 </div></div>'
 });
+
+/**
+ * General Input field input component for Bootstrap.
+ */
+Vue.component('ts-input', {
+    props: ['display', 'form', 'name', 'input', 'show', 'type'],
+
+    template: '<div><div v-show="typeof show !== \'undefined\' ? show : true" class="form-group" :class="{\'has-error\': form.errors.has(name)}">\
+    <label class="col-md-3 control-label">{{ display }}</label>\
+    <div class="col-md-9">\
+        <input :type="type" class="form-control" v-model="input">\
+        <span class="help-block" v-show="form.errors.has(name)">\
+            <strong>{{ form.errors.get(name) }}</strong>\
+        </span>\
+    </div>\
+</div></div>'
+});

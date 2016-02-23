@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\UpdatedDeviceTransactions;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateTransactionRequest;
 use Gate;
+use TenantSync\Models\Device;
 use TenantSync\Models\RecurringTransaction;
 use TenantSync\Models\Transaction;
 use TenantSync\Mutators\TransactionMutator;
@@ -66,8 +68,16 @@ class TransactionController extends Controller
                 RecurringTransaction::create($this->input);
             }
 
+            if($this->input['payable_type'] == 'device') {
+                $device = Device::find($transaction->payable_id);
+
+                \Event::fire(new UpdatedDeviceTransactions($device));
+            }
+            
             return $transaction;
         });
+        
+
     }
 
     /**
@@ -119,8 +129,16 @@ class TransactionController extends Controller
                 'payable_id' => $this->input['payable_id']
             ]);
 
+            if($this->input['payable_type'] == 'device') {
+                $device = Device::find($transaction->payable_id);
+
+                \Event::fire(new UpdatedDeviceTransactions($device));
+            }
+
             return $transaction;
         });
+
+
     }
 
     /**

@@ -55,10 +55,11 @@ class MaintenanceRequest extends Model {
 		if($user->role == 'manager') {
 			return MaintenanceRequest::whereIn('device_id', $user->manager->devices()->keyBy('id')->keys()->toArray())
 				->with($options['with'])
+				->orderBy('created_at', 'desc')
 				->limit($options['limit'])
 				->get();
 		}
-		return $user->maintenanceRequests()->with($options['with'])->limit($options['limit'])->get();
+		return $user->maintenanceRequests()->with($options['with'])->orderBy('created_at', 'desc')->limit($options['limit'])->get();
 	}
 
 	public function setAppointmentDateAttribute($date)
