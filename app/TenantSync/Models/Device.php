@@ -32,6 +32,7 @@ class Device extends Model {
 		'location', 
 		'rent_amount', 
 		'rent_due',
+		'last_contact',
 		'balance_due',
 		'monthly_cost', 
 		'contact_name', 

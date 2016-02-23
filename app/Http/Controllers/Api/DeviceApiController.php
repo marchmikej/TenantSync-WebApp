@@ -143,6 +143,7 @@ class DeviceApiController extends Controller {
         		->count();
 
         	$device->last_contact = date('Y-m-d', time());
+        	$device->save();
 
 			return response()->json([
 				'alarm_id' => $this->device->alarm_id,
