@@ -129,11 +129,20 @@ class Device extends Model {
 
 	public function updateAlarm()
 	{		
-		if($this->balance() < 0) {
-			$this->alarm_id = 0;
+		$balance = $this->balance();
+
+		if($balance < 0) {
+		    $this->alarm_id = 0;
+
+		    $this->save();
+
+		    return false;
 		}
-		else {
-			$this->alarm_id = 1;
+
+		$latestBill = RentBill::where(['device_id' => $this->id])->orderBy('created_at', 'desc')->first();
+
+		if(strtotime($latestBill->rent_month. ' + ' .$this->grace_period. ' days') < time()) {
+		    $this->alarm_id = 1;
 		}
 
 		$this->save();
