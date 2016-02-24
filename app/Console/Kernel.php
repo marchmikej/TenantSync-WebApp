@@ -21,6 +21,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\GenerateRentBills::class,
         \App\Console\Commands\UpdatePropertyValue::class,
         \App\Console\Commands\UpdateDeviceAlarms::class,
+        \App\Console\Commands\UnPinDevice::class,
     ];
 
     /**
