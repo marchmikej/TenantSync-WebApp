@@ -1,4 +1,4 @@
-Vue.component('portfolio-table', {		
+Vue.component('portfolio-table', TSTable.extend({		
 
 	// components: {
 	// 	'table-headers': require('./table-headers'),
@@ -6,13 +6,9 @@ Vue.component('portfolio-table', {
 
 	data: function() {
 		return {
-			sortKey: 'roi',
+			perPage: 10,
 
-			reverse: -1,
-
-			currentPage: 1,
-
-			search: null,
+			listName: 'properties',
 
 			columns: [
 				{
@@ -86,4 +82,4 @@ Vue.component('portfolio-table', {
 			$('[data-property-id='+ id +']').toggle();
 		},
 	},
-});
+}));

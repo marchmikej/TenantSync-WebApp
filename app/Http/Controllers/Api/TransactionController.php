@@ -156,6 +156,12 @@ class TransactionController extends Controller
             return abort(403, "Thats not yours!");
         }
 
+        if($transaction->payable_type == 'device') {
+            $device = Device::find($transaction->payable_id);
+
+            \Event::fire(new UpdatedDeviceTransactions($device));
+        }
+
         return json_encode(Transaction::find($id)->delete());
     }
 }

@@ -128,30 +128,21 @@
 			</form>
 		</div>
 	</div>
-
-	<div class="card row">
-		<div class="col-sm-12">
-			<h4 class="card-header">
-				Devices<!-- <a href="/landlord/device/create?propertyId={{ $property->id }}"><button class=" btn btn-clear text-primary"><h4 class="m-a-0 icon icon-plus"></h4></button></a> -->
-			</h4>
-			<div class="table-heading row">
-				<div class="col-sm-3">Location</div>
-				<div class="col-sm-3">Rent due</div>
-				<div class="col-sm-3">Rent Amount</div>
-				<div class="col-sm-3">Status</div>
-			</div>
-			<div class="table-body table-striped">
-				<div  v-for="device in devices" class="table-row row">
-					<div class="col-sm-3"><a href="/landlord/device/@{{ device.id }}">@{{ device.location }}</a></div>
-					<div class="col-sm-3">@{{ device.rent_due }}</div>
-					<div class="col-sm-3">@{{ device.rent_amount }}</div>
-					<div class="col-sm-3">@{{ device.status }}</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
 	
+	<devices-table 
+		:search="'{{ $property->address }}'" 
+		inline-template
+	>
+		@include('TenantSync::includes.tables.devices-table')
+	</devices-table>
+
+	<transactions-table 
+		:search="'{{ $property->address }}'"
+		inline-template
+	>
+		@include('TenantSync::includes.tables.transactions-table')
+	</transactions-table>
+
 </div>
 
 
@@ -185,6 +176,10 @@
 			methods: {
 
 				fetchDevices: function() {
+					var data = {
+						with: ['alarm']
+					};
+
 					var params = window.location.href.split('/');
 					this.propertyId = params[5].split('?')[0];
 

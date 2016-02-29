@@ -1,26 +1,10 @@
-Vue.component('property-manager-table', {
-	
-	props: ['userRole'],
-
-	// components: {
-	// 	'table-headers': require('./table-headers'),
-	// },
+Vue.component('property-manager-table', TSTable.extend({
 
 	data: function() {
 		return {
-			sortKey: '',
+			perPage: 10,
 
-			reverse: -1,
-
-			currentPage: 1,
-
-			paginated: {},
-
-			search: null,
-
-			range: {
-				from: moment().subtract(1, 'month').format('YYYY-MM-DD'),
-			},
+			listName: 'properties',
 
 			columns: [
 				{
@@ -43,21 +27,13 @@ Vue.component('property-manager-table', {
 				}
 			],
 
-			properties: [
+			properties: [],
 
-			],
+			messages: [],
 
-			messages: [
-			
-			],
+			maintenanceRequests: [],
 
-			maintenanceRequests: [
-			
-			],
-
-			showDevices: [
-
-			],
+			showDevices: [],
 		};
 	},
 
@@ -101,4 +77,4 @@ Vue.component('property-manager-table', {
 		},
 	},
 
-});
+}));

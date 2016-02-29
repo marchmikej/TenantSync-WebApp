@@ -8,10 +8,9 @@
 		</div>
 	</div>
 	<div class="row">
-		<form action="/sales/device" class="device-form form form-horizontal" method="POST">
+		<form action="/sales/landlord/{{ $landlord->id }}/device" class="device-form form form-horizontal" method="POST">
 			<div class="col-sm-6">
 				<input type="hidden" name="_token" value="{{ csrf_token() }}">
-				<input type="hidden" name="user_id" value="{{ $landlord->id }}">
 				<h4 class="text-info">Device Info</h4>
 
 				<div class="form-group">
@@ -108,7 +107,9 @@
 					<label class="control-label col-sm-3" for="payment_method">Payment Method</label>
 					<div class="col-sm-9">
 						<input class="form-control form-borderless col-sm-6" type="text" name="payment_method" placeholder="" :value="paymentMethods.hasOwnProperty(0) ? paymentMethods[0].MethodName : 'Loading...'" disabled readonly/>
-						<a href="/sales/payment/create?user_id={{ $landlord->id }}" class="btn btn-primary col-sm-4"><span>Change</span></a>
+						<a href="/sales/payment/create?user_id={{ $landlord->id }}" class="btn btn-primary col-sm-4">
+							<span>Change</span>
+						</a>
 					</div>
 				</div>
 				

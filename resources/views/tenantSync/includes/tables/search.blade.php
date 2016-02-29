@@ -1,0 +1,1 @@
+<input type="text" class="col-sm-2 col-xs-12 pull-right form-control" placeholder="search..." v-model='search'>

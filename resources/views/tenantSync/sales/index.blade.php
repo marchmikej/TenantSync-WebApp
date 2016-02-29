@@ -46,7 +46,7 @@
 					<tr>
 						<!-- <td><input type="checkbox" name="devices[]"></td> -->
 						<td><a href="/sales/device/{{$device->id}}">{{ $device->property->address . ' ' . $device->location }}</a></td>
-						<td>{{ $device->alarm }}</td>
+						<td>{{ $device->alarm->slug ? $device->alarm->slug : 'Off' }}</td>
 						<td>{{ $device->status }}</td>
 					</tr>
 					@endforeach

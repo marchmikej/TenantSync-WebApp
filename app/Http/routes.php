@@ -91,45 +91,24 @@ Route::group(['middleware' => ['auth']], function()
 	Route::group(['prefix' => 'sales', 'namespace' => 'Sales', 'middleware' => ['sales']], function()
 	{
 		Route::get('/', '\App\Http\Controllers\HomeController@index');
-		Route::get('/registration/pay',['as' => 'sales.registration.getPay', 'permission' => 'is_sales_rep', 'uses' => 'PaymentController@getPayRegistration']);
-		Route::post('/registration/pay',['as' => 'sales.registration.postPay', 'permission' => 'is_sales_rep', 'uses' => 'PaymentController@postPayRegistration']);
+		Route::get('/registration/pay', 'PaymentController@getPayRegistration');
+		Route::post('/registration/pay', 'PaymentController@postPayRegistration');
 
 		Route::patch('/landlord/{id}', 'LandlordController@update');
+		Route::post('/landlord/{id}/device', 'DeviceController@store');
+		Route::get('/landlord/{id}/device/create', 'DeviceController@create');
 		Route::get('/landlord/{id}/customer', 'LandlordController@customer');
 		Route::resource('/landlord', 'LandlordController');
-		// Route::group(['prefix' => 'landlord'], function()
-		// {
-		// 	Route::get('/',['as' => 'sales.landlord.index', 'permission' => 'view_all_landlords', 'uses' => 'LandlordController@index']);
-		// 	Route::get('/create',['as' => 'sales.landlord.create', 'permission' => 'create_landlord', 'uses' => 'LandlordController@create']);
-		// 	Route::post('/',['as' => 'sales.landlord.store', 'permission' => 'create_landlord', 'uses' => 'LandlordController@store']);
-		// 	Route::get('{id}',['as' => 'sales.landlord.show', 'permission' => 'view_landlord', 'uses' => 'LandlordController@show']);
-		// 	Route::get('{id}/edit',['as' => 'sales.landlord.edit', 'permission' => 'edit_landlord', 'uses' => 'LandlordController@edit']);
-		// 	Route::post('{id}/edit',['as' => 'sales.landlord.update', 'permission' => 'edit_landlord', 'uses' => 'LandlordController@update']);
-		// 	Route::post('{id}/delete',['as' => 'sales.landlord.delete', 'permission' => 'delete_landlord', 'uses' => 'LandlordController@delete']);
-		// });
+
 
 		Route::resource('device', 'DeviceController');
-		// Route::group(['prefix' => 'device'], function()
-		// {
-		// 	Route::get('/',['as' => 'sales.device.index', 'permission' => 'view_all_devices', 'uses' => 'DeviceController@index']);
-		// 	Route::get('/create',['as' => 'sales.device.create', 'permission' => 'create_device', 'uses' => 'DeviceController@create']);
-		// 	Route::post('/',['as' => 'sales.device.store', 'permission' => 'view_all_devices', 'uses' => 'DeviceController@store']);
-		// 	Route::get('{id}',['as' => 'sales.device.show', 'permission' => 'view_all_devices', 'uses' => 'DeviceController@show']);
-		// 	Route::get('{id}/edit',['as' => 'sales.device.edit', 'permission' => 'view_all_devices', 'uses' => 'DeviceController@edit']);
-		// 	Route::post('{id}/edit',['as' => 'sales.device.update', 'permission' => 'view_all_devices', 'uses' => 'DeviceController@update']);
-		// 	Route::post('{id}/delete',['as' => 'sales.device.update', 'permission' => 'view_all_devices', 'uses' => 'DeviceController@delete']);
-		// });
 
 		Route::resource('payment', 'PaymentController');
-		// Route::group(['prefix' => 'payment'], function()
-		// {
-		// 	Route::get('create', ['as' => 'sales.payment.create', 'permission' => 'is_sales_rep', 'uses' => 'PaymentController@create']);
-		// 	Route::get('type', ['as' => 'sales.payment.type', 'permission' => 'is_sales_rep', 'uses' => 'PaymentController@type']);
-		// 	Route::post('card', ['as' => 'sales.payment.card', 'permission' => 'is_sales_rep', 'uses' => 'PaymentController@card']);
-		// });
 
 		Route::resource('gateway', 'GatewayController');
+
 		Route::resource('profile', 'ProfileController');
+
 		Route::resource('billing', 'BillingController');
 	});
 
@@ -138,11 +117,11 @@ Route::group(['middleware' => ['auth']], function()
 	// Landlord Routes
 	Route::group(['prefix' => 'landlord', 'namespace' => 'Landlord', 'middleware' => ['landlord']], function()
 	{
-		Route::get('/',['as' => 'landlord.index', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\HomeController@index']);
-		Route::get('calendar', ['as' => 'landlord.calendar', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\CalendarController@index']);
-		Route::get('calendar/all', ['as' => 'landlord.calendar.all', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\CalendarController@all']);
-		Route::get('calculator', ['as' => 'landlord.calculator', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\CalculatorController@index']);
-		Route::get('calculator/estimate_roi', ['as' => 'landlord.calculator.estimate_roi', 'permission' => 'is_landlord', 'uses' => '\App\Http\Controllers\Landlord\CalculatorController@estimateRoi']);
+		Route::get('/', '\App\Http\Controllers\HomeController@index');
+		Route::get('calendar', '\App\Http\Controllers\Landlord\CalendarController@index');
+		Route::get('calendar/all', '\App\Http\Controllers\Landlord\CalendarController@all');
+		Route::get('calculator', '\App\Http\Controllers\Landlord\CalculatorController@index');
+		Route::get('calculator/estimate_roi', '\App\Http\Controllers\Landlord\CalculatorController@estimateRoi');
 
 		Route::get('maintenance/all', 'MaintenanceController@all');
 		Route::get('api/maintenance/{id}', 'MaintenanceController@get');

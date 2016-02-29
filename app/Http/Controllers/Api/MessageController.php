@@ -83,7 +83,8 @@ class MessageController extends Controller
 
             $messages[] = Message::create(['user_id' => $this->user->id,'device_id' => $device->id,'body' => $this->input['body'],]);
 
-            \Event::push(new MessageCreatedByUser($device->id, $this->input['body']));
+            \Event::push('MessageCreatedByUser', $device->id, $this->input['body']);
+            // \Event::fire(new MessageCreatedByUser($device->id, $this->input['body']));
         }
 
         return $messages;

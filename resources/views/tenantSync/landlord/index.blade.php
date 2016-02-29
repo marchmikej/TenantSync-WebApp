@@ -143,8 +143,10 @@
 			</div>
 		</div>
 	</modal>
-
-	@include('TenantSync::includes.tables.devices-table')
+	
+	<devices-table inline-template>
+		@include('TenantSync::includes.tables.devices-table')
+	</devices-table>
 
 </div>
 @endsection

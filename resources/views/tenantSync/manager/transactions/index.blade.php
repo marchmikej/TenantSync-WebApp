@@ -7,8 +7,10 @@
 	@include('TenantSync::includes.accounting-stats')
 	
 	@include('TenantSync::includes.tables.most-expensive-property-table')
-
-	@include('TenantSync::includes.tables.transactions-table')
+	
+	<transactions-table inline-template>
+		@include('TenantSync::includes.tables.transactions-table')
+	</transactions-table>
 
 </div>
 

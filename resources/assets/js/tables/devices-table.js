@@ -1,18 +1,16 @@
 Vue.component('devices-table', TSTable.extend({
-	
-	props: ['userRole'],
-
-	// components: {
-	// 	'table-headers': require('./table-headers'),
-	// },
 
 	data: function() {
 		return {
 
+			perPage: 10,
+
+			listName: 'devices',
+
 			columns: [
 				{
 					name: 'address',
-					label: 'address',
+					label: 'Address',
 					width: 'col-sm-6',
 					isSortable: false
 				},
@@ -24,13 +22,13 @@ Vue.component('devices-table', TSTable.extend({
 				},
 				{
 					name: 'status',
-					label: 'status',
+					label: 'Status',
 					width: 'col-sm-2',
 					isSortable: true
 				},
 				{
 					name: 'alarm_id',
-					label: 'alarm',
+					label: 'Alarm',
 					width: 'col-sm-2',
 					isSortable: true
 				}

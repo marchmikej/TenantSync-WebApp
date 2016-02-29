@@ -1,5 +1,19 @@
 Vue.component('transactions-table', {
-	props: ['userRole'],
+	props: [
+		{
+			name: 'dates', 
+			default: function() {
+				return {
+					from: moment().subtract(1, 'month').format(dateString),
+					to: moment().add(1, 'year').format(dateString),
+				};
+			},
+		},
+		{
+			name: 'search',
+			default: null,
+		}
+	],
 
 	data: function() {
 		return {
@@ -8,8 +22,6 @@ Vue.component('transactions-table', {
 			reverse: -1,
 
 			currentPage: 1,
-
-			search: null,
 
 			columns: [
 				{
@@ -55,14 +67,13 @@ Vue.component('transactions-table', {
 				recurringTransaction: {},
 			},
 
+			transactionsUrl: '/api/transactions',
+
+			propertiesUrl: '/api/properties',
+
 			transactions: [],
 
 			properties: [],
-
-			dates: {
-				from: moment().subtract(1, 'month').format(dateString),
-				to: moment().add(1, 'year').format(dateString)
-			},
 		}
 	},
 
@@ -110,7 +121,7 @@ Vue.component('transactions-table', {
 				set: ['address'],
 			};
 
-			this.$http.get('/api/transactions', data)
+			this.$http.get(this.transactionsUrl, data)
 				.success( function(transactions) {
 					_.each(transactions, function(transaction) { transaction.amount = Number(transaction.amount); });
 					this.transactions = transactions;
@@ -122,7 +133,7 @@ Vue.component('transactions-table', {
 				with: ['devices'],
 			};
 
-			this.$http.get('/api/properties', data)
+			this.$http.get(this.propertiesUrl, data)
 				.success( function(properties) {
 					this.properties = properties;
 				});

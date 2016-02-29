@@ -40,6 +40,7 @@ Vue.component('modal', {
 	methods: {
 		show: function() {
 			this.visible = true;
+			this.$dispatch('modal-shown');
 		},
 
 		hide: function() {

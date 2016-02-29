@@ -143,8 +143,10 @@
 			</div>
 		</div>
 	</modal>
-
-	@include('TenantSync::includes.tables.devices-table')
+	
+	<devices-table inline-template>
+		@include('TenantSync::includes.tables.devices-table')
+	</devices-table>
 
 </div>
 @endsection
@@ -297,6 +299,10 @@ var vue = new Vue({
 					device.balance_due = rentBillTotal - rentPaymentTotal;
 				}
 			}.bind(this));
+
+			devices = _.filter(devices, function(device) {
+				return device.balance_due;
+			});
 
 			return devices;
 		},

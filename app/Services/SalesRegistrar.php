@@ -1,6 +1,6 @@
 <?php namespace App\Services;
 
-require_once base_path().'/vendor/usaepay-php/usaepay.php';
+require_once app_path().'/Services/usaepay-php/usaepay.php';
 use Validator;
 use App\Http\Controllers\Controller;
 use TenantSync\Models\Registration;
@@ -55,12 +55,13 @@ class SalesRegistrar extends Controller  {
 		{
 			return redirect()->back()->withErrors([$e->getMessage()])->withInput();
 		}
+		
 		$landlord = $this->landlordGateway->create($data);
 		// $transaction = Transaction::create(['user_id' => $landlord->id, 'amount' => 50]);
-		// Registration::create(['user_id' => $landlord->id, 'transaction_id' => $transaction->id]);
+
 		$landlord->customer_id = $customerId;
+		
 		$landlord->save();
-		//$landlord->charge(5000);
 
 		return $landlord;
 	}

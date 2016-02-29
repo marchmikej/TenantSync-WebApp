@@ -5,15 +5,27 @@
 <managers-table inline-template>
 	<div class="row card" id="managers">
 		<div class="col-sm-12">
-				<h4 class="card-header">
-					Managers<button @click="" class="btn btn-clear p-y-0"><a href="/landlord/managers/create"><h3 class="icon icon-plus text-primary m-a-0"></h3></a></button>
-				</h4>
-			<!-- <table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers> -->
+
+			<h4 class="card-header">
+				Managers
+				<button @click="" class="btn btn-clear p-y-0">
+					<a href="/landlord/managers/create"><h3 class="icon icon-plus text-primary m-a-0"></h3></a>
+				</button>
+
+				@include('TenantSync::includes.tables.search')
+
+			</h4>
+
+			<table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers>
 	
 			<div class="table-body table-striped">
-				<div v-for="manager in managers" class="table-row row">
+				<div v-for="manager in filteredList 
+					| orderBy sortKey reverse"
+					v-if="inCurrentPage($index)"
+					class="table-row row"
+				>
 					<div @click="confirm({method:'deleteManager', id: manager.id})" class="col-sm-1 text-left btn icon icon-minus text-danger p-a-0"></div>
-					<div class="col-sm-3">@{{ manager.first_name + ' ' + manager.last_name}}</div>
+					<div class="col-sm-3">@{{ manager.name }}</div>
 					<div class="col-sm-2">@{{ manager.position ? manager.position : '-' }}</div>
 					<div class="col-sm-3">@{{ manager.email ? manager.email : '-' }}</div>
 					<div class="col-sm-2">@{{ manager.phone ? manager.phone : '-' }}</div>
@@ -33,39 +45,29 @@
 					</div>
 				</div>
 			</div>
+
+			@include('TenantSync::includes.tables.pagination')
+
 		</div>
 	
 		<!--// MODAL -->
-		<div v-show="modal.show" id="modal" class="vue-modal" style="display: none;">
-		  	<div class="modal-dialog">
-		    	<div class="modal-content">
-			      	<!-- <div class="modal-header">
-			        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			        	<h4 class="modal-title text-info">Edit Transaction</h4>
-			      	</div> -->
-			      	<form @keyup.enter="submitModal" class="form form-horizontal">
-			      		<div class="modal-body">
-						<h4 v-if="modal.show" class="card-header">@{{ modal.manager.first_name + ' ' + modal.manager.last_name }}</h4>
-						
-						<div class="form-group">
-							<label class="control-label col-sm-3">Properties</label>
-							<div class="col-sm-9">
-								<select v-model="modal.properties" id="property-select" class="form-control" style="width: 100%;" multiple>
-									<option v-for="property in properties | whereNotIn modal.manager.properties 'id'" :value="property.id">@{{ property.address }}</option>
-								</select>
-							</div>
-						</div>
-						
-	
-			      		</div>
-				      	<div class="modal-footer">
-				        	<button @click="hideModal" type="button" class="btn btn-default">Close</button>
-				        	<button  @click="submitModal" type="button" class="btn btn-primary">Add Properties</button>
-				      	</div>
-			      	</form>
-		    	</div><!-- /.modal-content -->
-		  	</div><!-- /.modal-dialog -->
-		</div><!-- /.modal -->
+		<modal id="manager-modal">
+	      	<form @keyup.enter="submitProperties()" class="form form-horizontal">
+				
+				<div class="form-group">
+					<label class="control-label col-sm-3">Properties</label>
+					<div @click="initializeSelect()" class="col-sm-9">
+						<select v-model="forms.managerProperties.properties" id="property-select" class="form-control" style="width: 100%;" multiple>
+							<option v-for="property in properties | whereNotIn forms.managerProperties.manager.properties 'id'" :value="property.id">@{{ property.address }}</option>
+						</select>
+					</div>
+				</div>
+				
+		      	<div class="modal-footer">
+		        	<button  @click="submitProperties()" type="button" class="btn btn-primary">Add Properties</button>
+		      	</div>
+	      	</form>
+		</modal>
 	</div>
 </managers-table>
 
@@ -81,26 +83,22 @@ Vue.component('managers-table', TSTable.extend({
 
 	data: function() {
 		return {
-			// sortKey: 'first_name',
+			listName: 'managers',
 
-			// reverse: -1,
-
-			// currentPage: 1,
-
-			// search: null,
+			perPage: 5,
 
 			columns: [
 				{
-					name: 'first_name',
-					label: 'First Name',
-					width: 'col-sm-6',
+					name: '',
+					label: '',
+					width: 'col-sm-1',
 					isSortable: false
 				},
 				{
-					name: 'Last Name',
+					name: 'name',
 					label: 'Name',
-					width: 'col-sm-6',
-					isSortable: false
+					width: 'col-sm-3',
+					isSortable: true
 				},
 				{
 					name: 'position',
@@ -111,7 +109,7 @@ Vue.component('managers-table', TSTable.extend({
 				{
 					name: 'email',
 					label: 'Email',
-					width: 'col-sm-2',
+					width: 'col-sm-3',
 					isSortable: true
 				},
 				{
@@ -126,21 +124,25 @@ Vue.component('managers-table', TSTable.extend({
 
 			properties: [],
 
-			modal: {
-				show: false,
-				manager: {},
-				properties: [],
+			forms: {
+				managerProperties: {
+					manager: null,
+					properties: []
+				},
 			},
 		};
 	},
 
 	ready: function() {
 		this.fetchManagers();
+
 		this.fetchProperties();
-		var select = $('#property-select');
-		select.select2({
-			theme: "bootstrap",
-		});
+	},
+
+	events: {
+		'modal-shown': function() {
+			this.initializeSelect();
+		},
 	},
 
 	methods: {
@@ -152,12 +154,15 @@ Vue.component('managers-table', TSTable.extend({
 			this.$http.get('/api/managers', data)
 			.success(function(managers) {
 				this.managers = managers;
+
+				_.each(this.managers, function(manager) {
+					this.setName(manager);
+				}.bind(this));
 			});
 		},
 
 		fetchProperties: function() {
-
-			this.$http.get('/api/properties/')
+			this.$http.get('/api/properties')
 			.success(function(properties) {
 				this.properties = properties;
 			});
@@ -166,23 +171,21 @@ Vue.component('managers-table', TSTable.extend({
 		generateModal: function(id) {
 			var manager = _.find(this.managers, function(manager) { return manager.id == id; });
 
-			this.modal.show = true;
-			this.modal.manager = manager;
-			// this.$http.post('/landlord/managers/')
-			// .success(function(manager) {
+			this.forms.managerProperties.manager = manager;
 
-			// });
+			this.$broadcast('show-modal', 'manager-modal');
 		},
 
-		submitModal: function() {
+		submitProperties: function() {
 			var data = {
 				properties: $('#property-select').val(),
-				manager_id: this.modal.manager.id,
+				manager_id: this.forms.managerProperties.manager.id,
 			};
 
 			this.$http.patch('/api/managers/properties', data)
 				.success(function(properties) {
 					this.fetchManagers();
+
 					this.hideModal();
 
 					// var manager = _.find(this.managers, function(manager) {
@@ -192,11 +195,13 @@ Vue.component('managers-table', TSTable.extend({
 		},
 
 		hideModal: function() {
-			this.modal = {
-				manager: {},
-				properties: [],
-				show: false,
-			};
+			this.$broadcast('hide-modal');
+
+			this.forms.managerProperties = {
+				manager: null,
+				properties: []
+			}
+
 			$('#property-select').select2('val', '');
 		},
 
@@ -208,6 +213,7 @@ Vue.component('managers-table', TSTable.extend({
 			this.$http.delete('/api/managers/properties', data)
 				.success(function(result) {
 					manager.properties.$remove(property);
+
 					this.hideModal();
 				});
 		},
@@ -229,10 +235,21 @@ Vue.component('managers-table', TSTable.extend({
 		toggleProperties: function(id) {
 			$('[data-manager-id= '+ id +']').toggle();
 		},
+
+		setName: function(manager) {
+			manager.name = manager.first_name + ' ' + manager.last_name;
+		},
+
+		initializeSelect: function() {
+			var element = $('.select2');
+			
+			if(element.length > 0) {
+				return false;
+			}
+
+			setTimeout(function() {$('#property-select').select2({theme: "bootstrap"});}, 0);
+		},
 	}
-
-
-
 }));
 
 </script>

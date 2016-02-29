@@ -211,6 +211,7 @@ Vue.component('modal', {
 	methods: {
 		show: function show() {
 			this.visible = true;
+			this.$dispatch('modal-shown');
 		},
 
 		hide: function hide() {
@@ -998,18 +999,16 @@ Vue.component('transaction-form', {
 
 Vue.component('devices-table', TSTable.extend({
 
-	props: ['userRole'],
-
-	// components: {
-	// 	'table-headers': require('./table-headers'),
-	// },
-
 	data: function data() {
 		return {
 
+			perPage: 10,
+
+			listName: 'devices',
+
 			columns: [{
 				name: 'address',
-				label: 'address',
+				label: 'Address',
 				width: 'col-sm-6',
 				isSortable: false
 			}, {
@@ -1019,12 +1018,12 @@ Vue.component('devices-table', TSTable.extend({
 				isSortable: true
 			}, {
 				name: 'status',
-				label: 'status',
+				label: 'Status',
 				width: 'col-sm-2',
 				isSortable: true
 			}, {
 				name: 'alarm_id',
-				label: 'alarm',
+				label: 'Alarm',
 				width: 'col-sm-2',
 				isSortable: true
 			}],
@@ -1072,6 +1071,11 @@ Vue.component('devices-table', TSTable.extend({
 
 window.TSTable = Vue.component('ts-table', {
 
+	props: [{
+		name: 'search',
+		'default': null
+	}],
+
 	data: function data() {
 		return {
 			sortKey: null,
@@ -1080,7 +1084,9 @@ window.TSTable = Vue.component('ts-table', {
 
 			currentPage: 1,
 
-			search: null,
+			lastPage: 1,
+
+			perPage: 15,
 
 			range: {
 				from: moment().subtract(1, 'month').format(dateString),
@@ -1089,13 +1095,48 @@ window.TSTable = Vue.component('ts-table', {
 		};
 	},
 
+	computed: {
+		filteredList: function filteredList() {
+			var filter = Vue.filter('filterBy');
+			return filter(this[this.listName], this.search);
+		},
+
+		lastPage: function lastPage() {
+			return Math.ceil(Number(_.size(this.filteredList)) / Number(this.perPage));
+		}
+	},
+
 	events: {
 		'table-sorted': function tableSorted(sortKey) {
 			this.sortKey = sortKey;
 			this.reverse = this.sortKey == sortKey ? this.reverse * -1 : 1;
+		},
+
+		'modal-hidden': function modalHidden() {
+			if (this.hasOwnProperty('modalHidden')) {
+				this.modalHidden();
+			}
+		}
+	},
+
+	methods: {
+
+		previousPage: function previousPage() {
+			this.currentPage--;
+		},
+
+		nextPage: function nextPage() {
+			this.currentPage++;
+		},
+
+		isLastPage: function isLastPage() {
+			return this.currentPage == this.lastPage;
+		},
+
+		inCurrentPage: function inCurrentPage(index) {
+			return (this.currentPage - 1) * this.perPage <= index && index < this.currentPage * this.perPage;
 		}
 	}
-
 });
 
 },{}],15:[function(require,module,exports){
@@ -1162,7 +1203,7 @@ Vue.component('most-expensive-property-table', {
 },{}],16:[function(require,module,exports){
 'use strict';
 
-Vue.component('portfolio-table', {
+Vue.component('portfolio-table', TSTable.extend({
 
 	// components: {
 	// 	'table-headers': require('./table-headers'),
@@ -1170,13 +1211,9 @@ Vue.component('portfolio-table', {
 
 	data: function data() {
 		return {
-			sortKey: 'roi',
+			perPage: 10,
 
-			reverse: -1,
-
-			currentPage: 1,
-
-			search: null,
+			listName: 'properties',
 
 			columns: [{
 				name: 'address',
@@ -1240,34 +1277,18 @@ Vue.component('portfolio-table', {
 			$('[data-property-id=' + id + ']').toggle();
 		}
 	}
-});
+}));
 
 },{}],17:[function(require,module,exports){
 'use strict';
 
-Vue.component('property-manager-table', {
-
-	props: ['userRole'],
-
-	// components: {
-	// 	'table-headers': require('./table-headers'),
-	// },
+Vue.component('property-manager-table', TSTable.extend({
 
 	data: function data() {
 		return {
-			sortKey: '',
+			perPage: 10,
 
-			reverse: -1,
-
-			currentPage: 1,
-
-			paginated: {},
-
-			search: null,
-
-			range: {
-				from: moment().subtract(1, 'month').format('YYYY-MM-DD')
-			},
+			listName: 'properties',
 
 			columns: [{
 				name: 'address',
@@ -1337,7 +1358,7 @@ Vue.component('property-manager-table', {
 		}
 	}
 
-});
+}));
 
 },{}],18:[function(require,module,exports){
 'use strict';
@@ -1399,7 +1420,18 @@ Vue.component('table-headers', {
 'use strict';
 
 Vue.component('transactions-table', {
-	props: ['userRole'],
+	props: [{
+		name: 'dates',
+		'default': function _default() {
+			return {
+				from: moment().subtract(1, 'month').format(dateString),
+				to: moment().add(1, 'year').format(dateString)
+			};
+		}
+	}, {
+		name: 'search',
+		'default': null
+	}],
 
 	data: function data() {
 		return {
@@ -1408,8 +1440,6 @@ Vue.component('transactions-table', {
 			reverse: -1,
 
 			currentPage: 1,
-
-			search: null,
 
 			columns: [{
 				name: 'amount',
@@ -1448,14 +1478,13 @@ Vue.component('transactions-table', {
 				recurringTransaction: {}
 			},
 
+			transactionsUrl: '/api/transactions',
+
+			propertiesUrl: '/api/properties',
+
 			transactions: [],
 
-			properties: [],
-
-			dates: {
-				from: moment().subtract(1, 'month').format(dateString),
-				to: moment().add(1, 'year').format(dateString)
-			}
+			properties: []
 		};
 	},
 
@@ -1503,7 +1532,7 @@ Vue.component('transactions-table', {
 				set: ['address']
 			};
 
-			this.$http.get('/api/transactions', data).success(function (transactions) {
+			this.$http.get(this.transactionsUrl, data).success(function (transactions) {
 				_.each(transactions, function (transaction) {
 					transaction.amount = Number(transaction.amount);
 				});
@@ -1516,7 +1545,7 @@ Vue.component('transactions-table', {
 				'with': ['devices']
 			};
 
-			this.$http.get('/api/properties', data).success(function (properties) {
+			this.$http.get(this.propertiesUrl, data).success(function (properties) {
 				this.properties = properties;
 			});
 		},
@@ -1687,6 +1716,7 @@ Vue.http.headers.common['X-CSRF-TOKEN'] = document.getElementById('_token').getA
 Vue.prototype.numeral = window.numeral;
 Vue.prototype.moment = window.moment;
 Vue.prototype._ = window._;
+Vue.prototype.dateString = window.dateString;
 
 Vue.mixin({
 	methods: {

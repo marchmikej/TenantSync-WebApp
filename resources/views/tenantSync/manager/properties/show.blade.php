@@ -3,32 +3,11 @@
 @section('content')
 
 <div id="property">
-	<!-- <div class="row card">
-		<div class="col-sm-12">
-		<h4 class="card-header">Overview</h4>
-			<div class="col-sm-3">
-				<p class="text-center">Avg ROI</p>
-				<p class="stat text-success text-center">-</p>
-			</div>
-			<div class="col-sm-3">
-				<p class="text-center">Vacancies</p>
-				<p class="stat text-primary text-center">-</p>
-			</div>
-			<div class="col-sm-3">
-				<p class="text-center">Something here</p>
-				<p class="stat text-danger text-center">-</p>
-			</div>
-			<div class="col-sm-3">
-				<p class="text-center">Something Else</p>
-				<p class="stat text-warning text-center">-</p>
-			</div>
-		</div>
-	</div> -->
 	
 	<div class=" card row">
 		<div class="col-sm-12">
 			<h4 class="card-header">Property Info</h4>
-			<form action="/manager/properties/{{$property->id}}" method="Post" class="form form-horizontal">
+			<form action="/landlord/properties/{{$property->id}}" method="Post" class="form form-horizontal">
 				<input type="hidden" name="_token" value="{{ csrf_token() }}">
 				<input type="hidden" name="_method" value="PATCH">
 				<div class="row">
@@ -128,30 +107,21 @@
 			</form>
 		</div>
 	</div>
-
-	<div class="card row">
-		<div class="col-sm-12">
-			<h4 class="card-header">
-				Devices<!-- <a href="/manager/device/create?propertyId={{ $property->id }}"><button class=" btn btn-clear text-primary"><h4 class="m-a-0 icon icon-plus"></h4></button></a> -->
-			</h4>
-			<div class="table-heading row">
-				<div class="col-sm-3">Location</div>
-				<div class="col-sm-3">Rent due</div>
-				<div class="col-sm-3">Rent Amount</div>
-				<div class="col-sm-3">Status</div>
-			</div>
-			<div class="table-body table-striped">
-				<div  v-for="device in devices" class="table-row row">
-					<div class="col-sm-3"><a href="/manager/device/@{{ device.id }}">@{{ device.location }}</a></div>
-					<div class="col-sm-3">@{{ device.rent_due }}</div>
-					<div class="col-sm-3">@{{ device.rent_amount }}</div>
-					<div class="col-sm-3">@{{ device.status }}</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
 	
+	<devices-table 
+		:search="'{{ $property->address }}'" 
+		inline-template
+	>
+		@include('TenantSync::includes.tables.devices-table')
+	</devices-table>
+
+	<transactions-table 
+		:search="'{{ $property->address }}'"
+		inline-template
+	>
+		@include('TenantSync::includes.tables.transactions-table')
+	</transactions-table>
+
 </div>
 
 
@@ -185,10 +155,14 @@
 			methods: {
 
 				fetchDevices: function() {
+					var data = {
+						with: ['alarm']
+					};
+
 					var params = window.location.href.split('/');
 					this.propertyId = params[5].split('?')[0];
 
-					this.$http.get('/manager/properties/' + this.propertyId + '/devices')
+					this.$http.get('/landlord/properties/' + this.propertyId + '/devices')
 						.success( function(devices) {
 							this.devices = devices;
 						})

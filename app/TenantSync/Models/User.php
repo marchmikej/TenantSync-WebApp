@@ -1,7 +1,7 @@
 <?php namespace TenantSync\Models;
 
 use TenantSync\Auth\UserACL;
-use TenantSync\Billing\Billable2;
+use TenantSync\Billing\Billable;
 use Illuminate\Auth\Authenticatable;
 use TenantSync\Auth\UserRelationships;
 
@@ -20,7 +20,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	/**
 	 * Application's Traits (Separation of various types of methods)
 	 */
-	use AuthorizesUser, Billable2;
+	use AuthorizesUser, Billable;
 
 	/**
 	 * The database table used by the model.

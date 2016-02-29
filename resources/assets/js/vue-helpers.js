@@ -5,6 +5,7 @@ Vue.http.headers.common['X-CSRF-TOKEN'] = document.getElementById('_token').getA
 Vue.prototype.numeral = window.numeral;
 Vue.prototype.moment = window.moment;
 Vue.prototype._ = window._;
+Vue.prototype.dateString = window.dateString;
 
 Vue.mixin({
 	methods: {

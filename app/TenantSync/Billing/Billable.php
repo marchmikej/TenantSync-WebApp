@@ -6,7 +6,7 @@ use TenantSync\Models\Registration;
 use TenantSync\Billing\UsaEpayGateway;
 use TenantSync\Billing\PaymentMethod;
 
-trait Billable2 {
+trait Billable {
 
 	protected $soapUrl = 'https://sandbox.usaepay.com/soap/gate/0AE595C1/usaepay.wsdl';
 	protected $data;

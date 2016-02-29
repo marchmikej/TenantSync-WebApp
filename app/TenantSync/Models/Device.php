@@ -24,7 +24,7 @@ class Device extends Model {
 		'token', 
 		'property_id', 
 		'serial', 
-		'alarm', 
+		'alarm_id', 
 		'status',
 		'vacant', 
 		'late_fee', 

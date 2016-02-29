@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container-fluid">
-	<div class="row">
+	<div class="row card">
 		<div class="col-md-12">
 			<div class="">
 				<div class="">
@@ -12,18 +12,8 @@
 						
 						<div class="col-sm-6">
 							<h2 class="text-info">Landlord Info</h2>
-							<div class="form-group">
-								<label class="col-md-4 control-label">Role</label>
-								<div class="col-md-6">
-									<select name="role_id" id="role" class=" form-control">
-										<option value="2">Landlord</option>
-										@if(\Auth::user()->role == 'admin')
-											<option value="3">Sales Rep</option>
-											<option value="4">Admin</option>
-										@endif
-									</select>
-								</div>
-							</div>
+							
+							<input type="hidden" name="role_id" value="2">
 
 							<div class="form-group">
 								<label class="col-md-4 control-label">First Name</label>

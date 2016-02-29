@@ -6,20 +6,20 @@
 				@if(\Auth::user()->role == 'landlord')
 					<button class=" btn btn-clear p-y-0"><a href="/landlord/properties/create"><h3 class="m-a-0 text-primary icon icon-plus"></h3></a></button>
 				@endif
+				@include('TenantSync::includes.tables.search')
 			</h4>
-			<!-- <div class="row table-heading">
-				<div class="col-sm-5">Address</div>
-				<div class="col-sm-2">ROI</div>
-				<div class="col-sm-2">Devices</div>
-				<div class="col-sm-2">Value</div>
-				<div class="col-sm-1"></div>
-			</div> -->
 
 			<table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers>
 		
 			<div class="table-body table-striped">
 						
-				<div v-for="property in properties | orderBy sortKey reverse" class="table-row row">
+				<div 
+					v-for="property in filteredList 
+					| orderBy sortKey reverse 
+					| filterBy search"
+					v-if="inCurrentPage($index)" 
+					class="table-row row"
+				>
 					<div class="col-sm-7"><a :href="'/'+ userRole +'/properties/' + property.id">@{{property.address + ', ' + property.city + ' ' + property.state}}</a></div>
 					<div class="col-sm-2 text-danger">@{{ property.alarms }}</div>
 					<div class="col-sm-2 text-warning">@{{ property.inactives }}</div>
@@ -44,6 +44,9 @@
 					</div>
 				</div>
 			</div>
+
+			@include('TenantSync::includes.tables.pagination')
+
 		</div>
 	</div>
 </property-manager-table>

@@ -6,7 +6,7 @@ use App\Events\UpdatedDeviceTransactions;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UpdateDeviceAlarm
+class UpdateDeviceAlarm implements ShouldBeQueued
 {
     /**
      * Create the event listener.

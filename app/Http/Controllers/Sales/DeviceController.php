@@ -21,21 +21,22 @@ class DeviceController extends SalesController {
 		return view('TenantSync::sales.device.index', compact('devices'));
 	}
 
-	public function create()
+	public function create($id)
 	{
-		$landlord = User::find($this->input['user_id']);
+		$landlord = User::find($id);
 		$states = State::all();
 		return view('TenantSync::sales.device.create', compact('landlord', 'states'));
 	}
 
-	public function store(CreateDeviceRequest $request)
+	public function store(CreateDeviceRequest $request, $id)
 	{
-		\DB::transaction(function() {
+		\DB::transaction(function() use ($id) {
 			$this->input['token'] = \Token::create();
 			$this->input['rent_due'] = \Carbon\Carbon::parse('first day of next month');
 			$this->input['monthly_cost'] = 10;
 			$this->input['alarm_id'] = 0;
 			$this->input['status'] = 'active';
+			$this->input['user_id'] = $id;
 			$device = Device::create($this->input);
 
 			$this->input['device_id'] = $device->id;
@@ -57,7 +58,8 @@ class DeviceController extends SalesController {
 	public function edit($id)
 	{
 		$device = Device::find($id);
-		return view('TenantSync::sales.device.edit', compact('device'));
+		//return view('TenantSync::sales.device.edit', compact('device'));
+		return view('TenantSync::sales.device.show', compact('device'));
 	}
 
 	public function update($id)

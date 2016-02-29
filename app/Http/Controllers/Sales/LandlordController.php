@@ -20,14 +20,13 @@ class LandlordController extends SalesController {
 
 	public function index()
 	{
-		$landlords = User::where(['role_id' => 3]);
+		$landlords = User::where(['role' => 'landlord'])->get();
 
 		return view('TenantSync::sales.landlord.index', compact('landlords'));
 	}
 
 	public function store(Billing $billing, Mailer $mailer)
 	{
-		//$billing->verify($this->input);
 		$landlord = $this->landlordGateway->create($this->input);
 		$data = ['landlord' => $landlord];
 		//send email to set password
@@ -48,7 +47,7 @@ class LandlordController extends SalesController {
 
 		//$landlord->updateRecurringBillingTransactions();
 
-		return view('TenantSync::sales.landlord.show2', compact('landlord', 'states'));
+		return view('TenantSync::sales.landlord.show', compact('landlord', 'states'));
 	}
 
 	public function edit($id)
@@ -61,7 +60,7 @@ class LandlordController extends SalesController {
 	{
 		$landlord = User::find($id);
 		$this->landlordGateway->update($landlord, $this->input);
-		return redirect()->route('sales.landlord.show', $landlord->id);
+		return 'Success';
 
 	}
 
