@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -41,37 +42,47 @@ class GenerateRecurringTransactions extends Command
      */
     public function handle()
     {
+        \Log::info('Running GenerateRecurringTransactions: ');
+
+        $transactions = RecurringTransaction::all();
+
+        foreach($transactions as $transaction) {
+            if($this->transactionHasNotBeenRun($transaction)) {
+                $this->createNewTransaction($transaction);
+            }
+        }
+    }
+
+    public function transactionHasNotBeenRun($transaction)
+    {
+        $lastCreationDate = $transaction->last_ran;
+
+        $expectedlastCreation = date('Y-m-d', time() - strtotime('1 ' . $transaction->schedule, 0));
+
+        return $lastCreationDate < $expectedlastCreation;
+    }
+
+    public function createNewTransaction($transaction)
+    {
         $types = [
             'TenantSync\Models\Property' => 'property',
             'TenantSync\Models\Device' => 'device',
             'TenantSync\Models\User' => 'user'
         ];
 
-        \Log::info('Running GenerateRecurringTransactions: \n');
+        $date = date('Y-m-d', strtotime($transaction->last_ran) + strtotime('1 ' . $transaction->schedule, 0));
 
-        $transactions = RecurringTransaction::all()->filter(function($transaction) {
-            if($transaction->schedule == 'day') {
-                return true;
-            }
-            elseif($transaction->schedule == 'week' && date('w', time()) + 1 == $transaction->day) {
-                return true;
-            }
-            elseif($transaction->schedule == 'month' && date('j', time()) == $transaction->day) {
-                return false;
-            }
-        });
+        Transaction::create([
+            'user_id' => $transaction->user_id,
+            'amount' => $transaction->amount,
+            'description' => $transaction->description,
+            'date' => $date,
+            'payable_type' => $types[$transaction->payable_type],
+            'payable_id' => $transaction->payable_id,
+        ]);
 
-        foreach($transactions as $transaction) {
-            Transaction::create([
-                'user_id' => $transaction->user_id,
-                'amount' => $transaction->amount,
-                'description' => $transaction->description,
-                'date' => date('Y-m-d', time()),
-                'payable_type' => $types[$transaction->payable_type],
-                'payable_id' => $transaction->payable_id,
-            ]);
-        }
+        $transaction->last_ran = $date;
 
-        return 'Finished';
+        $transaction->save();
     }
 }
