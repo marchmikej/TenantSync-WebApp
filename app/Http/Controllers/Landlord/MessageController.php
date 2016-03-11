@@ -9,12 +9,8 @@ use TenantSync\Models\Conversation;
 use App\Http\Controllers\Controller;
 use App\Events\MessageCreatedByUser;
 use App\Events\DeviceMadeUpdate;
-use App\Http\Controllers\Traits\AuthorizesUsers;
-
 
 class MessageController extends Controller {
-
-	use AuthorizesUsers;
 
 	public function __construct(Request $request)
 	{
@@ -29,20 +25,8 @@ class MessageController extends Controller {
 	public function index()
 	{
 		$messages =  $this->user->messages;
-		return view('TenantSync::landlord/messages/index', compact('messages'));
-	}
 
-	public function all()
-	{
-		if(!empty($this->input['device_id']))
-		{
-			return Message::where('device_id', '=', $this->input['device_id'])->orderBy('created_at', 'desc')->get()->keyBy('id');
-		}
-		else
-		{
-			// return Message::where('device_id', '=', $this->user->devices->fetch('id')->toArray())->take(10)->get()->keyBy('id');
-			return Message::where('user_id', '=', $this->user->id)->with('device', 'device.property')->take(5)->orderBy('created_at', 'desc')->get()->keyBy('id');
-		}
+		return view('TenantSync::landlord/messages/index', compact('messages'));
 	}
 
 	/**
@@ -62,19 +46,7 @@ class MessageController extends Controller {
 	 */
 	public function store(Requests\MessageCreatedRequest $request)
 	{
-		$device = Device::find($this->input['device_id']);
-		
-		if(! Gate::allows('owned-by-user', $device))
-		{
-			return abort(403, "Thats not yours!");
-		}
-		Message::create([
-			'user_id' => $this->user->id,
-			'device_id' => $this->input['device_id'],
-			'body' => $this->input['message'],
-			]);
-		\Event::fire(new MessageCreatedByUser($this->input['device_id'], $this->input['message']));
-		return redirect()->back();
+		//
 	}
 
 	/**

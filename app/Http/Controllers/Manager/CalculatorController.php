@@ -11,6 +11,7 @@ class CalculatorController extends Controller {
     public function __construct(RoiCalculator $roiCalculator)
     {
         $this->roiCalculator = $roiCalculator;
+
         parent::__construct();
     }
     /**
@@ -21,19 +22,23 @@ class CalculatorController extends Controller {
     public function index()
     {
         $states = State::all();
+
         return view('TenantSync::manager/calculator', compact('states'));
     }
 
     public function estimateRoi()
     {
         $roi = $this->roiCalculator->cashOnCashRoi($this->input['purchasePrice'], $this->input['rent'], $this->input['expenses'], $this->input['taxes']);
+
         return $roi;
     }
 
     public function calculatePayments($rate, $months, $principal) 
     {
         $loan = $principal;// - $down;
+
         $payment = floor(($loan*$rate/(1-pow(1+$rate,(-1*$months))))*100)/100;
+        
         return $payment;
         //return number_format($rate * $principal * pow((1 + $rate), $months) / (1 - pow((1 + $rate), $months)));
     }

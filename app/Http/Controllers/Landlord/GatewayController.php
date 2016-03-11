@@ -72,6 +72,7 @@ class GatewayController extends Controller
     public function update()
     {
         $this->user->gateway->update($this->input);
+        
         return redirect()->back();
     }
 

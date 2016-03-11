@@ -16,7 +16,9 @@ class TransactionController extends Controller {
 	public function __construct(TransactionMutator $transactionMutator)
 	{
 		parent::__construct();
+
 		$this->manager = $this->user->manager;
+
 		$this->transactionMutator = $transactionMutator;
 	}
 
@@ -28,12 +30,15 @@ class TransactionController extends Controller {
 	public function index()
 	{
 		$landlord = $this->manager->landlord;
+
 		$manager = $this->manager;
-		foreach($manager->properties as $property)
-		{
+
+		foreach($manager->properties as $property) {
 			$netIncomes[] = $property->netIncome('-1 month');
 		}
+
 		$netIncome = array_sum($netIncomes);
+
 		return view('TenantSync::manager.transactions.index', compact('manager', 'landlord', 'netIncome'));
 	}
 
@@ -41,12 +46,12 @@ class TransactionController extends Controller {
 	{	
 		$transactions = (new Transaction)->getTransactionsForUser($this->user);
 
-		if(isset($this->input['with']))
-		{
+		if(isset($this->input['with'])) {
 			$with = $this->input['with'];
 		}
 
 		$transactions = $this->transactionMutator->set('address', $transactions);
+
 		return $transactions;
 	}
 
@@ -69,11 +74,9 @@ class TransactionController extends Controller {
 	{
 		\DB::transaction(function() {
 			$this->input['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $this->input['date'])));
+
 			$transaction = Transaction::create($this->input);
-			if(isset($this->input['is_rent'])) {
-				$device = Device::find($this->input['payable_id']);
-				(new RentPaymentGateway($device))->processPayment($transaction->amount, $transaction);
-			}
+
 			return $transaction;
 		});
 	}
@@ -108,46 +111,7 @@ class TransactionController extends Controller {
 	 */
 	public function update($id)
 	{
-		$transaction = Transaction::find($id);
-		if(Gate::denies('has-transaction', $transaction))
-		{
-			return abort(403, "That's not yours");
-		}
-		$this->input['date'] = date('Y-m-d', strtotime(str_replace('-', '/', $this->input['date'])));
-		$transaction->update(['amount' => $this->input['amount'], 'description' => $this->input['description'], 'date' => $this->input['date'], 'payable_type' => $this->input['payable_type'], 'payable_id' => $this->input['payable_id']]);
-		
-		if($this->input['recurring'])
-		{
-			$schedule = (60*60*24*$this->input['schedule']);
-			$nextDate = strtotime($transaction->date) + $schedule;
-			while($nextDate < time())
-			{
-				$nextDate = $nextDate + $schedule;
-			}
-			$nextDate = date('Y-m-d', $nextDate);
-
-			if(! RecurringTransaction::where(['transaction_id' => $transaction->id])->exists())
-			{
-				RecurringTransaction::create([
-					'transaction_id' => $transaction->id, 
-					'schedule' => $this->input['schedule'], 
-					'next_date' => $nextDate
-				]);
-			}
-			RecurringTransaction::where(['transaction_id' => $transaction->id])->update([
-				'transaction_id' => $transaction->id, 
-				'schedule' => $this->input['schedule'], 
-				'next_date' => $nextDate
-			]);
-			
-		}
-		if(!$this->input['recurring'] && $transaction->recurringTransaction)
-		{
-			RecurringTransaction::where([
-				'transaction_id' => $transaction->id, 
-			])
-			->delete();
-		}
+		//
 	}
 
 	/**
@@ -158,18 +122,7 @@ class TransactionController extends Controller {
 	 */
 	public function destroy($id)
 	{
-		$transaction = Transaction::find($id);
-		if(Gate::denies('has-transaction', $transaction))
-		{
-			return abort(403, "Thats not yours!");
-		}
-
-		if($transaction->recurringTransaction)
-		{
-			$transaction->recurringTransaction->delete();
-		}
-
-		return json_encode(Transaction::find($id)->delete());
+		//
 	}
 
 }

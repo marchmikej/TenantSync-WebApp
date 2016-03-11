@@ -20,7 +20,7 @@
 					v-if="inCurrentPage($index)" 
 					class="table-row row"
 				>
-					<div class="col-sm-7"><a :href="'/'+ userRole +'/properties/' + property.id">@{{property.address + ', ' + property.city + ' ' + property.state}}</a></div>
+					<div class="col-sm-7"><a :href="'/'+ user().role +'/properties/' + property.id">@{{property.address + ', ' + property.city + ' ' + property.state}}</a></div>
 					<div class="col-sm-2 text-danger">@{{ property.alarms }}</div>
 					<div class="col-sm-2 text-warning">@{{ property.inactives }}</div>
 					<div @click="toggleDevices(property.id)" class="col-sm-1 btn btn-clear icon icon-plus p-a-0"></div>

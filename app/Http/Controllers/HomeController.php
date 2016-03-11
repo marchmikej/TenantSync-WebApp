@@ -19,7 +19,6 @@ class HomeController extends Controller {
 				case 'admin':
 					return $this->admin();
 				case 'sales':
-					//return redirect()->route('sales.index');
 					return $this->sales();
 				case 'landlord':
 					return $this->landlord();

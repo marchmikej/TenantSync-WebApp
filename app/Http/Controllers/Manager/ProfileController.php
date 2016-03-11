@@ -11,6 +11,7 @@ class ProfileController extends Controller
     public function __construct()
     {
         parent::__construct();
+
         $this->manager = $this->user->manager;
     }
     /**
@@ -21,6 +22,7 @@ class ProfileController extends Controller
     public function index()
     {
         $manager = $this->manager;
+
         return view('TenantSync::manager/profile/index', compact('manager'));
     }
 
@@ -29,12 +31,15 @@ class ProfileController extends Controller
         if(! \Hash::check($this->input['current_password'], $this->user->password)) {
             return redirect()->back()->withErrors(["Current password doesn't match"]);
         }
+
         $this->validate($this->request, [
             'password' => 'required|confirmed|min:6',
         ]);
 
         $this->user->password = \Hash::make($this->input['password']);
+
         $this->user->save();
+
         return redirect()->back();
     }
 
@@ -43,8 +48,11 @@ class ProfileController extends Controller
         $this->validate($this->request, [
                 'email' => 'required|email|unique:users,email',
             ]);
+        
         $this->user->email = $this->input['email'];
+        
         $this->user->save();
+        
         return redirect()->back();
     }
 

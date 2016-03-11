@@ -14,6 +14,7 @@ class MaintenanceController extends Controller {
 	public function __construct()
 	{
 		parent::__construct();
+
 		$this->manager = $this->user->manager;
 	}
 
@@ -62,8 +63,7 @@ class MaintenanceController extends Controller {
 	{
 		$maintenanceRequest = MaintenanceRequest::find($id);
 
-		if(Gate::denies('has-device', $maintenanceRequest->device))
-		{
+		if(Gate::denies('has-device', $maintenanceRequest->device)) {
 			return abort(403, "Thats not yours!");
 		}
 		
@@ -131,14 +131,17 @@ class MaintenanceController extends Controller {
 	public function closeRequest($id)
 	{
 		$maintenanceRequest = MaintenanceRequest::find($id);
-		if(Gate::denies('has-device', $maintenanceRequest->device))
-		{
+
+		if(Gate::denies('has-device', $maintenanceRequest->device)) {
 			return abort(403, "Thats not yours!");
 		}
 
 		$maintenanceRequest = MaintenanceRequest::find($id);
+
 		$maintenanceRequest->status = 'closed';
+
 		$maintenanceRequest->save();
+
 		return $maintenanceRequest;
 	}
 

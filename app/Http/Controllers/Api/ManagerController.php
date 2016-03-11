@@ -51,23 +51,25 @@ class ManagerController extends Controller
     public function addProperties()
     {
         $manager = Manager::find($this->input['manager_id']);
-        if(Gate::denies('owned-by-user', $manager))
-        {
+
+        if(Gate::denies('owned-by-user', $manager)) {
             return abort(403, "Thats not yours!");
         }
 
         $manager->properties()->attach($this->input['properties']);
+
         return $manager->with('properties')->get();
     }
 
     public function removeProperties()
     {
         $manager = Manager::find($this->input['manager_id']);
-        if(Gate::denies('owned-by-user', $manager))
-        {
+
+        if(Gate::denies('owned-by-user', $manager)) {
             return abort(403, "Thats not yours!");
         }
         $manager->properties()->detach($this->input['properties']);
+
         return $manager->with('properties')->get();
     }
 
@@ -113,15 +115,19 @@ class ManagerController extends Controller
      */
     public function destroy($id)
     {
+        // This needs to be reworked. Make sure no unique email conflicts happen.
         $manager = Manager::find($id);
-        if(Gate::denies('owned-by-user', $manager))
-        {
+
+        if(Gate::denies('owned-by-user', $manager)) {
             return abort(403, "Thats not yours!");
         }
 
         $manager->user->delete();
+
         $manager->properties()->detach();
+
         $manager->delete();
+
         return $this->user->managers;
     }
 }

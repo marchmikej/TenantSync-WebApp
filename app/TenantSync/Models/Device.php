@@ -1,11 +1,11 @@
 <?php namespace TenantSync\Models;
 
-use TenantSync\Billing\Billable2;
+use TenantSync\Billing\Billable;
 use Illuminate\Database\Eloquent\Model;
 
 class Device extends Model {
 
-	use Billable2;
+	use Billable;
 
 	/**
 	 * The database table used by the model.

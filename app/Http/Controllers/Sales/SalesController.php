@@ -13,8 +13,8 @@ class SalesController extends Controller
     public function __construct()
     {
         parent::__construct();
-        if($this->user->role != 'sales')
-        {
+
+        if($this->user->role != 'sales') {
             return abort(403, 'Unauthorized action.');
         }
     }

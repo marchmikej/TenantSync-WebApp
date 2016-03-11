@@ -15,7 +15,9 @@ class ProfileController extends Controller
     public function index()
     {
         $landlord = $this->user;
+
         $states = State::all();
+
         return view('TenantSync::landlord/profile/show', compact('landlord', 'states'));
     }
 
@@ -35,12 +37,15 @@ class ProfileController extends Controller
         if(! \Hash::check($this->input['current_password'], $this->user->password)) {
             return redirect()->back()->withErrors(["Current password doesn't match"]);
         }
+
         $this->validate($this->request, [
             'password' => 'required|confirmed|min:6',
         ]);
 
         $this->user->password = \Hash::make($this->input['password']);
+
         $this->user->save();
+
         return redirect()->back();
     }
 
@@ -87,6 +92,7 @@ class ProfileController extends Controller
     public function update($id)
     {
         $this->user->profile->update($this->input);
+        
         return redirect()->back();
     }
 

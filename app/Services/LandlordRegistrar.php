@@ -59,6 +59,7 @@ class LandlordRegistrar implements RegistrarContract {
 		//$landlord->charge(5000);
 
 		$user = $this->landlordGateway->create($data);
+		$user = $this->createLandlord($data);
 		return $user;
 	}
 
@@ -171,6 +172,56 @@ class LandlordRegistrar implements RegistrarContract {
 			'ClientIP'=>$_SERVER['REMOTE_ADDR'],
 		);
 		return $token;
+	}
+
+	public function createLandlord($data)
+	{
+		$data['role'] = 'landlord';
+
+		$user = User::create([
+			'email' => $data['email'],
+			//'password' => password_hash($data['password'], PASSWORD_BCRYPT),
+			'role_id' => $data['role_id'],
+		]);
+
+		Profile::create([
+			'user_id' => $user->id,
+			'first_name' => $data['first_name'],
+			'last_name' => $data['last_name'],
+			'phone' => $data['phone'],
+			]);
+
+		// Registration::create([
+		// 	'user_id' => $user->id, 
+		// 	'ammount_due' => $this->registrationCost
+		// ]);
+
+
+		Gateway::create([
+			'user_id' => $user->id,
+		]);
+
+
+		PaymentMethod::create([
+			'user_id' => $user->id,
+			'name' => ucfirst($data['type']) . 'ending in ' . isset($data['card_number']) ? substr($data['card_number'], -4) : substr($data['account_number'], -4), 
+		]);
+
+		return $user;
+	}
+
+	public function update(User $landlord, array $relationships)
+	{
+		$relations = $landlord->getRelations();
+		foreach($relationships as $relationship => $data)
+		{
+			if(isset($relations[$relationship]))
+			{
+				$landlord->$relationship = $data;
+			}
+			continue;
+		}
+		$landlord->push();
 	}
 
 }

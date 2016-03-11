@@ -8,11 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateMaintenanceRequest;
 use TenantSync\Models\MaintenanceRequest;
 use App\Events\LandlordRespondedToMaintenance;
-use App\Http\Controllers\Traits\AuthorizesUsers;
 
 class MaintenanceController extends Controller {
-
-	use AuthorizesUsers;
 
 	public function __construct(Device $device)
 	{
@@ -27,33 +24,9 @@ class MaintenanceController extends Controller {
 	 */
 	public function index()
 	{
-		$maintenanceRequests = MaintenanceRequest::where('user_id', '=', $this->user->id)->get();
+		$maintenanceRequests = $this->user->maintenanceRequests;
+
 		return view('TenantSync::landlord/maintenance/index', compact('maintenanceRequests'));
-	}
-
-	public function all()
-	{
-		if(!empty($this->input['device_id']))
-		{
-			return MaintenanceRequest::where('device_id', '=', $this->input['device_id'])->orderBy('created_at', 'desc')->get()->keyBy('id');
-		}
-		else
-		{
-			// return Message::where('device_id', '=', $this->user->devices->fetch('id')->toArray())->take(10)->get()->keyBy('id');
-			return MaintenanceRequest::where('user_id', '=', $this->user->id)->with('device', 'device.property')->take(5)->orderBy('created_at', 'desc')->get()->keyBy('id');
-		}
-	}
-
-	public function get($id)
-	{
-		$maintenanceRequest = MaintenanceRequest::find($id);
-
-		if(Gate::denies('owned-by-user', $maintenanceRequest))
-		{
-			return abort(403, "Thats not yours!");
-		}
-
-		return $maintenanceRequest;
 	}
 
 	/**
@@ -86,8 +59,7 @@ class MaintenanceController extends Controller {
 	{	
 		$maintenanceRequest = MaintenanceRequest::find($id);
 
-		if(Gate::denies('owned-by-user', $maintenanceRequest))
-		{
+		if(Gate::denies('owned-by-user', $maintenanceRequest)) {
 			return abort(403, "Thats not yours!");
 		}
 		
@@ -115,10 +87,10 @@ class MaintenanceController extends Controller {
 	{
 		$maintenanceRequest = MaintenanceRequest::find($id);
 
-		if(Gate::denies('owned-by-user', $maintenanceRequest))
-		{
+		if(Gate::denies('owned-by-user', $maintenanceRequest)) {
 			return abort(403, "Thats not yours!");
 		}
+
 		$fields = [
 			'cost',
 			'status',
@@ -134,18 +106,24 @@ class MaintenanceController extends Controller {
 
 		$maintenanceRequest->status = 'awaiting_approval';
 		
-		if(! count($maintenanceRequest->transaction))
-		{
-			$transaction = Transaction::create(['user_id' => $maintenanceRequest->user_id, 'description' => 'Maintenance Request '.$maintenanceRequest->id, 'payable_type' => 'device', 'payable_id' => $maintenanceRequest->device->id, 'date' => date('Y-m-d', time())]);
+		if(! count($maintenanceRequest->transaction)) {
+			$transaction = Transaction::create([
+				'user_id' => $maintenanceRequest->user_id, 
+				'description' => 'Maintenance Request '.$maintenanceRequest->id, 
+				'payable_type' => 'device', 
+				'payable_id' => $maintenanceRequest->device->id, 
+				'date' => date('Y-m-d', time())
+			]);
+
 			$maintenanceRequest->update(['transaction_id' => $transaction->id]);
 		}
 
-		if(isset($this->input['cost']))
-		{
+		if(isset($this->input['cost'])) {
 			$maintenanceRequest->transaction->update(['amount' => abs($this->input['cost']) * -1, 'date' => date('Y-m-d', strtotime($maintenanceRequest->appointment_date))]);
 		}
 
 		\Event::fire(new LandlordRespondedToMaintenance($maintenanceRequest->device->id, 'Maintenance response received.'));
+
 		$maintenanceRequest->save();
 
 		return 'success';
@@ -155,13 +133,15 @@ class MaintenanceController extends Controller {
 	{	
 		$maintenanceRequest = MaintenanceRequest::find($id);
 
-		if(Gate::denies('owned-by-user', $maintenanceRequest))
-		{
+		if(Gate::denies('owned-by-user', $maintenanceRequest)) {
 			return abort(403, "Thats not yours!");
 		}
 		$maintenanceRequest = MaintenanceRequest::find($id);
+
 		$maintenanceRequest->status = 'closed';
+
 		$maintenanceRequest->save();
+
 		return $maintenanceRequest;
 	}
 

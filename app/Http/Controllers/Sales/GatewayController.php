@@ -13,6 +13,7 @@ class GatewayController extends SalesController {
 	public function __construct(LandlordGateway $landlordGateway)
 	{
 		$this->landlordGateway = $landlordGateway;
+
 		parent::__construct();
 	}
 
@@ -77,9 +78,13 @@ class GatewayController extends SalesController {
 	public function update($id)
 	{
 		$landlord = User::find($id);
+		
 		$landlord->gateway->pin = $this->input['pin'];
+		
 		$landlord->gateway->key = $this->input['key'];
+		
 		$landlord->push();
+		
 		return redirect()->back();
 	}
 

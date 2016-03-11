@@ -15,6 +15,7 @@ class MessageController extends Controller
     public function __construct()
     {
         parent::__construct();
+
         $this->manager = $this->user->manager;
     }
     /**
@@ -29,13 +30,14 @@ class MessageController extends Controller
 
     public function all()
     {
-        if(!empty($this->input['device_id']))
-        {
+        if(!empty($this->input['device_id'])) {
             return Device::find($this->input['device_id'])->messages;
         }
+
         if(!empty($this->input['limit'])) {
             return $this->manager->messages()->sortByDesc('created_at')->take($this->input['limit']);
         }
+
         return $this->manager->messages();
     }
 
@@ -69,6 +71,7 @@ class MessageController extends Controller
             \Event::fire(new MessageCreatedByUser($this->input['device_id'], $this->input['message']));
             return redirect()->back();
         }
+        
         return abort(403, "Thats not yours!");
     }
 

@@ -79,12 +79,14 @@ class BillingController extends SalesController {
 			'zip' => 'required'
 		]);
 
-		if($validator->fails())
-		{
+		if($validator->fails()) {
 			return redirect()->back()->withErrors($validator->errors());
 		}
+		
 		$profile = Profile::find($id);
+		
 		$profile->update($this->input);
+		
 		//if not return error
 		return redirect()->back();
 	}

@@ -47,6 +47,7 @@ class PaymentController extends Controller
     public function show($id)
     {
         $landlord = $this->user;
+        
         return $landlord->getPaymentMethods();
     }
 

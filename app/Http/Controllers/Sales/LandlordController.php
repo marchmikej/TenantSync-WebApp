@@ -15,6 +15,7 @@ class LandlordController extends SalesController {
 	public function __construct(LandlordGateway $landlordGateway)
 	{
 		$this->landlordGateway = $landlordGateway;
+
 		parent::__construct();
 	}
 
@@ -28,6 +29,7 @@ class LandlordController extends SalesController {
 	public function store(Billing $billing, Mailer $mailer)
 	{
 		$landlord = $this->landlordGateway->create($this->input);
+
 		$data = ['landlord' => $landlord];
 		//send email to set password
 		// $mailer->send('emails.welcome', $data, function($message) use ($landlord)
@@ -40,12 +42,10 @@ class LandlordController extends SalesController {
 	public function show($id)
 	{
 		$states = State::all();
-		$landlord = User::find($id);
-		//$landlord->charge(500, ['account_holder' => 'mitchtest', 'payment_type' => 'card', 'card_number' => '4000100211112222', 'expiration' => '0919', 'cvv2' => '999', 'description' => "mitch's test charge with new billable trait", 'address' => '5042 parker rd', 'zip' => '14075']);
-		//$landlord->charge(500);
-		$landlord->addDevice($landlord->devices->first());
 
-		//$landlord->updateRecurringBillingTransactions();
+		$landlord = User::find($id);
+
+		$landlord->addDevice($landlord->devices->first());
 
 		return view('TenantSync::sales.landlord.show', compact('landlord', 'states'));
 	}
@@ -53,13 +53,16 @@ class LandlordController extends SalesController {
 	public function edit($id)
 	{
 		$landlord = User::find($id);
+
 		return view('TenantSync::sales.landlord.edit2', compact('landlord'));
 	}
 
 	public function update($id)
 	{
 		$landlord = User::find($id);
+
 		$this->landlordGateway->update($landlord, $this->input);
+
 		return 'Success';
 
 	}
@@ -67,12 +70,14 @@ class LandlordController extends SalesController {
 	public function customer($id)
 	{
 		$landlord = User::find($id);
+
 		return response()->json($landlord->getCustomer());
 	}
 
 	public function updateCustomer($id)
 	{
 		$landlord = User::find($id);
+		
 		return $landlord->updateCustomer($this->input);
 	}
 

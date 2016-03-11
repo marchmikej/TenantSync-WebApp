@@ -14,10 +14,13 @@ abstract class Controller extends BaseController
     public function __construct()
     {
     	$this->user = \Auth::user();
+
 		$this->input = \Request::all();
+
 		$this->request = \Request::instance();
 
 		view()->share('signedIn', \Auth::check());
+		
 		view()->share('user', \Auth::user());
 	}
 }

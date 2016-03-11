@@ -1,10 +1,8 @@
 <?php namespace TenantSync\Models;
 
-use TenantSync\Auth\UserACL;
 use TenantSync\Billing\Billable;
 use Illuminate\Auth\Authenticatable;
 use TenantSync\Auth\UserRelationships;
-
 use TenantSync\Auth\AuthorizesUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Passwords\CanResetPassword;

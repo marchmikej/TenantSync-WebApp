@@ -27,43 +27,6 @@ class PropertyController extends Controller {
 		return view('TenantSync::landlord/properties/index', compact('landlord'));
 	}
 
-	public function all()
-	{
-
-		$paginate = 15;
-		$query = Property::where(['user_id' => $this->user->id]);
-
-		if(isset($this->input['sort']) && ! empty($this->input['sort']))
-		{
-			$sort = $this->input['sort'];
-			$order = isset($this->input['asc']) && $this->input['asc'] != 1 ? 'desc' : 'asc';
-			$query = $query->orderBy($sort, $order);
-		}
-		
-		if(isset($this->input['paginate']))
-		{
-			$paginate = $this->input['paginate'];
-		}	
-		
-		if(isset($this->input['with']))
-		{
-			$with = $this->input['with'];
-			$query = $query->with($with);
-		}
-
-		//return Device::where(['user_id' => $this->user->id])->orderBy('rent_amount', 'desc')->with(['property', 'alarm'])->paginate(15);
-		$result = $query->paginate($paginate);
-
-		//$properties = $this->user->properties->load('devices')->keyBy('id');
-		$result->data = $properties;
-		return $result;
-	}
-
-	public function devices($id)
-	{
-		return Device::where(['property_id' => $id])->get();
-	}
-
 	/**
 	 * Show the form for creating a new resource.
 	 *
@@ -72,6 +35,7 @@ class PropertyController extends Controller {
 	public function create()
 	{
 		$states = State::all();
+
 		return view('TenantSync::landlord/properties/create', compact('states'));
 	}
 
@@ -83,7 +47,9 @@ class PropertyController extends Controller {
 	public function store(CreatePropertyRequest $request)
 	{
 		$this->input['user_id'] = $this->user->id;
+		// Change to this eventualy -  $this->user->properties->create($this->input);
 		$property = Property::create($this->input);
+
 		return redirect()->route('landlord.properties.show', [$property]);
 
 	}
@@ -96,13 +62,28 @@ class PropertyController extends Controller {
 	 */
 	public function show($id)
 	{
+		$landlord = $this->user;
+
+		$landlord->charge(500, [
+			'account_holder' => 'mitchtest',  
+			'card' => [
+				'card_number' => '4000100211112222', 
+	 			'expiration' => '0919', 
+	 			'cvv2' => '999',
+			 ] ,
+			'description' => "mitch's test charge with new billable trait", 
+			// 'address' => '5042 parker rd', 
+			// 'zip' => '14075'
+		]);
+
 		$property = Property::find($id);
-		if(Gate::denies('owned-by-user', $property))
-		{
+
+		if(Gate::denies('owned-by-user', $property)){
 			return abort(403, "Thats not yours!");
 		}
 
 		$states = State::all();
+
 		return view('TenantSync::landlord/properties/show', compact('states', 'property'));
 	}
 
@@ -126,12 +107,13 @@ class PropertyController extends Controller {
 	public function update(CreatePropertyRequest $request, $id)
 	{
 		$property = Property::find($id);
-		if(Gate::denies('owned-by-user', $property))
-		{
+
+		if(Gate::denies('owned-by-user', $property)) {
 			return abort(403, "Thats not yours!");
 		}
 
 		$property->update(\Request::except('_token'));
+
 		return redirect()->back();
 	}
 

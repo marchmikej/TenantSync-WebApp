@@ -15,6 +15,7 @@ class PropertyController extends Controller
     public function __construct()
     {
         parent::__construct();
+
         $this->manager = $this->user->manager;
     }
 
@@ -26,47 +27,14 @@ class PropertyController extends Controller
     public function index()
     {
         $manager = $this->manager;
-        foreach($manager->properties as $property)
-        {
+
+        foreach($manager->properties as $property) {
             $roiGroup[] = $property->roi();
         }
+
         $roi = array_sum($roiGroup) / count($roiGroup);
+
         return view('TenantSync::landlord/properties/index', compact('manager', 'roi'));
-    }
-
-    public function all()
-    {
-        $paginate = 15;
-        $query = Property::whereIn('id', $this->manager->properties->keyBy('id')->keys()->toArray());
-
-        if(isset($this->input['sort']) && ! empty($this->input['sort']))
-        {
-            $sort = $this->input['sort'];
-            $order = isset($this->input['asc']) && $this->input['asc'] != 1 ? 'desc' : 'asc';
-            $query = $query->orderBy($sort, $order);
-        }
-        
-        if(isset($this->input['paginate']))
-        {
-            $paginate = $this->input['paginate'];
-        }   
-        
-        if(isset($this->input['with']))
-        {
-            $with = $this->input['with'];
-            $query = $query->with($with);
-        }
-
-        //return Device::where(['user_id' => $this->user->id])->orderBy('rent_amount', 'desc')->with(['property', 'alarm'])->paginate(15);
-        $result = $query->paginate($paginate);
-
-        //$properties = $this->user->properties->load('devices')->keyBy('id');
-        $properties = PropertyMutator::set('netIncome', $result);
-        $properties = PropertyMutator::set('incomes', $result);
-        $properties = PropertyMutator::set('expenses', $result);
-        $properties = PropertyMutator::set('roi', $result);
-        $result->data = $properties;
-        return $result;
     }
 
     public function devices($id)
@@ -104,12 +72,13 @@ class PropertyController extends Controller
     public function show($id)
     {
         $property = Property::find($id);
-        if(Gate::denies('has-property', $property))
-        {
+
+        if(Gate::denies('has-property', $property)) {
             return abort(403, "Thats not yours!");
         }
 
         $states = State::all();
+
         return view('TenantSync::manager/properties/show', compact('states', 'property'));
     }
 
@@ -134,12 +103,13 @@ class PropertyController extends Controller
     public function update($id)
     {
         $property = Property::find($id);
-        if(Gate::denies('has-property', $property))
-        {
+
+        if(Gate::denies('has-property', $property)) {
             return abort(403, "Thats not yours!");
         }
 
         $property->update(\Request::except('_token'));
+        
         return redirect()->back();
     }
 
