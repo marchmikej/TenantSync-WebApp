@@ -17,24 +17,31 @@ class UsaEpayGateway {
 		$this->gateway = new \SoapClient($this->soapUrl);
 	}
 
-	public function charge($amount, $options)
+	public function charge($amount, $userOptions)
 	{
-		if (empty($options['payment_type']))
-		{
-			if(! array_key_exists('method_id', $options))
-			{
-				$options['method_id'] = 0;
-			}
-			return $this->chargeBillable($amount, $options);
+		// if (empty($options['payment_type']))
+		// {
+		// 	if(! isset($userOptions['method_id']))
+		// 	{
+		// 		$options['method_id'] = 0;
+		// 	}
+		// 	return $this->chargeBillable($amount, $userOptions);
+		// }
+		
+		if(! isset($userOptions['command'])) {
+			$userOptions['command'] = 'sale';
+		}
+
+		if (! empty($userOptions)) {
+			$userOptions['amount'] = $amount;
 		}
 
 		try 
 		{
-			return $this->gateway->runTransaction($this->billable->createToken(true), (new TransactionRequest($amount, $options))->build());
-			// if($toLandlord)
-			// {
-			// 	Transaction::create(['user_id' => $this->owner->id, 'reference_number' => $res->RefNum, 'amount' => $amount]);
-			// }
+			// var_export((new TransactionRequest($userOptions))->toArray());
+			// var_export('<br>');
+			// var_export($this->gateway->runTransaction($this->billable->createToken(), (new TransactionRequest($userOptions))->toArray()));
+			return $this->gateway->runTransaction($this->billable->createToken(), (new TransactionRequest($userOptions))->toArray());
 		} 
 		catch (\SoapFault $e) 
 		{
@@ -43,14 +50,14 @@ class UsaEpayGateway {
 		}
 	}
 
-	public function chargeBillable($amount, $options)
+	public function chargeBillable($amount, $userOptions)
 	{
 		//debug((new CustomerTransactionRequest($amount, $options))->build());
 		if (! $this->billable->hasCustomerId())
 		{
 			throw new \InvalidArgumentException('No payment info provided or no customer Id.');
 		}
-		return $this->gateway->runCustomerTransaction($this->billable->createToken(), $this->billable->customer_id, $options['method_id'], [
+		return $this->gateway->runCustomerTransaction($this->billable->createToken(), $this->billable->customer_id, $userOptions['method_id'], [
 				'Command'=>'Sale',
 				'Details' =>  [
 					'Invoice' => '', 

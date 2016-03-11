@@ -2,22 +2,42 @@
 
 namespace TenantSync\Billing;
 
-trait Util {
+class Util {
 
-	public function set($options)
+	public static function studlyCase($string)
 	{
-		foreach($options as $key => $value)
-		{
-			if(isset($this->fillable[$key]) && is_string($value))
-			{	
-				$property = $this->fillable[$key];
-				$this->$property = $value;
+		$string = str_replace(['-', '_'], ' ', $string);
+		
+		$string = ucwords($string);
+
+		return str_replace(' ', '', $value);
+	}
+
+	public static function camelCase($string)
+	{
+		$studly = $this->studly_case($string);
+
+		return lcfirst($studly);
+	}
+
+	public static function arrayhas($array, $key)
+	{
+		return isset($array[$key]);
+	}
+
+	public static function flatten($array)
+	{
+		$newArray = array();
+
+		foreach ($array as $key => $item) {
+			if (is_array($item)) {
+				$newArray = $newArray + self::flatten($item);
 			}
-			if(is_array($value))
-			{
-				$this->set($value);
+			else {
+				$newArray[$key] = $item;
 			}
-			continue;
 		}
+
+		return $newArray ;
 	}
 }

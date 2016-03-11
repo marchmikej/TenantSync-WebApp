@@ -2,59 +2,81 @@
 
 namespace TenantSync\Billing;
 
+use Exception;
 use TenantSync\Billing\Util;
+use TenantSync\Billing\RequestObjectFormatter;
 
 abstract class UsaEpayObject {
 
-	// use Util;
+	protected $emptyableRequiredFields = [];
 
-	/* protected $billable; */
-	protected $properties; 
-	protected $fillable;
-	protected $required;
+	public $userOptions;
 
-	public function __construct()	
+	public $requestObject;
+
+	public function __construct($userOptions)
 	{
-		//
+		$this->validateUserOptions($userOptions);
+
+		$this->userOptions = $userOptions;
+
+		$this->formatter = new RequestObjectFormatter;
 	}
 
-	public function properties($options)
+	public function toArray()
 	{
-		foreach($this->fillable as $key => $value)
-		{
-			if(isset($options[$key]))
-			{
-				if (method_exists($this, camel_case($key)))
-				{
-					$result = $this->{camel_case($key)}($value);
-					if (is_array($result))
-					{
-						$this->properties[$result['key']] = $result['value'];
-						continue;	
-					}
-					$this->properties[$value] = $result;
-					continue;
-				}
-				$this->properties[$value] = $options[$key];
-				continue;
-			}
+		return $this->generateRequestObject();
+	}
 
-			if (in_array($key, $this->required) && method_exists($this, camel_case($key)))
-			{
-				$result = $this->{camel_case($key)}($value);
-				if (is_array($value))
-				{
-					$this->properties[$result['key']] = $result['value'];
-					continue;	
-				}
-				$this->properties[$value] = $result;
-				continue;
+
+	public function validateUserOptions($userOptions) 
+	{
+		if (! is_array($userOptions)) {
+			throw new Exception('The $userOptions parameter must be an array.');
+		}
+
+		$this->validateRequiredInputfields($userOptions);
+	}
+
+
+	public function validateRequiredInputfields($userOptions)
+	{
+		$requiredFields = [];
+
+		foreach($this->requiredInputFields as $field) {
+			if(! Util::arrayHas($userOptions, $field)) {
+				$requiredFields[] = $field;
 			}
-			if(in_array($key, $this->required) && !isset($this->required[$key]))
-			{
-				return abort(500, 'Missing variable '.$key);
+		}	
+
+		if(count($requiredFields)) {
+			throw new Exception('The following field(s) are required: '. implode(', ', $requiredFields));
+		}
+	}
+
+
+	public function generateRequestObject()
+	{
+		$this->requestObject = $this->formatter->format($this)->with($this->userOptions);
+
+		$this->resolveEmptyableRequiredFields();
+
+		return $this->requestObject;
+	}
+
+
+	public function resolveEmptyableRequiredFields()
+	{
+		foreach($this->emptyableRequiredFields as $field) {
+			if ($this->notSetInRequestObject($field)) {
+				$this->requestObject[$field] = '';
 			}
 		}
-		return $this->properties;
+	}
+
+
+	public function notSetInRequestObject($field)
+	{
+		return ! Util::arrayHas($this->requestObject, $field);
 	}
 }
