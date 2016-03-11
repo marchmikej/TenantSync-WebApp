@@ -47,33 +47,34 @@ class GenerateRentBills extends Command
 
         $devices = Device::all();
 
-        $devicesToBill = $devices->filter(function($device) {
-            if($device->rent_due != '0000-00-00') {
-                return date('Y-m-d', strtotime($device->rent_due)) == date('Y-m-d', time());
+        foreach($devices as $device) {
+            if($this->deviceHasNotBeenBilled($device)) {
+                $this->createNewBillForDevice($device);
             }
-
-            return false;
-        });
-        foreach($devicesToBill as $device) {
-            $bill = RentBill::create([
-                'user_id' => $device->owner->id, 
-                'device_id' => $device->id, 
-                'rent_month' => date('Y-m-d', time()), 
-                'bill_amount' => $device->rent_amount, 
-                'balance_due' => $device->rent_amount, 
-                'paid' => 0, 
-                'vacant' => $device->vacant
-            ]);
-
-            $device->rent_due = date('Y-m-d', strtotime($device->rent_due. ' +1 month'));
-            // if(date('m', strtotime($device->rent_due) + strtotime('+1 month')) !== date('m', strtotime($device->rent_due)))
-            // {
-            //     $device->rent_due = date('Y-m-d', strtotime($device->rent_due) + strtotime('last day of +1 month'));
-            // }
-
-            $device->save();
         }
+    }
 
-        return 'Finished';
+    public function deviceHasNotBeenBilled($device)
+    {
+        $latestBill = RentBill::where(['device_id' => $device->id])->orderBy('created_at', 'desc')->first();
+
+        $latestBillMonth = date('m', strtotime($latestBill->rent_month));
+
+        return $latestBillMonth < date('m');
+    }
+
+    public function createNewBillForDevice($device)
+    {
+        $bill = RentBill::create([
+            'user_id' => $device->owner->id,
+            'device_id' => $device->id, 
+            'rent_month' => date('Y-m-d', strtotime('first day of this month')), 
+            'bill_amount' => $device->rent_amount, 
+            'vacant' => $device->vacant
+        ]);
+
+        $device->rent_due = date('Y-m-d', strtotime($device->rent_due. ' first day of +1 month'));
+
+        $device->save();
     }
 }
