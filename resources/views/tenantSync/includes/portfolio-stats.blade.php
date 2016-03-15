@@ -47,10 +47,6 @@
 					<div v-if="stats.paid_rent != 0" class="h-md col-sm-12 scrollable-y">
 		
 						<div class="table-heading row">
-							<div class="col-sm-3">
-								Amount
-							</div>
-		
 							<div class="col-sm-6">
 								Address
 							</div>
@@ -58,20 +54,24 @@
 							<div class="col-sm-3">
 								Date
 							</div>
+							
+							<div class="col-sm-3">
+								Amount
+							</div>
 						</div>
 		
 						<div class="table-body table-striped">
 							<div v-for="transaction in paidRentTransactions()" class="table-row row">
-								<div :class="transaction.amount > 0 ? 'text-success' : 'text-danger'" class="col-sm-3">
-									@{{ transaction.amount }}
-								</div>		
 								<div class="col-sm-6">
 									<a :href="'/'+ user().role +'/device/'+ transaction.payable_id">
 										@{{ transaction.address }}
 									</a>
 								</div>		
 								<div class="col-sm-3">
-									@{{ transaction.date }}
+									@{{ moment(transaction.date).format(displayDateString) }}
+								</div>		
+								<div :class="transaction.amount > 0 ? 'text-success' : 'text-danger'" class="col-sm-3">
+									@{{ transaction.amount }}
 								</div>		
 							</div>
 						</div>
@@ -130,7 +130,7 @@
 						<div class="table-body table-striped">
 							<div v-for="bill in vacantRentBills()" class="table-row row">
 								<div class="col-sm-6">
-									<a :href="'/'+ user().role +'/device/'+ rentBill.device_id">
+									<a :href="'/'+ user().role +'/device/'+ bill.device_id">
 										@{{ bill.address }}
 									</a>
 								</div>		

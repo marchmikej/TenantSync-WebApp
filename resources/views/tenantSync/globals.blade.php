@@ -12,6 +12,8 @@
 		    '<': function(a, b) { return a < b },
 		};
 
-	var dateString = 'YYYY-MM-DD';
+	window.dateString = 'YYYY-MM-DD';
+
+	window.displayDateString = 'MMM D, YY';
 
 </script>

@@ -129,7 +129,7 @@
 					<div class="table-body table-striped">
 						<div v-for="bill in vacantRentBills()" class="table-row row">
 							<div class="col-sm-6">
-								<a :href="'/'+ user().role +'/device/'+ rentBill.device_id">
+								<a :href="'/'+ user().role +'/device/'+ bill.device_id">
 									@{{ bill.address }}
 								</a>
 							</div>		
