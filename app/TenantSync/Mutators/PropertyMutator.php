@@ -17,10 +17,11 @@ class PropertyMutator extends ModelMutator {
 	public function totalExpenses($property)
 	{
 		$amounts = array();
-		foreach($property->expenses() as $expense)
-		{
+
+		foreach($property->expenses() as $expense) {
 			$amounts[] = $expense->amount;
-		}		
+		}
+				
 		return array_sum($amounts);
 	}
 

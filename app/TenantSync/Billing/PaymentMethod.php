@@ -4,7 +4,7 @@ namespace TenantSync\Billing;
 
 class PaymentMethod extends UsaEpayObject {
 
-	protected $fillable = [
+	protected $inputToObjectName = [
 		'id' => 'MethodID',
 		'method_name' => 'MethodName',
 		'card_number' => 'CardNumber',
@@ -14,17 +14,8 @@ class PaymentMethod extends UsaEpayObject {
 		'sort_order' => 'SecondarySort',
 	];
 
-	protected $required = [
+	protected $requiredInputField = [
 		'method_name',
 		'sort_order',
 	];
-
-	public function sortOrder()
-	{
-		if(! isset($this->option['sort_order'])) 
-		{
-			return 0;
-		}
-		return $this->option['sort_order'];
-	}
 }

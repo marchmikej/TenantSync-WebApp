@@ -37,6 +37,7 @@ class RecurringTransaction extends Model
 	public function getPayableTypeAttribute($type) 
     {
 	    $type = strtolower($type);
+
 	    return array_get($this->types, $type, $type);
     }
 
@@ -45,6 +46,7 @@ class RecurringTransaction extends Model
         switch($this->payable_type) {
             case 'TenantSync\\Models\\Device': 
                 $device = Device::find($this->payable_id);
+                
                 return $device->property->address . ', ' . $device->location;
             case 'TenantSync\\Models\\Property':
                 return Property::find($this->payable_id)->address;

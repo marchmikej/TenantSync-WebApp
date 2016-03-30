@@ -4,9 +4,9 @@ namespace TenantSync\Billing;
 
 use TenantSync\Billing\UsaEpayObject;
 
-class RecurringBilling extends UsaEpayObject /*implements UsaEpayRequestObject*/ {
+class RecurringBilling extends UsaEpayObject {
 
-	protected $fillable = [
+	protected $inputToObjectName = [
 		'repeat' => 'Schedule',
 		'next' => 'Next',
 		'ends' => 'Expire',
@@ -14,11 +14,4 @@ class RecurringBilling extends UsaEpayObject /*implements UsaEpayRequestObject*/
 		'amount' => 'Amount',
 		'enable_recurring' => 'Enabled',
 	];
-	
-
-	public function __construct()
-	{
-		//
-	}
-
 }

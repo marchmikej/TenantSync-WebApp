@@ -9,26 +9,25 @@ class Customer extends UsaEpayObject {
 	protected $requiredInputFields = [
 		'amount',
 	];
-	// let usaepay handle error reporting on their own fields
 
 	protected $emptyableRequiredUsaEpayFields = [];
 
-	public $keyMap = [
+	public $inputToObjectName = [
 		'card' => 'PaymentMethods',
 		'check' => 'PaymentMethods',
-		// 'amount',
-		// 'billing_address',
-		// 'billing_cycles',
-		// 'command',
-		// 'customer_id',
-		// 'descriptoin',
-		// 'details',
-		// 'enabled',
-		// 'next',
-		// 'order_id',
-		// 'payment_methods',
-		// 'receipt_note',
-		// 'schedule',
-		// 'send_receipt',
+		'amount' => 'Amount',
+		'billing_address' => 'BillingAddress',
+		'billing_cycles' => 'BillingCycles',
+		'command' => 'Command',
+		'customer_id' => 'CustomerID',
+		'description' => 'Discription',
+		'details' => 'Details',
+		'enabled' => 'Enabled',
+		'next' => 'Next',
+		'order_id' => 'OrderID',
+		'payment_methods' => 'PaymentMethods',
+		'receipt_note' => 'ReceiptNote',
+		'schedule' => 'Schedule',
+		'send_receipt' => 'SendReceipt',
 	];
 }

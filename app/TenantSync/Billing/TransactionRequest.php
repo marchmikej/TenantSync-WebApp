@@ -13,10 +13,11 @@ class TransactionRequest extends UsaEpayObject {
 	protected $requiredInputFields = [
 		'account_holder',
 		'command',
+		'amount',
+		'description',
 	];
 
-	public $inputOptionToObjectName = 
-	[
+	public $inputToObjectName = [
 		'account_holder' => 'AccountHolder',
 		'amount' => 'Details',
 		'command' => 'Command',
@@ -27,6 +28,4 @@ class TransactionRequest extends UsaEpayObject {
 		'billing_address' => 'BillingAddress',
 		'recurring_billing' => 'RecurringBilling',
  	];
-
-
 }

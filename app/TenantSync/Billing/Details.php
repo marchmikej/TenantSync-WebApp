@@ -15,7 +15,7 @@ class Details extends UsaEpayObject {
 	    'OrderID',
 	];
 
-	public $inputOptionToObjectName = [
+	public $inputToObjectName = [
 		'amount' => 'Amount',
 		'invoice' => 'Invoice',
 	    'purchase_order' => 'PONum',

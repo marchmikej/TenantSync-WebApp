@@ -8,26 +8,20 @@ use TenantSync\Billing\RequestObjectFormatter;
 
 abstract class UsaEpayObject {
 
-	protected $emptyableRequiredFields = [];
-
 	public $userOptions;
 
 	public $requestObject;
 
-	public function __construct($userOptions)
+	protected $emptyableRequiredFields = [];
+
+	private function __construct($userOptions)
 	{
 		$this->validateUserOptions($userOptions);
 
 		$this->userOptions = $userOptions;
 
-		$this->formatter = new RequestObjectFormatter;
+		$this->formatter = new RequestObjectFormatter; // Should be injected but is here for now
 	}
-
-	public function toArray()
-	{
-		return $this->generateRequestObject();
-	}
-
 
 	public function validateUserOptions($userOptions) 
 	{
@@ -52,6 +46,11 @@ abstract class UsaEpayObject {
 		if(count($requiredFields)) {
 			throw new Exception('The following field(s) are required: '. implode(', ', $requiredFields));
 		}
+	}
+
+	public static function createWith($options)
+	{    
+        return (new static($options))->generateRequestObject();
 	}
 
 

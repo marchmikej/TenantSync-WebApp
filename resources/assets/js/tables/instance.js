@@ -37,8 +37,10 @@ window.TSTable = Vue.component('ts-table', {
 
 	events: {
 		'table-sorted': function(sortKey) {
+			//this.reverse = (this.sortKey == sortKey) ? this.reverse * -1 : 1;
+			this.reverse = this.reverse * -1;
+
 			this.sortKey = sortKey;
-			this.reverse = (this.sortKey == sortKey) ? this.reverse * -1 : 1;
 		},
 
 		'modal-hidden': function() {

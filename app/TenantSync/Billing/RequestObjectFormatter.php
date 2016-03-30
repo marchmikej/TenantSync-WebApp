@@ -7,7 +7,7 @@ use TenantSync\Billing\Util;
 
 class RequestObjectFormatter {
 	
-	protected $inputOptionToObjectName;
+	protected $inputToObjectName;
 
 	protected $requestObject;
 	
@@ -17,7 +17,7 @@ class RequestObjectFormatter {
 	{
 		$this->usaEpayObject = $usaEpayObject;
 		
-		$this->inputOptionToObjectName = $usaEpayObject->inputOptionToObjectName;
+		$this->inputToObjectName = $usaEpayObject->inputToObjectName;
 		
 		return $this;
 	}
@@ -34,8 +34,8 @@ class RequestObjectFormatter {
 	public function fillRequestObject($inputOptions)
 	{
 		foreach ($inputOptions as $key => $value) {
-			if($this->isNotValidInputField($key)) {
-				// If is not in local or Mapper key map
+			if($this->inputFieldNotValid($key)) {
+				// If is not in local key map or Mapper key map
 				continue;
 			}
 
@@ -52,7 +52,7 @@ class RequestObjectFormatter {
 
 	public function generateValueForInputField($key, $inputOptions)
 	{
-		$className = $this->inputOptionToObjectName[$key];
+		$className = $this->inputToObjectName[$key];
 
 		$fullClassPath = __NAMESPACE__ . '\\' . $className;
 
@@ -60,15 +60,16 @@ class RequestObjectFormatter {
 			return $inputOptions[$key];
 		}
 
-		$newObject = new $fullClassPath(Util::flatten($inputOptions));
+		$options = Util::flatten($inputOptions);
 
-		return $newObject->toArray();
+		return $fullClassPath::createWith($options);
+
 	}
 
 
 	public function getUsaEpayKey($key)
 	{	
-		return $this->inputOptionToObjectName[$key];
+		return $this->inputToObjectName[$key];
 	}
 
 
@@ -78,8 +79,8 @@ class RequestObjectFormatter {
 	}
 
 
-	public function isNotValidInputField($key)
+	public function inputFieldNotValid($key)
 	{
-		return ! Util::arrayHas($this->inputOptionToObjectName, $key);
+		return ! Util::arrayHas($this->inputToObjectName, $key);
 	}
 }

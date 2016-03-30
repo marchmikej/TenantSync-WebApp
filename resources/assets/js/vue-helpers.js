@@ -6,6 +6,7 @@ Vue.prototype.numeral = window.numeral;
 Vue.prototype.moment = window.moment;
 Vue.prototype._ = window._;
 Vue.prototype.dateString = window.dateString;
+Vue.prototype.displayDateString = window.displayDateString;
 
 Vue.mixin({
 	methods: {

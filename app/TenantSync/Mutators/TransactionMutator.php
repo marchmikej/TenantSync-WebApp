@@ -11,6 +11,7 @@ class TransactionMutator extends ModelMutator {
 	public function payable($transaction)
 	{
 		$model = ucfirst($transaction->payable_type);
+		
 		return $model::where(['id' => $transaction->payable_id]);
 	}
 

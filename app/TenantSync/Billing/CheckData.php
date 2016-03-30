@@ -4,9 +4,14 @@ namespace TenantSync\Billing;
 
 use TenantSync\Billing\UsaEpayObject;
 
-class Check extends UsaEpayObject /*implements UsaEpayRequestObject*/ {
+class CheckData extends UsaEpayObject {
 
-	protected $fillable = [
+	public $requiredInputFields = [
+		'account_number',
+		'routing_number',
+	];
+	
+	public $inputToObjectName = [
 		'check_number' => 'CheckNumber',
 		'routing_number' => 'Routing',
 		'account_number' => 'Account',
@@ -14,20 +19,4 @@ class Check extends UsaEpayObject /*implements UsaEpayRequestObject*/ {
 		'license_number' => 'DriversLicense',
 		'license_state' => 'DriversLicenseState',
 	];
-	protected $required = [
-		'account_number',
-		'routing_number',
-	];
-	
-
-	public function __construct()
-	{
-		//
-	}
-
-	public function build($options)
-	{
-		$this->set($options);
-	}
-
 }

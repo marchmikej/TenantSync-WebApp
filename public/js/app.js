@@ -919,8 +919,6 @@ Vue.component('transaction-form', {
 
 	ready: function ready() {},
 
-	events: {},
-
 	methods: {
 		submitTransaction: function submitTransaction() {
 			var payload = {
@@ -1108,8 +1106,10 @@ window.TSTable = Vue.component('ts-table', {
 
 	events: {
 		'table-sorted': function tableSorted(sortKey) {
+			//this.reverse = (this.sortKey == sortKey) ? this.reverse * -1 : 1;
+			this.reverse = this.reverse * -1;
+
 			this.sortKey = sortKey;
-			this.reverse = this.sortKey == sortKey ? this.reverse * -1 : 1;
 		},
 
 		'modal-hidden': function modalHidden() {
@@ -1244,14 +1244,6 @@ Vue.component('portfolio-table', TSTable.extend({
 
 			properties: []
 		};
-	},
-
-	events: {
-		'table-sorted': function tableSorted(sortKey) {
-			this.sortKey = sortKey;
-			this.reverse = this.sortKey == sortKey ? this.reverse * -1 : 1;
-			// this.currentPage = 1;
-		}
 	},
 
 	ready: function ready() {
@@ -1717,6 +1709,7 @@ Vue.prototype.numeral = window.numeral;
 Vue.prototype.moment = window.moment;
 Vue.prototype._ = window._;
 Vue.prototype.dateString = window.dateString;
+Vue.prototype.displayDateString = window.displayDateString;
 
 Vue.mixin({
 	methods: {

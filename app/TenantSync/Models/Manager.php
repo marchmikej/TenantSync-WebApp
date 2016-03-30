@@ -127,6 +127,7 @@ class Manager extends Model {
 		$rentBills = array_map(function($rentBill) {
 			return $rentBill['id'];
 		}, $this->rentBills()->toArray());
+		
 		return collect(\DB::table('rent_payments')->whereIn('rent_bill_id', $rentBills)->get());
 	}
 }

@@ -16,7 +16,7 @@ class RentBill extends Model
         'vacant'
     ];
 
-    protected $append = ['address'];
+    protected $appends = ['address'];
 
     public function user()
     {
@@ -37,8 +37,8 @@ class RentBill extends Model
     {   
         if($user->role == 'manager') {
             return RentBill::whereIn('device_id', $user->manager->devices()->pluck('id')->toArray())
-                ->where('rent_month', '>=', date('Y-m-d', strtotime($fromDate)))
-                ->with($with)->get();
+            ->where('rent_month', '>=', date('Y-m-d', strtotime($fromDate)))
+            ->with($with)->get();
         }
 
         return $user->rentBills()->where('rent_month', '>=', date('Y-m-d', strtotime($fromDate)))->with($with)->get();
@@ -46,6 +46,6 @@ class RentBill extends Model
 
     public function getAddressAttribute()
     {
-        return $this->device->address();
+        return $this->device->address;
     }
 }

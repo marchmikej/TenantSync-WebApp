@@ -23,10 +23,6 @@ Vue.component('transaction-form', {
 
 	},
 
-	events: {
-
-	},
-
 	methods: {
 		submitTransaction: function() {
 			var payload = {

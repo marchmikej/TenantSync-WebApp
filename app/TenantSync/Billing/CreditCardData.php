@@ -12,7 +12,7 @@ class CreditCardData extends UsaEpayObject {
 		'cvv2',
 	];
 
-	public $inputOptionToObjectName = [
+	public $inputToObjectName = [
 		'card_number' => 'CardNumber',
       	'expiration' => 'CardExpiration',
       	'address' => 'AvsStreet',

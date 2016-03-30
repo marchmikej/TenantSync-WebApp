@@ -48,15 +48,6 @@ Vue.component('portfolio-table', TSTable.extend({
 
 	},
 
-	events: {
-		'table-sorted': function(sortKey) {
-			this.sortKey = sortKey;
-			this.reverse = (this.sortKey == sortKey) ? this.reverse * -1 : 1;
-			// this.currentPage = 1;
-		}
-	},
-
-
 	ready: function() {
 		this.fetchProperties();
 	},
