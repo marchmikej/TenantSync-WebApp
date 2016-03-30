@@ -5,12 +5,13 @@ Route::get('/home', 'HomeController@index');
 
 
 // Tenant/Device routes
-Route::get('device-api/maintenance', 'Api\DeviceApiController@allRequests');
-Route::post('device-api/maintenance/{id?}', 'Api\DeviceApiController@storeRequest');
-Route::get('device-api/device', 'Api\DeviceApiController@showDevice');
+Route::get('device-api/maintenance', 'Api\DeviceApiController@getMaintenanceRequests');
+Route::post('device-api/maintenance/{id}', 'Api\DeviceApiController@updateMaintenanceRequest');
+Route::post('device-api/maintenance', 'Api\DeviceApiController@storeMaintenanceRequest');
+Route::get('device-api/device', 'Api\DeviceApiController@getDevice');
 Route::post('device-api/device', 'Api\DeviceApiController@UpdateRoutingId');
 Route::get('device-api/message', 'Api\DeviceApiController@getMessages');
-Route::post('device-api/message', 'Api\DeviceApiController@createMessage');
+Route::post('device-api/message', 'Api\DeviceApiController@storeMessage');
 Route::post('device-api/pay', 'Api\DeviceApiController@payRent');
 Route::get('device-api/rent-status', 'Api\DeviceApiController@rentStatus');
 Route::post('device-api/receivingnotifications', 'Api\PhoneAppController@receivingNotifications');
