@@ -76,4 +76,9 @@ class MaintenanceRequest extends Model {
 	{
 		return round((time() - strtotime($this->created_at))/60/60/24, 0);
 	}
+
+	public function isOpen()
+	{
+		return! ($this->status == 'closed');
+	}
 }

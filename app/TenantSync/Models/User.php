@@ -154,32 +154,51 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		);
 	}
 
+	public function updateCustomerId($customerId)
+	{
+		$this->customer_id = $customerId;
+
+		$this->save();
+	}
+
 	public function recurringAmount()
 	{
 		$numberCurrentlyFinanced = 0;
+
 		if($this->orders)
 		{
-			$numberCurrentlyFinanced = $this->orders->filter(function($order) 
-				{
-					if(! $order->financed)
-					{
+			$numberCurrentlyFinanced = $this->orders->filter(function($order) {
+					if(! $order->financed) {
 						return false;
 					}
+
 					$day = date('d', time());
+
 					$month = date('m', time());
+
 					$year = date('Y', strtotime('+1 year'));
+
 					return date('Y-m-d', mktime(0,0,0, $month, $day, $year)) > date('Y-m-d', time());
-				}
-			)->count();
+			})
+			->count();
 		}
 
 		$monthlyCostOfDevices = 0;
-		if($this->devices)
-		{
+
+		if($this->devices) {
 			$monthlyCostOfDevices = array_sum($this->devices->pluck('monthly_cost')->toArray());
 		}
 
 		return $monthlyCostOfDevices + ($numberCurrentlyFinanced * 2.50);
 	}
 
+	public function getKeyAttribute()
+	{
+		return $this->gateway->key;
+	}
+
+	public function getPinAttribute()
+	{
+		return $this->gateway->pin;
+	}
 }

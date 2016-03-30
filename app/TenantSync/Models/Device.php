@@ -65,11 +65,6 @@ class Device extends Model {
 		return $this->hasMany('TenantSync\Models\MaintenanceRequest');
 	}
 
-	public function groups()
-	{
-		return $this->belongsToMany('TenantSync\Models\DeviceGroup');
-	}
-
 	public function messages()
 	{
 		return $this->hasMany('TenantSync\Models\Message');
@@ -78,14 +73,6 @@ class Device extends Model {
 	public function alarm()
 	{
 		return $this->belongsTo('TenantSync\Models\Alarm');
-	}
-
-	public function beneficiary()
-	{
-		return [
-			'key' => $this->owner->gateway->key,
-			'pin' => $this->owner->gateway->pin
-			];
 	}
 
 	public function transactions()
@@ -110,10 +97,12 @@ class Device extends Model {
 	{
 		return array_sum($this->rentBills->pluck('bill_amount')->toArray()) - array_sum($this->transactions->pluck('amount')->toArray());
 	}
+
 	public function getAddressAttribute()
 	{
 		return $this->address();
 	}
+
 	public function address()
 	{
 		return $this->property->address . ', ' . $this->location;
