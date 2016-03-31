@@ -50,10 +50,19 @@ class HomeController extends Controller {
 	}
 
 	public function test()
-	{
-		$property = Property::find(15);
-		var_export($property);var_export('<br>');
-		$properties = PropertyMutator::set('transactions', $property);
-		return $properties;
-	}
+    {
+        $file= public_path(). "/images/app-debug.apk";
+
+    	$headers = array(
+        	'Content-Type: application/vnd.android.package-archive',
+        );
+        
+        $file = \File::get($file);
+    	
+	    $response = \Response::make($file, 200);
+
+	    return $response;
+    	// return response()->download($file, 'app-debug.apk', $headers);
+    }
+
 }  
