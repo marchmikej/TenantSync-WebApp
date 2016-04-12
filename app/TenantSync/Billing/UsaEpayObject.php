@@ -12,70 +12,58 @@ abstract class UsaEpayObject {
 
 	public $requestObject;
 
-	protected $emptyableRequiredFields = [];
+	public $emptyableRequiredFields = [];
 
-	private function __construct($userOptions)
+	private function __construct($userOptions, $validate)
 	{
-		$this->validateUserOptions($userOptions);
-
 		$this->userOptions = $userOptions;
+
+		if($validate) {
+			$this->validateUserOptions();
+		}
 
 		$this->formatter = new RequestObjectFormatter; // Should be injected but is here for now
 	}
 
-	public function validateUserOptions($userOptions) 
+	public function validateUserOptions() 
 	{
-		if (! is_array($userOptions)) {
+		if (! is_array($this->userOptions)) {
 			throw new Exception('The $userOptions parameter must be an array.');
 		}
 
-		$this->validateRequiredInputfields($userOptions);
+		$this->validateRequiredInputfields();		
 	}
 
 
-	public function validateRequiredInputfields($userOptions)
+	public function validateRequiredInputfields()
 	{
 		$requiredFields = [];
 
 		foreach($this->requiredInputFields as $field) {
-			if(! Util::arrayHas($userOptions, $field)) {
+			if($this->fieldNotInUserOptions($field)) {
 				$requiredFields[] = $field;
 			}
 		}	
 
 		if(count($requiredFields)) {
-			throw new Exception('The following field(s) are required: '. implode(', ', $requiredFields));
+			throw new Exception('The following field(s) are required in ' . static::class . ' : '. implode(', ', $requiredFields));
 		}
 	}
 
-	public static function createWith($options)
-	{    
-        return (new static($options))->generateRequestObject();
+	public function fieldNotInUserOptions($field)
+	{
+		return ! Util::arrayHas($this->userOptions, $field);
 	}
 
+	public static function createWith($options, $validate = true, $fillEmptyable = true)
+	{    
+        return (new static($options, $validate))->generateRequestObject($fillEmptyable);
+	}
 
-	public function generateRequestObject()
+	public function generateRequestObject($fillEmptyable)
 	{
-		$this->requestObject = $this->formatter->format($this)->with($this->userOptions);
-
-		$this->resolveEmptyableRequiredFields();
+		$this->requestObject = $this->formatter->format($this)->with($this->userOptions, $fillEmptyable);
 
 		return $this->requestObject;
-	}
-
-
-	public function resolveEmptyableRequiredFields()
-	{
-		foreach($this->emptyableRequiredFields as $field) {
-			if ($this->notSetInRequestObject($field)) {
-				$this->requestObject[$field] = '';
-			}
-		}
-	}
-
-
-	public function notSetInRequestObject($field)
-	{
-		return ! Util::arrayHas($this->requestObject, $field);
 	}
 }

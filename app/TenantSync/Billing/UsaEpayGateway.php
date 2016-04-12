@@ -2,8 +2,10 @@
 
 namespace TenantSync\Billing;
 
-use TenantSync\Billing\UsaEpay;
 use TenantSync\Billing\Util;
+use TenantSync\Billing\UsaEpay;
+use TenantSync\Billing\CustomerData;
+use TenantSync\Billing\PaymentMethod;
 use TenantSync\Billing\TransactionRequest;
 
 class UsaEpayGateway {
@@ -40,6 +42,8 @@ class UsaEpayGateway {
 		$clear = $sourceKey . $seed . $pin;
 		$hash = sha1($clear);
 
+		$ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '108.17.11.34';//exec('curl ifconfig.me');
+
 		$token = [
 			'SourceKey' => $sourceKey,
 			'PinHash' => [
@@ -47,7 +51,7 @@ class UsaEpayGateway {
 				'Seed' => $seed,
 				'HashValue' => $hash
 			],
-			'ClientIP' => $_SERVER['REMOTE_ADDR'],
+			'ClientIP' => $ip,
 		];
 
 		return $token;
@@ -61,7 +65,7 @@ class UsaEpayGateway {
 			return call_user_func_array([$this, $method], $parameters);
 		}
 	  	catch (Exception $e) {
-			return abort(500, $e->getMessage());
+			return response()->json(['error' => $e->getMessage()]);
 		}
 	}
 
@@ -81,9 +85,16 @@ class UsaEpayGateway {
 		return $this->gateway->runCustomerTransaction($token, $customerId, $methodId, []);	
 	}
 
-	private function getPaymentMethods($token)
+	private function createAccount($token, $userOptions)
 	{
-		  return $this->gateway->getCustomerPaymentMethods($token, $this->customer_id);
+		$customer = CustomerData::createWith($userOptions);
+
+		return $this->gateway->addCustomer($token, $customer);
+	}
+
+	private function getPaymentMethods($token, $customer_id)
+	{
+		return $this->gateway->getCustomerPaymentMethods($token, $customer_id);
 	}
 
 	private function updatePaymentMethod($token, $userOptions)
@@ -100,14 +111,16 @@ class UsaEpayGateway {
 		return $this->gateway->addCustomerPaymentMethod($token, $customerId, $paymentMethod, true);
 	}
 
-	public function getCustomer($token, $customerId)
+	private function getCustomer($token, $customerId)
 	{
 		return $this->gateway->getCustomer($token, $customerId);
 	}
 
 	private function updateCustomer($token, $customerId, $userOptions)
 	{
-		$customer = Customer::createWith($userOptions);
+		$customer = json_decode(json_encode($this->gateway->getCustomer($token, $customerId)), true);
+
+		$customer = array_merge($customer, CustomerData::createWith($userOptions, false, false));
 
 		return $this->gateway->updateCustomer($token, $customerId, $customer); 
 

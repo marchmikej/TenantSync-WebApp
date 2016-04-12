@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Api;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use TenantSync\Models\Device;
 use TenantSync\Models\Message;
@@ -58,27 +59,27 @@ class DeviceApiController extends Controller {
 
 		$maintenanceRequest->update($this->input);
 
-		return 'Maintenace request updated.';
+		return response()->json(['Maintenace request updated.']);
 	}
 
 	public function storeMaintenanceRequest(MaintenanceRequest $maintenanceRequest)
 	{
 		// Prevent duplication from repeating requests
-		if($this->device->maintenanceRequests->where(['update_key' => $this->input['update_key']])->exists()) {
-			return 'Maintenance request successfully created.';
+		if($this->device->maintenanceRequests()->where(['update_key' => $this->input['update_key']])->exists()) {
+			return response()->json(['Maintenance request successfully created.']);
 		}
 
 		$maintenanceRequest = $maintenanceRequest->create([
 			'user_id' => $this->device->owner->id, 
+			'device_id' => $this->device->id,
 			'request' => $this->input['message'], 
-			'device_id' => $this->device->id, 
 			'update_key' => $this->input['update_key'], 
-			'status' => 'awaiting_response'
+			'status' => 'awaiting_response',
 		]);
 			
 		\Event::fire(new DeviceMadeUpdate($this->device->owner->id, $this->device->id, "New Maintenance Request","landlord/device"));
 		
-		return 'Maintenance request successfully created.';
+		return response()->json(['Maintenance request successfully created.']);
 	}
 
 	public function getDevice()
@@ -102,16 +103,20 @@ class DeviceApiController extends Controller {
 
 	public function getMessages()
 	{
-		$messages = Message::where(['device_id' => $this->device->id])->orderBy('created_at','asc')->get(['body', 'from_device', 'created_at']);
+		if($this->device->messages) {
+			$messages = $this->device->messages()->orderBy('created_at','asc')->get(['body', 'from_device', 'created_at']);
 
-		return response()->json($messages);
+			return $messages;
+		}
+
+		return response()->json(['No messages found.']);
 	}
 
 	public function storeMessage()
 	{
 		// Prevent duplication from repeating requests
-		if($this->device->messages->where(['update_key' => $this->input['update_key']])->exists()) {
-			return 'Message successfully sent.';
+		if($this->device->messages()->where(['update_key' => $this->input['update_key']])->exists()) {
+			return response()->json(['Message successfully sent.']);
 		}
 
 		Message::create([
@@ -124,7 +129,7 @@ class DeviceApiController extends Controller {
 
 		\Event::fire(new DeviceMadeUpdate($this->device->owner->id, $this->device->id, $this->input['message'],"landlord/device"));
 
-		return 'Message created succesfully.';
+		return response()->json(['Message created succesfully.']);
 	}
 
 	public function updateRoutingId()
@@ -150,21 +155,23 @@ class DeviceApiController extends Controller {
 
 		\DB::beginTransaction();
 
+		$amount = $this->input['amount'];
+
+		$description = isset($this->input['description']) ? $this->input['description'] : 'Rent Payment';
+
 		$transaction = [
-			'amount' => $this->input['amount'], 
+			'amount' => $amount, 
 			'user_id' => $this->device->owner->id, 
 			'payable_type' => 'device', 
 			'payable_id' => $this->device->id, 
-			'description' => 'Rent Payment', 
-			'date' => date('Y-m-d', time()), 
+			'description' => $description, 
+			'date' => Carbon::now()->toDateTimeString(), 
 		];
 
 		$payment = Transaction::create($transaction);
 
-		$amount = $this->input['amount'];
-	
-		$response = $this->device->payRent($amount, $this->input);
-		
+		$response = $this->device->payRent($amount, array_merge($this->input, ['description' => $description]));
+
 		if($response->Result == "Approved") {
 			$payment->reference_number = $response->RefNum;
 			
@@ -176,11 +183,15 @@ class DeviceApiController extends Controller {
 			\DB::rollback();
 		}
 
-		return json_encode(['RefNum' => $response->RefNum, 'Error' => $response->Error, 'Result' => $response->Result]);
+		return response()->json(['RefNum' => $response->RefNum, 'Error' => $response->Error, 'Result' => $response->Result]);
 	}
 
 	public function validateDevice()
 	{
+		if(\App::runningUnitTests()) {
+			return true;
+		}
+
 		if(!isset($this->headers['serial']) || !isset($this->headers['token'])) {
 			return response()->json(['error' => 'Please provide the required credentials.']);
 		}
@@ -196,8 +207,18 @@ class DeviceApiController extends Controller {
 
 	public function fetchDevice()
 	{
-		return Device::where('serial', '=', $this->headers['serial'])
-					 ->where('token', '=', $this->headers['token'])
-					 ->first();
+		if(\App::runningUnitTests()) {
+			return Device::where(['serial' => $this->input['serial'], 'token' => $this->input['token']])->first();
+		}
+			
+		$device = Device::where('serial', '=', $this->headers['serial'])
+						->where('token', '=', $this->headers['token'])
+						->first();
+
+		if(! $device) {
+			return response()->json(['Device not found.']);
+		}
+
+		return $device;
 	}
 }  

@@ -27,7 +27,7 @@ trait Billable {
 			$options['command'] = $this->getCommand($options);
 		}
 
-		return (new UsaEpayGateway($this->key, $this->pin))->charge($amount, $options);
+		return (new UsaEpayGateway($this->sourceKey(), $this->sourcePin()))->charge($amount, $options);
 	}
 
 	public function chargeCustomer($amount)
@@ -36,7 +36,7 @@ trait Billable {
 			throw new Exception('No payment source provided.');
 		}
 
-		return (new UsaEpayGateway($this->key, $this->pin))->chargeCustomer($amount, $this->getCustomerId());
+		return (new UsaEpayGateway($this->sourceKey(), $this->sourcePin()))->chargeCustomer($amount, $this->getCustomerId());
 	}
 
 	public function payRent($amount, $options = []) 
@@ -56,30 +56,54 @@ trait Billable {
 		return (new UsaEpayGateway($this->owner->key, $this->owner->pin))->charge($amount, $options);
 	}
 
-	// public function paymentMethods()
-	// {
-	// 	return (new UsaEpayGateway($this->key, $this->pin))->getPaymentMethods($token, $this->getCustomerId());
-	// }
+	public function createUsaEpayAccount($options)
+	{
+		return (new UsaEpayGateway($this->sourceKey(), $this->sourcePin()))->createAccount($options);
+	}
 
-	// public function updatePaymentMethod($options)
-	// {
-	// 	return (new UsaEpayGateway($this->key, $this->pin))->updatePaymentMethod($token, $this->getCustomerId());
-	// }
+	public function getPaymentMethods()
+	{
+		return (new UsaEpayGateway($this->sourceKey(), $this->sourcePin()))->getPaymentMethods($this->getCustomerId());
+	}
+
+	public function addPaymentMethod($options)
+	{
+		return (new UsaEpayGateway($this->sourceKey(), $this->sourcePin()))->addPaymentMethod($this->getCustomerId(), $options);
+	}
+
+	public function updatePaymentMethod($options)
+	{
+		return (new UsaEpayGateway($this->sourceKey(), $this->sourcePin()))->updatePaymentMethod($options);
+	}
+
+	public function getCustomer()
+	{
+		return (new UsaEpayGateway($this->sourceKey(), $this->sourcePin()))->getCustomer($this->getCustomerId());
+	}
+
+	public function updateCustomer($options)
+	{
+		return (new UsaEpayGateway($this->sourceKey(), $this->sourcePin()))->updateCustomer($this->getCustomerId(), $options);
+	}
+
+	public function updateCustomerId($customerId)
+	{
+		$this->customer_id = $customerId;
+
+		$this->save();
+
+		return true;
+	}
 
 	// public function addPaymentMethod($userOptions)
 	// {
-	// 	return (new UsaEpayGateway($this->key, $this->pin))->addPaymentMethod($token, $this->getCustomerId());
-	// }
-
-	// public function getCustomer()
-	// {
-	// 	return (new UsaEpayGateway($this->key, $this->pin))->getCustomer($token, $this->getCustomerId());
+	// 	return (new UsaEpayGateway($this->sourceKey(), $this->sourcePin()))->addPaymentMethod($token, $this->getCustomerId());
 	// }
 
 	// public function updateBillingInfo($options)
 	// {
 	// 	// update usaepay customer stuff
-	// 	return (new UsaEpayGateway($this->key, $this->pin))->updateBillingInfo($token, $this->getCustomerId());
+	// 	return (new UsaEpayGateway($this->sourceKey(), $this->sourcePin()))->updateBillingInfo($token, $this->getCustomerId());
 	// }
 
 	// public function addDevice($device)
@@ -95,7 +119,7 @@ trait Billable {
 	// public function usaEpayTransactions()
 	// {
 	// 	// pull in any usaepay transactions that are not in the database
-	// 	$history = (new UsaEpayGateway($this->key, $this->pin))->getCustomerHistory($token, $customerId);
+	// 	$history = (new UsaEpayGateway($this->sourceKey(), $this->sourcePin()))->getCustomerHistory($token, $customerId);
 
 	// 	foreach($history->Transactions as $transaction)
 	// 	{
@@ -129,5 +153,15 @@ trait Billable {
 	public function getCustomerId()
 	{
 		return $this->customer_id;
+	}
+
+	public function sourceKey()
+	{
+		return config('usaEpay.sourceKey');
+	}
+
+	public function sourcePin()
+	{
+		return config('usaEpay.pin');
 	}
 }

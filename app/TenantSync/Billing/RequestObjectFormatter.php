@@ -11,48 +11,51 @@ class RequestObjectFormatter {
 
 	protected $requestObject;
 	
-	protected $usaEpayObject;
+	protected $object;
 
 	public function format($usaEpayObject)
 	{
-		$this->usaEpayObject = $usaEpayObject;
-		
-		$this->inputToObjectName = $usaEpayObject->inputToObjectName;
+		$this->object = $usaEpayObject;
 		
 		return $this;
 	}
 
 
-	public function with($inputOptions)
+	public function with($inputOptions, $fillEmptyable = true)
 	{		
-		$this->fillRequestObject($inputOptions);
+		$requestObject = $this->fillRequestObject($inputOptions);
+		if ($fillEmptyable) {
+			$requestObject = $this->resolveEmptyableRequiredFields($requestObject);
+		}
 
-		return $this->requestObject;
+		return $requestObject;
 	}
-
 
 	public function fillRequestObject($inputOptions)
 	{
+		$requestObject = [];
+
 		foreach ($inputOptions as $key => $value) {
 			if($this->inputFieldNotValid($key)) {
-				// If is not in local key map or Mapper key map
 				continue;
 			}
 
 			$usaEpayKey = $this->getUsaEpayKey($key); 
 
-			if($this->fieldAlreadySet($usaEpayKey)) {
+			if($this->fieldAlreadySet($requestObject, $usaEpayKey)) {
 				continue;
 			}
 
-			$this->requestObject[$usaEpayKey] = $this->generateValueForInputField($key, $inputOptions);
+			$requestObject[$usaEpayKey] = $this->generateValueForInputField($key, $inputOptions);
 		}
+		
+		return $requestObject;
 	}
 
 
 	public function generateValueForInputField($key, $inputOptions)
 	{
-		$className = $this->inputToObjectName[$key];
+		$className = $this->object->inputToObjectName[$key];
 
 		$fullClassPath = __NAMESPACE__ . '\\' . $className;
 
@@ -66,21 +69,35 @@ class RequestObjectFormatter {
 
 	}
 
+	public function resolveEmptyableRequiredFields($requestObject)
+	{
+		foreach($this->object->emptyableRequiredFields as $field) {
+			$usaEpayField = $this->getUsaEpayKey($field);
+
+			if ($this->notSetInRequestObject($requestObject, $usaEpayField)) {
+				$requestObject[$usaEpayField] = '';
+			}
+		}
+		return $requestObject;
+	}
 
 	public function getUsaEpayKey($key)
 	{	
-		return $this->inputToObjectName[$key];
+		return $this->object->inputToObjectName[$key];
 	}
 
-
-	public function fieldAlreadySet($usaEpayKey)
+	public function fieldAlreadySet($requestObject, $usaEpayKey)
 	{
-		return Util::arrayHas($this->requestObject, $usaEpayKey);
+		return Util::arrayHas($requestObject, $usaEpayKey);
 	}
 
+	public function notSetInRequestObject($requestObject, $field)
+	{
+		return ! Util::arrayHas($requestObject, $field);
+	}
 
 	public function inputFieldNotValid($key)
 	{
-		return ! Util::arrayHas($this->inputToObjectName, $key);
+		return ! Util::arrayHas($this->object->inputToObjectName, $key);
 	}
 }

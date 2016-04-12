@@ -9,10 +9,10 @@ class Details extends UsaEpayObject {
 		'description',
 	];
 
-	protected $emptyableRequiredFields = [
-		'Invoice',
-		'PurchaseOrder',
-	    'OrderID',
+	public $emptyableRequiredFields = [
+		'invoice',
+		'purchase_order',
+	    'order_id',
 	];
 
 	public $inputToObjectName = [
