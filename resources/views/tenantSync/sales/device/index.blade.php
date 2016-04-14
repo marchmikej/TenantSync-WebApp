@@ -26,7 +26,7 @@
 					<tr>
 						<td><a href="/sales/landlord/{{ $device->user_id }}">{{ $device->owner->email}}</a></td>
 						
-						<td>{{ $device->alarm->slug ? $device->alarm->slug : 'Off' }}</td>
+						<td>{{ $device->alarm_id ? $device->alarm->slug : 'Off' }}</td>
 						<td>{{ $device->status }}</td>
 						<td>{{ $device->property->address }}</td>
 						<td>{{ $device->location }}</td>

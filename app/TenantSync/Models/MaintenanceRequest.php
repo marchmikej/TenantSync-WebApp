@@ -79,6 +79,11 @@ class MaintenanceRequest extends Model {
 
 	public function isOpen()
 	{
-		return! ($this->status == 'closed');
+		return ! ($this->status == 'closed');
+	}
+
+	public function isAwaitingApproval()
+	{
+		return ! ($this->status == 'awaiting_approval');
 	}
 }

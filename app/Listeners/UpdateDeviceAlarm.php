@@ -5,8 +5,9 @@ namespace App\Listeners;
 use App\Events\UpdatedDeviceTransactions;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldBeQueued;
 
-class UpdateDeviceAlarm implements ShouldBeQueued
+class UpdateDeviceAlarm
 {
     /**
      * Create the event listener.

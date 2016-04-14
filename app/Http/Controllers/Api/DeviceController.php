@@ -28,4 +28,17 @@ class DeviceController extends Controller
 
         return $devices;
     }
+
+    public function update($id)
+    {
+        $device = Device::find($id);
+
+        if(Gate::denies('has-device', $device)) {
+            return abort(403, 'That\'s not yours');
+        }
+
+        $device->update($this->input);
+
+        return $device;
+    }
 }

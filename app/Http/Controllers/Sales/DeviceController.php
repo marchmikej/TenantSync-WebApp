@@ -1,10 +1,13 @@
-<?php namespace App\Http\Controllers\Sales;
+<?php 
 
+namespace App\Http\Controllers\Sales;
+
+use Carbon\Carbon;
 use TenantSync\Models\User;
 use TenantSync\Models\Order;
+use App\Http\Utilities\State;
 use TenantSync\Models\Device;
 use TenantSync\Models\Property;
-use App\Http\Utilities\State;
 use App\Http\Requests\CreateDeviceRequest;
 use App\Http\Controllers\Sales\BaseController;
 
@@ -24,11 +27,11 @@ class DeviceController extends SalesController {
 
 	public function create($id)
 	{
-		$landlord = User::find($id);
+		$property = Property::find($id);
 
 		$states = State::all();
 
-		return view('TenantSync::sales.device.create', compact('landlord', 'states'));
+		return view('TenantSync::sales.device.create', compact('property', 'states'));
 	}
 
 	public function store(CreateDeviceRequest $request, $id)
@@ -36,7 +39,7 @@ class DeviceController extends SalesController {
 		\DB::transaction(function() use ($id) {
 			$this->input['token'] = \Token::create();
 
-			$this->input['rent_due'] = \Carbon\Carbon::parse('first day of next month');
+			$this->input['rent_due'] = Carbon::parse('first day of next month');
 
 			$this->input['monthly_cost'] = 10;
 
@@ -52,10 +55,11 @@ class DeviceController extends SalesController {
 
 			$order = Order::create($this->input);
 
-			//$device->owner->addDevice($device);
+			//$device->owner->addDevice($paymentMethodId, $device);
 			
 			//return view('TenantSync::sales.device.show', compact('device'));
 		});
+
 		return redirect()->route('sales.landlord.show', [$this->input['user_id']]);
 	}
 

@@ -49,21 +49,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasOne('TenantSync\Models\Profile');
 	}
 
-	public function hasRole($role)
-	{
-		if(is_string($role))
-		{
-			return $this->roles->contains('name', $role);
-		}
-
-		return !! $role->intersect($this->roles)->count();
-	}
-
-	public function paymentMethods()
-	{
-		return $this->hasMany('TenantSync\Models\PaymentMethod');
-	}
-
 	public function devices()
 	{
 		return $this->hasMany('TenantSync\Models\Device');
@@ -142,7 +127,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasMany('TenantSync\Models\Order');
 	}
 
-	public function netIncome($fromDate)
+	public function netIncome($fromDate = '-1 year')
 	{
 		return array_sum(
 			$this->transactions

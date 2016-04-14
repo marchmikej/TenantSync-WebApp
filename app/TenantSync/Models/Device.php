@@ -95,7 +95,7 @@ class Device extends Model {
 
 	public function rentOwed()
 	{
-		return array_sum($this->rentBills->pluck('bill_amount')->toArray()) - array_sum($this->transactions->pluck('amount')->toArray());
+		return max([$this->balance(), 0]);
 	}
 
 	public function getAddressAttribute()
@@ -120,12 +120,12 @@ class Device extends Model {
 	{		
 		$balance = $this->balance();
 
-		if($balance < 0) {
+		if($balance >= 0) {
 		    $this->alarm_id = 0;
 
 		    $this->save();
 
-		    return false;
+		    return true;
 		}
 
 		$latestBill = RentBill::where(['device_id' => $this->id])->orderBy('created_at', 'desc')->first();
@@ -135,5 +135,7 @@ class Device extends Model {
 		}
 
 		$this->save();
+
+		return false;
 	}
 }

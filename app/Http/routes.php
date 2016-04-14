@@ -1,5 +1,7 @@
 <?php 
 
+Route::get('test', 'HomeController@test');
+
 Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index');
 
@@ -25,6 +27,7 @@ Route::post('password/email', '\App\Http\Controllers\Auth\PasswordController@pos
 
 // Auth Routes
 Route::get('login', '\App\Http\Controllers\Auth\AuthController@getLogin');
+Route::post('login', '\App\Http\Controllers\Auth\AuthController@postLogin');
 Route::get('auth/login/{routing_id?}', 'HomeController@index');
 Route::post('auth/login/{routing_id?}', '\App\Http\Controllers\Auth\AuthController@postLogin');
 Route::get('logout', '\App\Http\Controllers\Auth\AuthController@getLogout');
@@ -39,6 +42,7 @@ Route::group(['middleware' => ['auth']], function()
 	// Internal Api Routes
 	Route::get('api/devices/{id}/messages', 'Api\MessageController@forDevice');
 	Route::get('api/devices/{id}/maintenance', 'Api\MaintenanceController@forDevice');
+	Route::patch('api/devices/{id}', 'Api\DeviceController@update');
 	Route::resource('api/devices', 'Api\DeviceController');
 
 	Route::patch('api/transactions/recurring/{id}', 'Api\RecurringTransactionController@update');
@@ -71,22 +75,30 @@ Route::group(['middleware' => ['auth']], function()
 		Route::get('/', '\App\Http\Controllers\HomeController@index');
 		Route::get('/registration/pay', 'PaymentController@getPayRegistration');
 		Route::post('/registration/pay', 'PaymentController@postPayRegistration');
-		Route::get('sales/register', ['as' => 'landlord.register', 'uses' => function() {
-				return view('auth.register');
-			}
-		]);
-		Route::post('sales/register', ['uses' => '\App\Services\SalesRegistrar@create']);
+		// Route::get('sales/register', ['as' => 'landlord.register', 'uses' => function() {
+		// 		return view('auth.register');
+		// 	}
+		// ]);
+		Route::post('/register', ['uses' => '\App\Services\SalesRegistrar@create']);
 
 		Route::patch('/landlord/{id}', 'LandlordController@update');
-		Route::post('/landlord/{id}/device', 'DeviceController@store');
-		Route::get('/landlord/{id}/device/create', 'DeviceController@create');
-		Route::get('/landlord/{id}/customer', 'LandlordController@customer');
+
+		Route::resource('/landlord/{id}/device', 'DeviceController');
+
+		Route::resource('/landlord/{id}/properties', 'PropertyController');
+
+		Route::get('/landlord/{id}/billing-account', 'LandlordController@getBillingAccount');
+		Route::patch('/landlord/{id}/billing-account', 'LandlordController@updateBillingAccount');
+
+		Route::resource('landlord/{id}/payment', 'PaymentController');
+		Route::patch('landlord/{id}/payment', 'PaymentController@update');
+		Route::get('landlord/{id}/payment', 'PaymentController@show');
+
 		Route::resource('/landlord', 'LandlordController');
 
+		Route::resource('/properties/{id}/device', 'DeviceController');
 
 		Route::resource('device', 'DeviceController');
-
-		Route::resource('payment', 'PaymentController');
 
 		Route::resource('gateway', 'GatewayController');
 

@@ -24,7 +24,9 @@ class TransactionRequest extends UsaEpayObject {
 		'details' => 'Details',
 		'description' => 'Details',
 		'card' => 'CreditCardData',
+		'card_number' => 'CreditCardData',
 		'check' => 'CheckData',
+		'account_number' => 'CheckData',
 		'billing_address' => 'BillingAddress',
 		'recurring_billing' => 'RecurringBilling',
  	];

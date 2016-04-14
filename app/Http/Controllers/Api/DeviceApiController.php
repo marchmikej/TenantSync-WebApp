@@ -85,7 +85,7 @@ class DeviceApiController extends Controller {
 	public function getDevice()
 	{
 		$maintenanceCount = $this->device->maintenanceRequests->filter(function($maintenanceRequest) {
-			return $maintenanceRequest->isOpen();
+			return $maintenanceRequest->isAwaitingApproval();
 		})->count();
 
 		$messageCount = $this->device->messages->count();

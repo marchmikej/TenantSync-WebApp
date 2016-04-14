@@ -5,7 +5,7 @@
 	<div class="row card">
 		<div class="col-sm-6">
 			<h1 class="m-t-0 text-info">
-				Landlords<a href="/sales/register"><button class=" btn btn-clear text-muted p-y-0"><h3 class="m-a-0 icon icon-plus"></h3></button></a>
+				Landlords<a href="/sales/landlord/create"><button class=" btn btn-clear text-muted p-y-0"><h3 class="m-a-0 icon icon-plus"></h3></button></a>
 			</h1>
 				
 			<table id="landlord-table" class="table">
@@ -46,7 +46,7 @@
 					<tr>
 						<!-- <td><input type="checkbox" name="devices[]"></td> -->
 						<td><a href="/sales/device/{{$device->id}}">{{ $device->property->address . ' ' . $device->location }}</a></td>
-						<td>{{ $device->alarm->slug ? $device->alarm->slug : 'Off' }}</td>
+						<td>{{ $device->alarm_id ? $device->alarm->slug : 'Off' }}</td>
 						<td>{{ $device->status }}</td>
 					</tr>
 					@endforeach

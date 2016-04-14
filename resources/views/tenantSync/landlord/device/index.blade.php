@@ -58,8 +58,8 @@
 
 			ready: function() {
 				var numeral = numeral;
-				this.fetchMessages();
-				this.fetchMaintenance();
+				// this.fetchMessages();
+				// this.fetchMaintenance();
 				this.fetchProperties();
 			},
 

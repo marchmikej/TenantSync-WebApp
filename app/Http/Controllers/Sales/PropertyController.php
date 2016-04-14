@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Landlord;
+namespace App\Http\Controllers\Sales;
 
-use App\Http\Requests\PaymentMethodRequest;
+use App\Http\Requests;
+use TenantSync\Models\User;
+use Illuminate\Http\Request;
+use App\Http\Utilities\State;
 use App\Http\Controllers\Controller;
 
-class PaymentController extends Controller
+class PropertyController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -22,9 +25,13 @@ class PaymentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($id)
     {
-        //
+        $landlord = User::find($id);
+
+        $states = State::all();
+
+        return view('TenantSync::sales.properties.create', compact('landlord', 'states'));
     }
 
     /**
@@ -33,9 +40,15 @@ class PaymentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store($id)
     {
-        //
+        $landlord = User::find($id);
+
+        $property = $landlord->properties()->create($this->input);
+
+        $states = State::all();
+
+        return redirect('/sales/properties/' . $property->id . '/device/create');
     }
 
     /**
@@ -46,9 +59,7 @@ class PaymentController extends Controller
      */
     public function show($id)
     {
-        $landlord = $this->user;
-        
-        return $landlord->getPaymentMethods();
+        //
     }
 
     /**
@@ -69,12 +80,9 @@ class PaymentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(PaymentMethodRequest $request, $id)
+    public function update(Request $request, $id)
     {
-        // var_export($this->input);die();
-        $this->user->updatePaymentMethod($this->input);
-
-        return 'true';
+        //
     }
 
     /**

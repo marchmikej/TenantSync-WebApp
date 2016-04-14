@@ -49,11 +49,10 @@ class PaymentController extends SalesController {
 
 	public function card()
 	{
-		// $result = $this->billing->charge($this->input['landlord_id'], $this->input, 'card', true);
-		$user = User::find($id);
+		$landlord = User::find($id);
 
 		if($user->charge($user->registration->amount_due)) {
-			return redirect()->route('sales.landlord.show', [$this->input['landlord_id']])->withMessage('Payment method added.');
+			return redirect('/sales/landlord/'. $landlord->id .'/')->withMessage('Payment method added.');
 		}
 
 		return redirect()->back()->withErrors([$result->error]);
@@ -68,13 +67,13 @@ class PaymentController extends SalesController {
 
 	public function update($id)
 	{
-		$landlord = User::find($id);
-		
-		if(!empty($this->input['id'])) {
+		$landlord = User::find($id);	
+
+		if(! empty($this->input['id'])) {
 			return response()->json($landlord->updatePaymentMethod($this->input));
 		}
 
-		return response()->json($landlord->addPaymentMethod($landlord, $this->input));
+		return response()->json($landlord->addPaymentMethod($this->input));
 	}
 
 

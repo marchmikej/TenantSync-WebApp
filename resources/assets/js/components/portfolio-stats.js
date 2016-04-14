@@ -168,7 +168,9 @@ Vue.component('portfolio-stats', {
 				return initial + Number(bill.bill_amount);
 			}, 0);
 
-			return totalBills - this.paidRent();
+			var deliquentRent = totalBills - this.paidRent()
+
+			return deliquentRent > 0 ? deliquentRent : 0;
 		},
 
 		vacantRentBills: function() {

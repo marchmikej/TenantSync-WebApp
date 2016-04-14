@@ -59,6 +59,11 @@ class Property extends Model {
 		return $this->user;
 	}
 
+	public function landlord()
+	{
+		return $this->user;
+	}
+
 	public function user()
 	{
 		return $this->belongsTo('TenantSync\Models\User');

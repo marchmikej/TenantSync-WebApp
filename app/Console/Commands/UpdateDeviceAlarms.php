@@ -41,6 +41,7 @@ class UpdateDeviceAlarms extends Command implements SelfHandling
     public function handle()
     {
         \Log::info('Running UpdateDeviceAlarms: \n');
+        echo ('Running UpdateDeviceAlarms:');
 
         $devices = Device::all();
 
@@ -49,29 +50,22 @@ class UpdateDeviceAlarms extends Command implements SelfHandling
         foreach($devices as $device) {
             $balance = $device->balance();
 
-            if($balance < 0) {
-                continue;
-            }
+            if($balance > 0) {
+                $latestBill = $device->rentBills()->orderBy('created_at', 'desc')->first();
 
-            $latestBill = RentBill::where(['device_id' => $device->id])->orderBy('created_at', 'desc')->first();
+                if($balance > $latestBill->bill_amount) {
+                    array_push($deliquentDevices, $device->id);
+                    continue;
+                }
 
-            if(strtotime($latestBill->rent_month. ' + ' .$device->grace_period. ' days') < time()) {
-                array_push($deliquentDevices, $device->id);
+                if(strtotime($latestBill->rent_month. ' + ' .$device->grace_period. ' days') < time()) {
+                    array_push($deliquentDevices, $device->id);
+                }
             }
         }
 
         Device::whereIn('id', $deliquentDevices)->update(['alarm_id' => 1]);
 
         Device::whereNotIn('id', $deliquentDevices)->update(['alarm_id' => 0]);
-
-        // $data = array();
-        // \Mail::send('emails.processran', $data, function($message) {
-        //     $message->to('marchmikej@gmail.com', 'Code Ran')->subject('UpdateDeviceAlarms Ran');
-        //     $message->from('admin@tenantsync.com', 'TenantSync');
-        // });
-        // \Mail::send('emails.processran', $data, function($message) {
-        //     $message->to('mitchjam1928@gmail.com', 'Code Ran')->subject('UpdateDeviceAlarms Ran');
-        //     $message->from('admin@tenantsync.com', 'TenantSync');
-        // });
     }
 }

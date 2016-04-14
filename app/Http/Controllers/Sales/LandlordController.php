@@ -1,21 +1,17 @@
 <?php namespace App\Http\Controllers\Sales;
 
+use App\Services\Registrar;
 use TenantSync\Models\User;
-use Illuminate\Mail\Mailer;
 use App\Http\Utilities\State;
-use App\Http\Controllers\Sales\BaseController;
+use Illuminate\Contracts\Mail\Mailer;
 use App\Http\Requests\LandlordRequest;
-use TenantSync\Landlord\LandlordGateway;
-use TenantSync\Billing\BillingInterface as Billing;
-use Wsdl2PhpGenerator\Generator;
-
+use Illuminate\Support\Facades\Password;
+use Illuminate\Contracts\Auth\PasswordBroker;
 
 class LandlordController extends SalesController {
 
-	public function __construct(LandlordGateway $landlordGateway)
+	public function __construct()
 	{
-		$this->landlordGateway = $landlordGateway;
-
 		parent::__construct();
 	}
 
@@ -26,17 +22,28 @@ class LandlordController extends SalesController {
 		return view('TenantSync::sales.landlord.index', compact('landlords'));
 	}
 
-	public function store(Billing $billing, Mailer $mailer)
+	public function create()
 	{
-		$landlord = $this->landlordGateway->create($this->input);
+		$states = State::all();
 
-		$data = ['landlord' => $landlord];
-		//send email to set password
-		// $mailer->send('emails.welcome', $data, function($message) use ($landlord)
-		// {
-		// 	$message->to($landlord->email, $landlord->first_name.' '.$landlord->last_name)->subject('Welcome to TenantSync!');
-		// });
-		return view('TenantSync::sales.device.create', compact('landlord'));
+		return view('TenantSync::sales/landlord/create2', compact('states'));
+	}
+
+	public function store(LandlordRequest $landlordRequest, PasswordBroker $passwordBroker)
+	{
+		\DB::beginTransaction();
+
+		$landlord = Registrar::registerLandlord($this->input);
+
+  		$states = State::all();
+		
+		if(! \App::runningUnitTests()) {
+			$passwordBroker->sendResetLink(['email' => $landlord->email]);
+		}
+
+		\DB::commit();
+
+		return redirect()->action('Sales\PropertyController@create', [$landlord->id]);
 	}
 
 	public function show($id)
@@ -45,7 +52,7 @@ class LandlordController extends SalesController {
 
 		$landlord = User::find($id);
 
-		$landlord->addDevice($landlord->devices->first());
+		// $landlord->addDevice($landlord->devices->first());
 
 		return view('TenantSync::sales.landlord.show', compact('landlord', 'states'));
 	}
@@ -61,24 +68,28 @@ class LandlordController extends SalesController {
 	{
 		$landlord = User::find($id);
 
-		$this->landlordGateway->update($landlord, $this->input);
+		$landlord->update($this->input);
 
 		return 'Success';
 
 	}
 
-	public function customer($id)
+	public function getBillingAccount($id)
 	{
 		$landlord = User::find($id);
 
 		return response()->json($landlord->getCustomer());
 	}
 
-	public function updateCustomer($id)
+	public function updateBillingAccount($id)
 	{
 		$landlord = User::find($id);
-		
-		return $landlord->updateCustomer($this->input);
+
+		$this->input['recurring_amount'] = $this->input['recurringAmount'];
+
+		$landlord->updateCustomer($this->input);
+
+		return 'success';
 	}
 
 }

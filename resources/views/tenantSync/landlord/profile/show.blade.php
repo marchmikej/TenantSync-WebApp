@@ -274,6 +274,7 @@ vue = new Vue({
 			this.$http.get('/landlord/payment/' + TenantSync.landlord)
 			.success(function(paymentMethods) {
 				this.paymentMethods = paymentMethods;
+				console.log(paymentMethods);
 			});
 		},
 		submitPayment: function(payment) {			
@@ -301,6 +302,11 @@ vue = new Vue({
 			this.payment.method_name = this.payment.object.MethodName;
 			this.payment.expiration = this.payment.object.CardExpiration.substring(5) + '/' + this.payment.object.CardExpiration.substring(2, 4);
 			this.payment.sortOrder = 0;
+		},
+
+		setCheckFields: function() {
+			this.payment.type = 'check';
+			this.payment.method_name = this.payment.object.MethodName;
 		},
 
 		resetPaymentFields: function() {

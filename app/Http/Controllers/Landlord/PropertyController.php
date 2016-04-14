@@ -46,9 +46,11 @@ class PropertyController extends Controller {
 	 */
 	public function store(CreatePropertyRequest $request)
 	{
-		$this->input['user_id'] = $this->user->id;
-		// Change to this eventualy -  $this->user->properties->create($this->input);
-		$property = Property::create($this->input);
+		// $this->input['user_id'] = $this->user->id;
+
+		// $property = Property::create($this->input);
+
+		$property = $this->user->properties->create($this->input);
 
 		return redirect()->route('landlord.properties.show', [$property]);
 
@@ -64,17 +66,17 @@ class PropertyController extends Controller {
 	{
 		$landlord = $this->user;
 
-		$landlord->charge(500, [
-			'account_holder' => 'mitchtest',  
-			'card' => [
-				'card_number' => '4000100211112222', 
-	 			'expiration' => '0919', 
-	 			'cvv2' => '999',
-			 ] ,
-			'description' => "mitch's test charge with new billable trait", 
-			// 'address' => '5042 parker rd', 
-			// 'zip' => '14075'
-		]);
+		// $landlord->charge(500, [
+		// 	'account_holder' => 'mitchtest',  
+		// 	'card' => [
+		// 		'card_number' => '4000100211112222', 
+	 // 			'expiration' => '0919', 
+	 // 			'cvv2' => '999',
+		// 	 ] ,
+		// 	'description' => "mitch's test charge with new billable trait", 
+		// 	// 'address' => '5042 parker rd', 
+		// 	// 'zip' => '14075'
+		// ]);
 
 		$property = Property::find($id);
 

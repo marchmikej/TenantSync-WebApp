@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Exception;
+use OutputInterface;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -25,7 +27,7 @@ class Handler extends ExceptionHandler
      * @return void
      */
     public function report(Exception $e)
-    {
+    {   
         return parent::report($e);
     }
 
@@ -38,6 +40,16 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
+        if(is_a($e, 'Illuminate\Session\TokenMismatchException')) {
+            Session::regenerateToken();
+
+            return Redirect::to('/');
+        }
+
+        if (\App::runningInConsole()) {
+            return $this->renderForConsole((new ConsoleOutput('VERBOSITY_DEBUG')), $e);
+        }
+
         return parent::render($request, $e);
     }
 }

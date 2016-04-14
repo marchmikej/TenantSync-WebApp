@@ -31,4 +31,13 @@ class Profile extends Model {
 		return $this->belongsTo('TenantSync\Models\User', 'user_id');
 	}
 
+	public function landlord()
+	{
+		return $this->owner();
+	}
+
+	public function user()
+	{
+		return $this->owner();
+	}
 }

@@ -5,7 +5,7 @@
 	<div class="row card">
 		<div class="col-sm-12">
 			<h1 class="m-t-0">
-				Landlords<a href="/sales/register"><button class=" btn btn-clear text-muted p-y-0"><h3 class="m-a-0 icon icon-plus"></h3></button></a>
+				Landlords<a href="/sales/landlord/create"><button class=" btn btn-clear text-muted p-y-0"><h3 class="m-a-0 icon icon-plus"></h3></button></a>
 			</h1>
 				
 			<table id="landlord-table" class="table">

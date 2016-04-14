@@ -698,7 +698,8 @@ a.bg-warning:focus {
   background-color: #f7ecb5;
 }
 
-.bg-danger {
+.bg-danger,
+div .card-alert {
   background-color: #f2dede;
 }
 

@@ -202,12 +202,9 @@ class DeviceApiTest extends TestCase
 			'token' => $this->device->token,
 			'account_holder' => 'Mike',
 			'amount' => $rand,
-			'description' => 'Test Charge',
-			'card' => [
-				'card_number' => '4000100211112222',
-				'expiration' => '0919',
-				'cvv2' => '999',
-			],
+			'card_number' => '4000100211112222',
+			'expiration' => '0919',
+			'cvv2' => '999',
 		]);
 
 		$this->seeInDatabase('transactions', [

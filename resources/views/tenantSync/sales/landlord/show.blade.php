@@ -48,7 +48,7 @@
 				<div class="form-group">
 					<label class="control-label col-sm-3">Method</label>
 					<div class="col-sm-9">
-						<input class="form-control form-borderless col-sm-10" value="{{ ($landlord->paymentMethods()->exists()) ? $landlord->paymentMethods()->orderBy('created_at', 'desc')->first()->name : ''}}" disabled readonly/>
+						<input class="form-control form-borderless col-sm-10" :value="paymentMethods[0] ? paymentMethods[0].MethodName : 'Loading...'" disabled readonly/>
 						<button @click.prevent="showModal = true" class="btn btn-clear col-sm-2"><span class="icon icon-edit"></span></button>
 					</div>
 				</div>
@@ -102,7 +102,7 @@
 	<div class="row card">
 		<div class="col-sm-12">
 		<h4 class="card-header">Recurring Billing</h4>
-		<form @submit.prevent="updateCustomer" class="form form-horizontal">
+		<form @submit.prevent="updateRecurringAmount" class="form form-horizontal">
 			<div class="form-group">
 				<label class="control-label col-sm-3">Reccuring Amount</label>
 				<div class="col-sm-9">
@@ -252,7 +252,7 @@
 @section('scripts')
 
 <script>
-vue = new Vue({
+var vue = new Vue({
 	el: '#landlord',
 	data: {
 		newPaymentMethod: false,
@@ -275,17 +275,17 @@ vue = new Vue({
 	},
 
 	ready: function() {
-		this.fetchPaymentMethods();
+		//this.fetchPaymentMethods();
 		this.getCustomer();
 	},
 
 	methods: {
-		fetchPaymentMethods: function() {
-			this.$http.get('/sales/payment/' + {{ $landlord->id }})
-			.success(function(paymentMethods) {
-				this.paymentMethods = paymentMethods;
-			});
-		},
+		// fetchPaymentMethods: function() {
+		// 	this.$http.get('/sales/payment/' + {{ $landlord->id }})
+		// 	.success(function(paymentMethods) {
+		// 		this.paymentMethods = paymentMethods;
+		// 	});
+		// },
 		submitPayment: function(payment) {			
 			this.$http.patch('/sales/payment/' + this.payment.id, this.payment)
 			.success(function(response) {
@@ -325,18 +325,19 @@ vue = new Vue({
 		},
 
 		getCustomer: function() {
-			this.$http.get('/sales/landlord/' + {{ $landlord->id }} + '/customer')
+			this.$http.get('/sales/landlord/' + {{ $landlord->id }} + '/billing-account')
 			.success(function(customer) {
 				this.customer = customer;
+				this.paymentMethods = customer.PaymentMethods;
 			});
 		},
 
-		updateCustomer: function() {
+		updateRecurringAmount: function() {
 			data = {
-				amount: this.customer.Amount,
+				recurringAmount: this.customer.Amount,
 			};
 
-			this.$http.patch('/sales/landlord/' + {{ $landlord->id }}, data)
+			this.$http.patch('/sales/landlord/' + {{ $landlord->id }} + '/billing-account', data)
 			.success(function() {
 				this.getCustomer();
 				swal('Success!', 'The recurring amount has been updated.');

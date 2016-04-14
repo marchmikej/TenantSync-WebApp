@@ -266,7 +266,7 @@ var vue = new Vue({
 			var transactions = this.paidRentTransactions();
 
 			return _.reduce(transactions, function(initial, transaction) {
-				return initial + Number(transaction.amount)  ;
+				return initial + Number(transaction.amount);
 			}, 0);
 		},
 
@@ -312,7 +312,9 @@ var vue = new Vue({
 				return initial + Number(bill.bill_amount);
 			}, 0);
 
-			return totalBills - this.paidRent();
+			var deliquentRent = totalBills - this.paidRent();
+
+			return deliquentRent > 0 ? deliquentRent : 0;
 		},
 
 		vacantRentBills: function() {
