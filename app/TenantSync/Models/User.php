@@ -146,6 +146,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$this->save();
 	}
 
+	public function addDevice($device)
+	{
+		//create device
+		//attach to property
+		//attach to landlord manager account thing
+	}
+
 	public function recurringAmount()
 	{
 		$numberCurrentlyFinanced = 0;

@@ -152,8 +152,8 @@ return [
         App\Providers\ViewServiceProvider::class,
         //Barryvdh\Debugbar\ServiceProvider::class,
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
-        Way\Generators\GeneratorsServiceProvider::class,
-        Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
+        // Way\Generators\GeneratorsServiceProvider::class,
+        // Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
 
     ],
 

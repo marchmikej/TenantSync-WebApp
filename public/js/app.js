@@ -27,8 +27,9 @@ require('./components/portfolio-stats.js');
 require('./components/accounting-stats.js');
 require('./components/recent-maintenance.js');
 require('./components/recent-messages.js');
+require('./components/payment-methods.js');
 
-},{"./components/accounting-stats.js":2,"./components/modal.js":3,"./components/portfolio-stats.js":4,"./components/recent-maintenance.js":5,"./components/recent-messages.js":6,"./forms/bootstrap.js":7,"./forms/transaction-form.js":12,"./tables/devices-table.js":13,"./tables/instance.js":14,"./tables/most-expensive-property-table.js":15,"./tables/portfolio-table.js":16,"./tables/property-manager-table.js":17,"./tables/table-headers.js":18,"./tables/transactions-table.js":19,"./vue-helpers.js":20}],2:[function(require,module,exports){
+},{"./components/accounting-stats.js":2,"./components/modal.js":3,"./components/payment-methods.js":4,"./components/portfolio-stats.js":5,"./components/recent-maintenance.js":6,"./components/recent-messages.js":7,"./forms/bootstrap.js":8,"./forms/transaction-form.js":13,"./tables/devices-table.js":14,"./tables/instance.js":15,"./tables/most-expensive-property-table.js":16,"./tables/portfolio-table.js":17,"./tables/property-manager-table.js":18,"./tables/table-headers.js":19,"./tables/transactions-table.js":20,"./vue-helpers.js":21}],2:[function(require,module,exports){
 'use strict';
 
 Vue.component('accounting-stats', {
@@ -225,6 +226,84 @@ Vue.component('modal', {
 },{}],4:[function(require,module,exports){
 'use strict';
 
+Vue.component('payment-methods', {
+	data: function data() {
+		return {
+			newPaymentMethod: false,
+			showModal: false,
+			payment: {
+				object: null,
+				id: null,
+				type: null,
+				method_name: null,
+				card_number: '',
+				expiration: '',
+				cvv2: '',
+				account_number: '',
+				routing_number: ''
+			},
+			paymentMethods: []
+		};
+	},
+
+	ready: function ready() {
+		this.fetchPaymentMethods();
+	},
+
+	methods: {
+		fetchPaymentMethods: function fetchPaymentMethods() {
+			this.$http.get('/landlord/payment/' + TenantSync.landlord).success(function (paymentMethods) {
+				this.paymentMethods = paymentMethods;
+				console.log(paymentMethods);
+			});
+		},
+		submitPayment: function submitPayment(payment) {
+			this.$http.patch('/landlord/payment/' + this.payment.id, this.payment).success(function (response) {
+				this.fetchPaymentMethods();
+				this.resetPaymentFields();
+				this.showModal = false;
+			});
+		},
+
+		setMethodDetails: function setMethodDetails() {
+			if (this.payment.object == null) {
+				this.resetPaymentFields();
+				return false;
+			}
+
+			this.payment.id = this.payment.object.MethodID;
+			this.payment.object.MethodType == 'cc' ? this.setCardFields() : this.setCheckFields();
+		},
+
+		setCardFields: function setCardFields() {
+			this.payment.type = 'card';
+			this.payment.method_name = this.payment.object.MethodName;
+			this.payment.expiration = this.payment.object.CardExpiration.substring(5) + '/' + this.payment.object.CardExpiration.substring(2, 4);
+			this.payment.sortOrder = 0;
+		},
+
+		setCheckFields: function setCheckFields() {
+			this.payment.type = 'check';
+			this.payment.method_name = this.payment.object.MethodName;
+		},
+
+		resetPaymentFields: function resetPaymentFields() {
+			this.payment.object = null;
+			this.payment.id = null;
+			this.payment.type = null;
+			this.payment.method_name = null;
+			this.payment.card_number = '';
+			this.payment.expiration = '';
+			this.payment.cvv2 = '';
+			this.payment.account_number = '';
+			this.payment.routing_number = '';
+		}
+	}
+});
+
+},{}],5:[function(require,module,exports){
+'use strict';
+
 Vue.component('portfolio-stats', {
 
 	data: function data() {
@@ -413,7 +492,7 @@ Vue.component('portfolio-stats', {
 	}
 });
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 Vue.component('recent-maintenance', {
@@ -429,8 +508,28 @@ Vue.component('recent-maintenance', {
 					body: '',
 					search: null
 				})
-			}
+			},
+
+			perPage: 5,
+
+			currentPage: 1
 		};
+	},
+
+	computed: {
+		lastMaintenance: function lastMaintenance() {
+			return this.currentPage * this.perPage;
+		},
+
+		firstMaintenance: function firstMaintenance() {
+			return this.lastMaintenance ? this.lastMaintenance - this.perPage : 0;
+		},
+
+		lastPage: function lastPage() {
+			var pages = Math.ceil(_.size(this.maintenanceRequests) / this.perPage);
+
+			return pages;
+		}
 	},
 
 	ready: function ready() {
@@ -440,18 +539,36 @@ Vue.component('recent-maintenance', {
 	methods: {
 		fetchMaintenance: function fetchMaintenance() {
 			var data = {
-				'with': ['device'],
-				limit: 5
+				'with': ['device']
 			};
 
+			// limit: 5,
 			this.$http.get('/api/maintenance/', data).success(function (maintenance) {
 				this.maintenanceRequests = maintenance;
 			});
+		},
+
+		isInCurrentPage: function isInCurrentPage(index) {
+			return this.firstMaintenance <= index && index < this.lastMaintenance;
+		},
+
+		nextPage: function nextPage() {
+			if (this.currentPage < this.lastPage) {
+				this.currentPage++;
+			}
+			console.log('next');
+		},
+
+		previousPage: function previousPage() {
+			if (this.currentPage > 1) {
+				this.currentPage--;
+			}
+			console.log('prev');
 		}
 	}
 });
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 Vue.component('recent-messages', {
@@ -586,7 +703,7 @@ Vue.component('recent-messages', {
 	}
 });
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /**
  * Initialize the Spark form extension points.
  */
@@ -618,7 +735,7 @@ $.extend(TS, require('./http'));
  */
 require('./components');
 
-},{"./components":8,"./errors":9,"./http":10,"./instance":11}],8:[function(require,module,exports){
+},{"./components":9,"./errors":10,"./http":11,"./instance":12}],9:[function(require,module,exports){
 /**
  * Text field input component for Bootstrap.
  */
@@ -757,7 +874,7 @@ Vue.component('ts-input', {
 </div></div>'
 });
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /**
  * Spark form error collection class.
  */
@@ -822,7 +939,7 @@ window.TSFormErrors = function () {
     };
 };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -868,7 +985,7 @@ module.exports = {
     }
 };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /**
  * SparkForm helper class. Used to set common properties on all forms.
  */
@@ -895,7 +1012,7 @@ window.TSForm = function (data) {
     };
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 Vue.component('transaction-form', {
@@ -994,7 +1111,7 @@ Vue.component('transaction-form', {
 
 });
 
-},{"./components.js":8}],13:[function(require,module,exports){
+},{"./components.js":9}],14:[function(require,module,exports){
 'use strict';
 
 Vue.component('devices-table', TSTable.extend({
@@ -1066,7 +1183,7 @@ Vue.component('devices-table', TSTable.extend({
 
 }));
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 window.TSTable = Vue.component('ts-table', {
@@ -1141,7 +1258,7 @@ window.TSTable = Vue.component('ts-table', {
 	}
 });
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 Vue.component('most-expensive-property-table', {
@@ -1202,7 +1319,7 @@ Vue.component('most-expensive-property-table', {
 
 });
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 Vue.component('portfolio-table', TSTable.extend({
@@ -1273,7 +1390,7 @@ Vue.component('portfolio-table', TSTable.extend({
 	}
 }));
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 Vue.component('property-manager-table', TSTable.extend({
@@ -1354,7 +1471,7 @@ Vue.component('property-manager-table', TSTable.extend({
 
 }));
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 Vue.component('table-headers', {
@@ -1410,7 +1527,7 @@ Vue.component('table-headers', {
 	}
 });
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 Vue.component('transactions-table', {
@@ -1700,7 +1817,7 @@ Vue.component('transactions-table', {
 
 });
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 Vue.config.debug = true;

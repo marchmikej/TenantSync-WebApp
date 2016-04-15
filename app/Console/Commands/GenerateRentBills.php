@@ -58,6 +58,10 @@ class GenerateRentBills extends Command
     {
         $latestBill = RentBill::where(['device_id' => $device->id])->orderBy('created_at', 'desc')->first();
 
+        if(! $latestBill) {
+            return true;
+        }
+
         $latestBillMonth = date('m', strtotime($latestBill->rent_month));
 
         return $latestBillMonth < date('m');

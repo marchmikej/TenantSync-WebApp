@@ -24,5 +24,6 @@ require('./components/portfolio-stats.js');
 require('./components/accounting-stats.js');
 require('./components/recent-maintenance.js');
 require('./components/recent-messages.js');
+require('./components/payment-methods.js');
 
 

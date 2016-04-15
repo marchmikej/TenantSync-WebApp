@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use TenantSync\Models\User;
 use TenantSync\Models\Order;
 use App\Http\Utilities\State;
+use App\Http\Utilities\Token;
 use TenantSync\Models\Device;
 use TenantSync\Models\Property;
 use App\Http\Requests\CreateDeviceRequest;
@@ -36,31 +37,23 @@ class DeviceController extends SalesController {
 
 	public function store(CreateDeviceRequest $request, $id)
 	{
-		\DB::transaction(function() use ($id) {
-			$this->input['token'] = \Token::create();
+		$property = Property::find($id);
 
-			$this->input['rent_due'] = Carbon::parse('first day of next month');
-
-			$this->input['monthly_cost'] = 10;
-
-			$this->input['alarm_id'] = 0;
-
-			$this->input['status'] = 'active';
-
-			$this->input['user_id'] = $id;
-
-			$device = Device::create($this->input);
-
-			$this->input['device_id'] = $device->id;
-
-			$order = Order::create($this->input);
-
-			//$device->owner->addDevice($paymentMethodId, $device);
+		\DB::transaction(function() use ($id, $property) {
+			$data = array_merge($this->input, [
+				'token' => \Token::create(),
+				'rent_due' => Carbon::parse('first day of next month'),
+				'monthly_cost' => 10,
+				'alarm_id' => 0,
+				'status' => 'active',
+			]);
 			
-			//return view('TenantSync::sales.device.show', compact('device'));
+			$paymentMethodId = $data['payment_method_id'];
+
+			$device = $property->addDevice($data);
 		});
 
-		return redirect()->route('sales.landlord.show', [$this->input['user_id']]);
+		return redirect()->route('sales.landlord.show', $property->landlord()->id);
 	}
 
 	public function show($id)

@@ -2,6 +2,7 @@
 
 namespace TenantSync\Models;
 
+use TenantSync\Models\Order;
 use App\Services\RoiCalculator;
 use Illuminate\Database\Eloquent\Model;
 
@@ -146,5 +147,18 @@ class Property extends Model {
 		});
 	}
 
+	public function addDevice($data)
+	{
+		$data['user_id'] = $this->landlord()->id;
+		
+		$device = $this->devices()->create($data);
+
+		$data['device_id'] = $device->id;
+
+		$order = Order::create($data);
+
+		// $device->owner->charge($device->monthly_cost);
+		//upon device activation the users recurring amount will be reevaluated and charged appropriatly
+	}
 
 }

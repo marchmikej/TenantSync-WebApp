@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Events\Event;
-use App\Events\LandlordRespondedToMaintenance;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\UpdateMaintenanceRequest;
 use Gate;
+use App\Events\Event;
 use TenantSync\Models\Device;
-use TenantSync\Models\MaintenanceRequest;
 use TenantSync\Models\Transaction;
+use App\Http\Controllers\Controller;
+use TenantSync\Models\MaintenanceRequest;
+use App\Events\LandlordRespondedToMaintenance;
+use App\Http\Requests\UpdateMaintenanceRequest;
 
 class MaintenanceController extends Controller {
 

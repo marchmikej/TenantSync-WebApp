@@ -118,9 +118,9 @@
 		<div class="col-sm-10">
 			<h2 class="text-info m-t-0">Devices</h2>
 		</div>
-		<div class="col-sm-2">
+		<!-- <div class="col-sm-2">
 			<a href="/sales/landlord/{{ $landlord->id }}/device/create"><button class="col-sm-12 btn btn-primary">Add Device</button></a>
-		</div>
+		</div> -->
 
 		<div class="col-sm-12">
 			<table class="devices-table table">
@@ -137,6 +137,7 @@
 					<tr>
 						<td><a href="/sales/device/{{ $device->id }}">{{ $device->property->address . ', ' .  $device->property->city . ' ' . $device->property->state }}</a></td>
 						<td>{{ $device->location }}</td>
+						<td class="{{ $device->alarm_id ? 'text-danger': 'text-success' }}">{{ $device->alarm_id ? 'Deliquent': 'Off' }}</td>
 						<td>{{ $device->status }}</td>
 						<td>{{ $device->serial }}</td>
 						
