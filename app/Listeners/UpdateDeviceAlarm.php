@@ -6,6 +6,7 @@ use App\Events\UpdatedDeviceTransactions;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Queue\ShouldBeQueued;
+use App\Events\DeviceRefresh;
 
 class UpdateDeviceAlarm
 {
@@ -28,5 +29,6 @@ class UpdateDeviceAlarm
     public function handle(UpdatedDeviceTransactions $event)
     {
         $event->device->updateAlarm();
+        \Event::fire(new DeviceRefresh($event->device->id));
     }
 }
