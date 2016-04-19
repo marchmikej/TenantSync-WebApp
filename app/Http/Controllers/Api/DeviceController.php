@@ -40,8 +40,6 @@ class DeviceController extends Controller
 
         $device->update($this->input);
 
-        \Event::fire(new DeviceRefresh($id));
-
         return $device;
     }
 }
