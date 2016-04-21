@@ -30,4 +30,12 @@ class TransactionRequest extends UsaEpayObject {
 		'billing_address' => 'BillingAddress',
 		'recurring_billing' => 'RecurringBilling',
  	];
+
+ 	// Mikes Check Input
+ 	// 
+    // params.put("payment_type", paymentType);
+    // params.put("amount", payment_amount);
+    // params.put("routing_number", routing_number);
+    // params.put("account_number", account_number);
+    // params.put("account_holder", card_holder);
 }

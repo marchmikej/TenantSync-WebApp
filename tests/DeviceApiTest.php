@@ -184,7 +184,7 @@ class DeviceApiTest extends TestCase
 	 * @return void
 	 * @test 
 	 **/
-	public function it_pays_the_rent_for_the_device()
+	public function it_pays_the_rent_for_the_device_with_credit_card()
 	{
 		$rand = rand(100, 1000);
 
@@ -213,5 +213,48 @@ class DeviceApiTest extends TestCase
 		]);
 
 		$this->assertResponseOk();
+	}
+
+	/**
+	 *  It pays the rent for the apartment
+	 *
+	 * @return void
+	 * @test 
+	 **/
+	public function it_pays_the_rent_for_the_device_with_check()
+	{
+		$rand = rand(100, 1000);
+
+		$user = factory(User::class, 'landlord')->create();
+
+		$this->device = factory(Device::class)->create();
+
+		$user->devices()->save($this->device);
+
+		$user->gateway()->save(factory(Gateway::class)->create());
+
+		$this->call('POST', '/device-api/pay', [
+			'_token' => csrf_token(),
+			'serial' => $this->device->serial, 
+			'token' => $this->device->token,
+			'account_holder' => 'Mike',
+			'amount' => $rand,
+			'account_number' => '284947392',
+			'routing_number' => '091975849',
+		]);
+
+		$this->seeInDatabase('transactions', [
+			'payable_id' => $this->device->id, 
+			'amount' => $rand,
+		]);
+
+		$this->assertResponseOk();
+		/*
+			params.put("payment_type", paymentType);
+		    params.put("amount", payment_amount);
+		    params.put("routing_number", routing_number);
+		    params.put("account_number", account_number);
+		    params.put("account_holder", card_holder);
+	    */
 	}
 }

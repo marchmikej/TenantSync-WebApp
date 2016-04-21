@@ -120,22 +120,23 @@ class Device extends Model {
 	{		
 		$balance = $this->balance();
 
-		if($balance >= 0) {
-		    $this->alarm_id = 0;
+		$this->alarm_id = 0;
 
-		    $this->save();
+        if($balance > 0) {
+            $latestBill = $this->rentBills()->orderBy('created_at', 'desc')->first();
 
-		    return true;
-		}
+            if($balance > $latestBill->bill_amount) {
+                $this->alarm_id = 1;
+            }
 
-		$latestBill = RentBill::where(['device_id' => $this->id])->orderBy('created_at', 'desc')->first();
+            if(strtotime($latestBill->rent_month. ' + ' .$this->grace_period. ' days') < time()) {
+                $this->alarm_id = 1;
+            }
+        }
+    
 
-		if(strtotime($latestBill->rent_month. ' + ' .$this->grace_period. ' days') < time()) {
-		    $this->alarm_id = 1;
-		}
+        $this->save();
 
-		$this->save();
-
-		return false;
+        return $this->alarm_id;
 	}
 }

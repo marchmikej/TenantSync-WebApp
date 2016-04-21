@@ -20,9 +20,17 @@ class Util {
 		return lcfirst($studly);
 	}
 
-	public static function arrayhas($array, $key)
+	public static function arrayhas($array, $keys)
 	{
-		return isset($array[$key]);
+		if(is_string($keys)) {
+			return isset($array[$keys]);
+		}
+
+		$keys = array_flip($keys);
+
+		$keysInBothArrays = array_intersect_key($keys, $array);
+		
+		return count($keysInBothArrays);
 	}
 
 	public static function flatten($array)

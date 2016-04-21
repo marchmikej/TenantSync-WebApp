@@ -142,7 +142,9 @@ trait Billable {
 	
 	public function getCommand($options)
 	{
-		return Util::arrayHas($options, 'check') ? 'check' : 'sale';
+		$array = Util::flatten($options);
+
+		return Util::arrayHas($array, ['check', 'account_number']) ? 'check' : 'sale';
 	}
 
 	public function hasCustomerId()
