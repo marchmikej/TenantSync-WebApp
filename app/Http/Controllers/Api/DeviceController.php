@@ -6,6 +6,7 @@ use Gate;
 use TenantSync\Models\Device;
 use App\Http\Controllers\Controller;
 use TenantSync\Mutators\DeviceMutator;
+use App\Events\DeviceRefresh;
 
 class DeviceController extends Controller
 {
@@ -38,6 +39,8 @@ class DeviceController extends Controller
         }
 
         $device->update($this->input);
+
+        \Event::fire(new DeviceRefresh($id));
 
         return $device;
     }
