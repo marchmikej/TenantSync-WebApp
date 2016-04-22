@@ -219,4 +219,14 @@ class DeviceApiController extends Controller {
 
 		return $device;
 	}
+
+	public function verifyUpgrade()
+	{
+		$version=$this->input['version'];
+		if($version == "1.0") {
+			return "tenantSync_1_1.apk";
+		} else {
+			return "NOUPDATE";
+		}
+	}
 }  
