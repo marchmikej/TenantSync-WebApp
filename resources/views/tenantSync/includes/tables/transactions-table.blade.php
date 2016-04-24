@@ -12,7 +12,7 @@
 	
 			<div class="table-body table-striped">
 				<div v-for="transaction in transactions | orderBy sortKey reverse | filterBy search | filterBy withinDates" class="table-row row">
-					<div :class="transaction.amount > 0 ? 'text-success' : 'text-danger'" class="col-sm-2"><strong>@{{ transaction.amount }}</strong></div>
+					<div :class="transaction.amount > 0 ? 'text-success' : 'text-danger'" class="col-sm-2"><strong>@{{ money(transaction.amount) }}</strong></div>
 					<div class="col-sm-2">@{{ transaction.address }}</div>
 					<div class="col-sm-6">@{{ transaction.description }}</div>
 					<div class="col-sm-1">@{{ (transaction.date.substring(5) + '/' + transaction.date.substring(2, 4)).replace('-', '/') }}</div>

@@ -44,10 +44,11 @@ class DeviceTest extends TestCase
 
 		$location = $this->faker->secondaryAddress;
 
-		$this->call('POST', '/sales/landlord/'. $property->owner()->id .'/device/', [
+		$this->call('POST', '/sales/properties/'. $property->id .'/device/', [
 			'_token' => csrf_token(),
 			'serial' => str_random(10),
 			'token' => str_random(5),
+			'payment_method_id' => 0,
 			'property_id' => $property->id, 
 			'vacant' => 1, 
 			'late_fee' => 30, 

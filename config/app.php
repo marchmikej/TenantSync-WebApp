@@ -209,6 +209,7 @@ return [
         'Token'     => App\Http\Utilities\Token::class,
 		//'Debugbar'  => Barryvdh\Debugbar\LaravelDebugbar::class,
         'Gate'      => Illuminate\Support\Facades\Gate::class,
+        // 'JavaScript'=> Laracasts\Utilities\JavaScript\JavaScriptFacade::class,
 
     ],
 

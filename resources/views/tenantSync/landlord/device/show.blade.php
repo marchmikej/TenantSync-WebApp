@@ -54,18 +54,24 @@
 				<div class="col-sm-12 p-x">
 					<h4 class="card-header">Chat</h4>
 					<div class="row h-sm scrollable" id="chat">									
-						<p 
-							v-for="message in messages"
-							:class="['chat', message.from_device ? 'chat-blue' : 'chat-gray']"
-							style="position: relative;"
-						>
-							<button 
-								@click="confirm({method: 'deleteMessage', id: message.id})"
-								class="btn btn-clear icon icon-cross"
-								:class="[message.from_device ? 'chat-close-l' : 'chat-close-r']"
-							></button>
-							@{{ message.body }}
-						</p>	
+						<div v-for="message in messages" :class="[message.from_device ? 'text-left' : 'text-right']">
+							<p 
+								:class="getMessageClasses(message)"
+								style="position: relative;"
+							>
+								<button 
+									v-if="user().role == 'landlord'"
+									@click="confirm({method: 'deleteMessage', id: message.id})"
+									class="btn btn-clear icon icon-cross"
+									:class="[message.from_device ? 'chat-close-l' : 'chat-close-r']"
+								></button>
+								@{{ message.body }}
+							</p>	
+							<span style="width: 100%;" :class="{'pull-left': message.from_device, 'pull-right': ! message.from_device}">
+								<span class="text-success">@{{ 'sent ' + moment(message.created_at).format('MMM, D') }}</span>
+								<span v-if="message.from_device" class="text-info">@{{ '| read ' + moment(message.read_at).format('MMM, D') }}</span>
+							</span>
+						</div>
 					</div>
 					<div class="row">
 						<form class="form row" >
@@ -272,6 +278,12 @@
 
 					this.device.alarm_id = device.alarm_id;
 				});
+			},
+
+			getMessageClasses: function(message) {
+				var classes = message.from_device ? ['chat-blue', 'text-left', 'pull-left'] : ['chat-gray', 'text-left', 'pull-right'];
+
+				return classes;
 			},
 
 			scrollToLatestMessage: function() {

@@ -37,6 +37,8 @@ class Registrar {
 		$gateway = $user->gateway()->create($data);
 
 		// Create manager
+		$data['user_id'] = $user->id;
+		
 		$manager = $user->managers()->create($data);
 
 		return $user;

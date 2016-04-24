@@ -5,31 +5,31 @@
 		
 				<h4 class="card-header">Overview</h4>
 		
-				<div class="col-sm-3 card-column">
+				<div class="col-md-6 col-md-3 card-column">
 					<p class="text-center">ROI YTD</p>
 					<p class="stat text-primary text-center">
 						@{{ stats.roi }}
 					</p>
 				</div>
 		
-				<div @click="toggleStat('paid_rent')" class="col-sm-3 card-column">
+				<div @click="toggleStat('paid_rent')" class="col-md-6  col-md-3 card-column">
 					<p class="text-center">Revenue YTD</p>
 					<p class="stat clickable text-success text-center">
-						@{{ stats.paid_rent}}
+						@{{ money(stats.paid_rent)}}
 					</p>
 				</div>
 		
-				<div @click="toggleStat('deliquent_rent')" class="col-sm-3 card-column">
+				<div @click="toggleStat('deliquent_rent')" class="col-md-6 col-md-3 card-column">
 					<p class="text-center">Delinquency YTD</p>
 					<p class="stat clickable text-warning text-center">
-						@{{ stats.deliquent_rent }}
+						@{{ money(stats.deliquent_rent) }}
 					</p>
 				</div>
 		
-				<div @click="toggleStat('vacant_rent')" class="col-sm-3 card-column">
+				<div @click="toggleStat('vacant_rent')" class="col-md-6 col-md-3 card-column">
 					<p class="text-center">Vacancy YTD</p>
 					<p class="stat clickable text-danger text-center">
-						@{{ stats.vacant_rent }}
+						@{{ money(stats.vacant_rent) }}
 					</p>
 				</div>
 		
@@ -71,7 +71,7 @@
 									@{{ moment(transaction.date).format(displayDateString) }}
 								</div>		
 								<div :class="transaction.amount > 0 ? 'text-success' : 'text-danger'" class="col-sm-3">
-									@{{ transaction.amount }}
+									@{{ money(transaction.amount) }}
 								</div>		
 							</div>
 						</div>
@@ -103,7 +103,7 @@
 									</a>
 								</div>		
 								<div class="col-sm-3 col-sm-offset-3 text-danger">
-									@{{ device.balance_due }}
+									@{{ money(device.balance_due) }}
 								</div>		
 							</div>
 						</div>
@@ -135,7 +135,7 @@
 									</a>
 								</div>		
 								<div class="col-sm-3 col-sm-offset-3 text-danger">
-									@{{ bill.bill_amount }}
+									@{{ money(bill.bill_amount) }}
 								</div>		
 							</div>
 						</div>

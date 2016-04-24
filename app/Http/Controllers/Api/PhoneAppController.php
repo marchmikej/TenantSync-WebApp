@@ -32,14 +32,14 @@ class PhoneAppController extends Controller
     }
 
     public function manageNotifications($route_id) {
-        $device = \DB::table('landlord_devices')
+        $device = \DB::table('user_devices')
             ->where('routing_id', '=', $route_id)
             ->first();
         if(!$device) {
-            DB::table('landlord_devices')->insert(
+            DB::table('user_devices')->insert(
                 ['user_id' => $this->user->id, 'routing_id' => $route_id, 'type' => '0', 'verified' => '0']
             );
-            $device = \DB::table('landlord_devices')
+            $device = \DB::table('user_devices')
             ->where('routing_id', '=', $route_id)
             ->first();
         }  
@@ -52,7 +52,7 @@ class PhoneAppController extends Controller
         } else {
             $verify=2;
         }
-        DB::table('landlord_devices')
+        DB::table('user_devices')
             ->where('id', $id)
             ->update(['verified' => $verify]);
         return redirect('home');
@@ -70,17 +70,17 @@ class PhoneAppController extends Controller
     public function receivingNotifications() {
         $returnValue="unsuccessful";
         if (Auth::attempt(['email' => $this->input['email'], 'password' => $this->input['password']])) {
-            $device = \DB::table('landlord_devices')
+            $device = \DB::table('user_devices')
                 ->where('routing_id', '=', $this->input['routeid'])
                 ->first();
             if(count($device)>0) {
                 if($device->verified == 0 && $this->input['verify'] == "turnon") {
-                    DB::table('landlord_devices')
+                    DB::table('user_devices')
                     ->where('id', $device->id)
                     ->update(['verified' => 1]);
                     $returnValue="notificationon";
                 } else if($device->verified == 1 && $this->input['verify'] == "turnoff") {
-                    DB::table('landlord_devices')
+                    DB::table('user_devices')
                     ->where('id', $device->id)
                     ->update(['verified' => 0]);
                     $returnValue="notificationoff";
@@ -93,7 +93,7 @@ class PhoneAppController extends Controller
                 }
             } else {
                 //Inserting device
-                DB::table('landlord_devices')->insert(
+                DB::table('user_devices')->insert(
                     ['user_id' => Auth::id(), 'routing_id' => $this->input['routeid'], 'type' => '0', 'verified' => '0']
                 );
                 $returnValue="notificationoff";
@@ -105,14 +105,14 @@ class PhoneAppController extends Controller
         Auth::logout();
         return response()->json(['returnvalue' => $returnValue]);
         /*
-        $device = \DB::table('landlord_devices')
+        $device = \DB::table('user_devices')
             ->where('routing_id', '=', $route_id)
             ->first();
         if(!$device) {
-            DB::table('landlord_devices')->insert(
+            DB::table('user_devices')->insert(
                 ['user_id' => $this->user->id, 'routing_id' => $route_id, 'type' => '0', 'verified' => '0']
             );
-            $device = \DB::table('landlord_devices')
+            $device = \DB::table('user_devices')
             ->where('routing_id', '=', $route_id)
             ->first();
         }  

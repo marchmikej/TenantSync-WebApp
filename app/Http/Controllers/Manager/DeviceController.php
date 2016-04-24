@@ -63,12 +63,14 @@ class DeviceController extends Controller {
 			return abort(403, "Thats not yours!");
 		}
 
+	    $device->markMessagesAsRead();
+
 		\JavaScript::put([
 	        'device' => $device,
 	        'deviceMessages' => $device->messages,
 	    ]);
 
-		return view('TenantSync::manager/device/show', compact('device'));
+		return view('TenantSync::landlord/device/show', compact('device'));
 	}
 
 	/**

@@ -16,21 +16,21 @@
 			<div @click="toggleStat('paid_rent')" class="col-sm-3 card-column">
 				<p class="text-center">Rent Paid MTD</p>
 				<p class="stat clickable text-success text-center">
-					@{{ stats.paid_rent }}
+					@{{ money(stats.paid_rent) }}
 				</p>
 			</div>
 	
 			<div @click="toggleStat('deliquent_rent')" class="col-sm-3 card-column">
 				<p class="text-center">Delinquency MTD</p>
 				<p class="stat clickable text-warning text-center">
-					@{{ stats.deliquent_rent }}
+					@{{ money(stats.deliquent_rent) }}
 				</p>
 			</div>
 			
 			<div @click="toggleStat('vacant_rent')" class="col-sm-3 card-column">
 				<p class="text-center">Vacant Rent MTD</p>
 				<p class="stat clickable text-danger text-center">
-					@{{ stats.vacant_rent }}
+					@{{ money(stats.vacant_rent) }}
 				</p>
 			</div>
 		</div>
@@ -62,7 +62,7 @@
 					<div class="table-body table-striped">
 						<div v-for="transaction in paidRentTransactions()" class="table-row row">
 							<div :class="transaction.amount > 0 ? 'text-success' : 'text-danger'" class="col-sm-3">
-								@{{ transaction.amount }}
+								@{{ money(transaction.amount) }}
 							</div>		
 							<div class="col-sm-6">
 								<a :href="'/'+ user().role +'/device/'+ transaction.payable_id">
@@ -102,7 +102,7 @@
 								</a>
 							</div>		
 							<div class="col-sm-3 col-sm-offset-3 text-danger">
-								@{{ device.balance_due }}
+								@{{ money(device.balance_due) }}
 							</div>		
 						</div>
 					</div>
@@ -134,7 +134,7 @@
 								</a>
 							</div>		
 							<div class="col-sm-3 col-sm-offset-3 text-danger">
-								@{{ bill.bill_amount }}
+								@{{ money(bill.bill_amount) }}
 							</div>		
 						</div>
 					</div>

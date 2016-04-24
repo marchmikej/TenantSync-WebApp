@@ -12639,7 +12639,7 @@ td .form-control {
 }
 
 #chat {
-  padding: 0px 5px;
+  padding: 0px 15px;
 }
 
 #chat .well {
@@ -12649,6 +12649,7 @@ td .form-control {
 .chat,
 .chat-gray,
 .chat-blue {
+  margin-bottom: 0;
   border: none;
   box-shadow: none;
   padding: 15px;

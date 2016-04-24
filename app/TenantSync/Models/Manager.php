@@ -59,6 +59,11 @@ class Manager extends Model {
 		return collect(\DB::table('devices')->whereIn('property_id', $this->properties->keyBy('id')->keys()->toArray())->get());
 	}
 
+	public function devicesToNotify()
+	{
+		return $this->hasMany('TenantSync\Models\UserDevice', 'manager.user_id', 'user_devices.user_id');
+	}
+
 	public function messages()
 	{
 		$devices = array_map(function($device) {
@@ -129,5 +134,26 @@ class Manager extends Model {
 		}, $this->rentBills()->toArray());
 		
 		return collect(\DB::table('rent_payments')->whereIn('rent_bill_id', $rentBills)->get());
+	}
+
+	public function notifications()
+	{
+		return $this->belongsToMany('TenantSync\Models\Notification');
+	}
+
+	public function updateNotifications($notificationIds)
+	{
+		return $this->notifications()->sync($notificationIds);
+	}
+
+	public function updateNotificationMethods($email, $text)
+	{
+		$this->email_notifications = $email;
+
+		$this->text_notifications = $text;
+
+		$this->save();
+
+		return $this;
 	}
 }

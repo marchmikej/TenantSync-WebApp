@@ -216,7 +216,7 @@ class DeviceApiTest extends TestCase
 	}
 
 	/**
-	 *  It pays the rent for the apartment
+	 *  It pays the rent for the apartment via check
 	 *
 	 * @return void
 	 * @test 

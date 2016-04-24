@@ -111,7 +111,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="control-label col-sm-3" for="password">Password</label>
+						<label class="control-label col-sm-3" for="password">New Password</label>
 						<div class="col-sm-9">
 							<input class="form-control" type="password" name="password" placeholder="Password" value="{{ old('password') }}"/>
 						</div>
@@ -123,6 +123,8 @@
 							<input class="form-control" type="password" name="password_confirmation" placeholder="Confirm" value="{{ old('password_confirmation') }}"/>
 						</div>
 					</div>
+
+					<button class="btn btn-primary col-sm-3 col-sm-offset-9 form-control">Submit</button>
 
 				</form>
 			</div>

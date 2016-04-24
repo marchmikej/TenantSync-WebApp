@@ -1,5 +1,6 @@
 <?php namespace TenantSync\Models;
 
+use Carbon\Carbon;
 use TenantSync\Billing\Billable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -114,6 +115,16 @@ class Device extends Model {
 		$transactions = array_sum($this->transactions->pluck('amount')->toArray());
 
 		return $rentBills - $transactions;
+	}
+
+	public function markMessagesAsRead()
+	{
+		$readAt = Carbon::now()->toDateTimeString();
+
+		$this->messages->each(function($message) use ($readAt) {
+			$message->read_at = $readAt;
+			$message->save();
+		});	
 	}
 
 	public function updateAlarm()

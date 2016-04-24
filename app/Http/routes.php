@@ -137,6 +137,9 @@ Route::group(['middleware' => ['auth']], function()
 
 		Route::resource('gateway', 'GatewayController');
 		Route::resource('payment', 'PaymentController');
+		Route::patch('notifications', 'NotificationController@update');
+		Route::patch('notifications/methods', 'NotificationController@updateMethods');
+		Route::resource('notifications', 'NotificationController');
 
 		Route::post('profile/password', 'ProfileController@password');
 		Route::resource('profile', 'ProfileController');

@@ -38,14 +38,17 @@ class HomeController extends Controller {
 
 	public function landlord()
 	{
-		$landlord = $this->user;
+		$manager = $this->user->manager()
+		;
 		$devices = $this->user->devices->load(['property', 'alarm']);
-		return view('TenantSync::landlord.index', compact('devices', 'landlord'));
+
+		return view('TenantSync::manager.index', compact('devices', 'manager'));
 	}
 
 	public function manager()
 	{
 		$manager = $this->user->manager;
+		
 		return view('TenantSync::manager.index', compact('manager'));
 	}
 

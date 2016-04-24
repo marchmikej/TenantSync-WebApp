@@ -1838,7 +1838,7 @@ Vue.mixin({
 		},
 
 		toTitleCase: function toTitleCase(string) {
-			var strings = string.replace('_', ' ').split(' ');
+			var strings = string.replace(/_/g, ' ').split(' ');
 			for (var i = 0; i < strings.length; i++) {
 				strings[i] = strings[i].charAt(0).toUpperCase() + strings[i].slice(1);
 			}
@@ -1867,6 +1867,22 @@ Vue.mixin({
 
 		user: function user() {
 			return TenantSync.user;
+		},
+
+		findById: function findById(array, id) {
+			return _.find(array, function (item) {
+				return item.id == id;
+			});
+		},
+
+		money: function money(number) {
+			var money = numeral(number).format('$0');
+
+			if (number % 1 != 0) {
+				money = '~' + money;
+			}
+
+			return money;
 		}
 	}
 });

@@ -5,25 +5,25 @@
 			<div class="col-sm-3 card-column">
 				<p class="text-center">Net Income MTD</p>
 				<p class="stat text-success text-center">
-				@{{ stats.net_income }}
+				@{{ money(stats.net_income) }}
 				</p>
 			</div>
 			<div @click="toggleStat('recurring')" class="col-sm-3 card-column">
 				<p class="text-center">Monthly Recurring Expenses</p>
 				<p class="stat clickable text-primary text-center">
-				@{{ stats.recurring }}
+				@{{ money(stats.recurring) }}
 				</p>
 			</div>
 			<div @click="toggleStat('expenses')" class="col-sm-3 card-column">
 				<p class="text-center">Total Expenses MTD</p>
 				<p class="stat clickable text-danger text-center">
-				@{{ stats.expenses }}
+				@{{ money(stats.expenses) }}
 				</p>
 			</div>
 			<div @click="toggleStat('revenue')" class="col-sm-3 card-column">
 				<p class="text-center">Revenue  MTD</p>
 				<p class="stat clickable text-warning text-center">
-				@{{ stats.revenue }}
+				@{{ money(stats.revenue) }}
 				</p>
 			</div>
 		</div>
@@ -55,7 +55,7 @@
 					<div class="table-body table-striped">
 						<div v-for="transaction in recurringTransactions" class="table-row row">
 							<div :class="transaction.amount > 0 ? 'text-success' : 'text-danger'" class="col-sm-2">
-								@{{ transaction.amount }}
+								@{{ money(transaction.amount) }}
 							</div>		
 							<div class="col-sm-5">
 								<!-- <a :href="'/'+ user().role +'/'device'/'+ transaction.payable_id"> -->
@@ -104,7 +104,7 @@
 								<!-- </a> -->
 							</div>		
 							<div class="col-sm-3 col-sm-offset-3 text-danger">
-								@{{ transaction.amount }}
+								@{{ money(transaction.amount) }}
 							</div>		
 						</div>
 					</div>
@@ -136,7 +136,7 @@
 								<!-- </a> -->
 							</div>		
 							<div :class="transaction.amount > 0 ? 'text-success' : 'text-danger'" class="col-sm-3 col-sm-offset-3">
-								@{{ transaction.amount }}
+								@{{ money(transaction.amount) }}
 							</div>		
 						</div>
 					</div>

@@ -19,7 +19,7 @@
 			<table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers>
 	
 			<div class="table-body table-striped">
-				<div v-for="manager in filteredList 
+				<div v-if="user().id != manager.user_id" v-for="manager in filteredList 
 					| orderBy sortKey reverse"
 					v-if="inCurrentPage($index)"
 					class="table-row row"
@@ -85,7 +85,7 @@ Vue.component('managers-table', TSTable.extend({
 		return {
 			listName: 'managers',
 
-			perPage: 5,
+			perPage: 10,
 
 			columns: [
 				{
