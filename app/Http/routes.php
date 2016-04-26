@@ -18,6 +18,7 @@ Route::post('device-api/pay', 'Api\DeviceApiController@payRent');
 Route::get('device-api/rent-status', 'Api\DeviceApiController@rentStatus');
 Route::post('device-api/receivingnotifications', 'Api\PhoneAppController@receivingNotifications');
 Route::post('device-api/loginapp', 'Api\PhoneAppController@isUser');
+Route::post('device-api/verifyupgrade', 'Api\DeviceApiController@verifyUpgrade');
 
 // Password reset Routes
 Route::get('password/reset/{token}', '\App\Http\Controllers\Auth\PasswordController@getReset');
