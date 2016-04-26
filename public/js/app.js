@@ -539,10 +539,10 @@ Vue.component('recent-maintenance', {
 	methods: {
 		fetchMaintenance: function fetchMaintenance() {
 			var data = {
-				'with': ['device']
+				'with': ['device'],
+				set: ['address']
 			};
 
-			// limit: 5,
 			this.$http.get('/api/maintenance/', data).success(function (maintenance) {
 				this.maintenanceRequests = maintenance;
 			});
@@ -1828,6 +1828,7 @@ Vue.prototype.numeral = window.numeral;
 Vue.prototype.moment = window.moment;
 Vue.prototype._ = window._;
 Vue.prototype.dateString = window.dateString;
+Vue.prototype.humanDateString = window.humanDateString;
 Vue.prototype.displayDateString = window.displayDateString;
 
 Vue.mixin({

@@ -45,7 +45,7 @@ Vue.component('recent-maintenance', {
 		fetchMaintenance: function() {
 			var data = {
 				with: ['device'],
-				// limit: 5,
+				set: ['address'],
 			};
 
 			this.$http.get('/api/maintenance/', data)

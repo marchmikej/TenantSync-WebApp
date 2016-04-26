@@ -4,7 +4,7 @@
 			<h4 class="card-header">
 				Properties 
 				@if(\Auth::user()->role == 'landlord')
-					<button class=" btn btn-clear p-y-0"><a href="/landlord/properties/create"><h3 class="m-a-0 text-primary icon icon-plus"></h3></a></button>
+					<button v-if="user().role == 'landlord'" class=" btn btn-clear p-y-0"><a href="/landlord/properties/create"><h3 class="m-a-0 text-primary icon icon-plus"></h3></a></button>
 				@endif
 				@include('TenantSync::includes.tables.search')
 			</h4>

@@ -6,8 +6,6 @@
 
 	@include('TenantSync::includes.accounting-stats')
 	
-	@include('TenantSync::includes.tables.most-expensive-property-table')
-	
 	<transactions-table inline-template>
 		@include('TenantSync::includes.tables.transactions-table')
 	</transactions-table>
@@ -15,8 +13,6 @@
 </div>
 
 @endsection
-
-
 
 @section('scripts')
 <script>

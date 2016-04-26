@@ -12916,6 +12916,10 @@ h5.card-header {
   border-bottom: 1px solid #d5d5d5;
 }
 
+.p-0-md {
+  padding: 0 0 0 0 !important;
+}
+
 @font-face {
   font-family: 'Glyphicons Halflings';
   src: url('../fonts/glyphicons-halflings-regular.eot');

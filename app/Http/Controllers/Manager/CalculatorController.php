@@ -3,10 +3,10 @@
 use App\Http\Requests;
 use App\Http\Utilities\State;
 use App\Services\RoiCalculator;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Manager\ManagerBaseController;
 
 
-class CalculatorController extends Controller {
+class CalculatorController extends ManagerBaseController {
 
     public function __construct(RoiCalculator $roiCalculator)
     {

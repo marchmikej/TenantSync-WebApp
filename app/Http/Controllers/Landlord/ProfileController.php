@@ -14,11 +14,13 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        $landlord = $this->user;
+        $manager = $this->user->manager;
+
+        $landlord  = $this->user;
 
         $states = State::all();
 
-        return view('TenantSync::landlord/profile/show', compact('landlord', 'states'));
+        return view('TenantSync::manager.profile.show', compact('manager', 'states', 'landlord'));
     }
 
     /**

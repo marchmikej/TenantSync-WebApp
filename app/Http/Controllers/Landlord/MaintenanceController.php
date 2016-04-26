@@ -26,7 +26,7 @@ class MaintenanceController extends Controller {
 	{
 		$maintenanceRequests = $this->user->maintenanceRequests;
 
-		return view('TenantSync::landlord/maintenance/index', compact('maintenanceRequests'));
+		return view('TenantSync::manager/maintenance/index', compact('maintenanceRequests'));
 	}
 
 	/**

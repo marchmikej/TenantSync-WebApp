@@ -14,6 +14,8 @@
 
 	window.dateString = 'YYYY-MM-DD';
 
+	window.humanDateString = 'MMM, D';
+
 	window.displayDateString = 'MMM D, YY';
 
 </script>

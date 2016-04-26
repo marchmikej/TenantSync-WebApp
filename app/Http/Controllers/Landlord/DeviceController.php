@@ -69,7 +69,7 @@ class DeviceController extends Controller {
 	        'deviceMessages' => $device->messages,
 	    ]);
 	    
-		return view('TenantSync::landlord/device/show', compact('device'));
+		return view('TenantSync::manager/device/show', compact('device'));
 	}
 
 	/**

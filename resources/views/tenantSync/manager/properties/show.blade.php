@@ -1,13 +1,34 @@
-@extends('TenantSync::manager/layout')
+@extends('TenantSync::manager.layout')
 
 @section('content')
 
 <div id="property">
+	<!-- <div class="row card">
+		<div class="col-sm-12">
+		<h4 class="card-header">Overview</h4>
+			<div class="col-sm-3">
+				<p class="text-center">Avg ROI</p>
+				<p class="stat text-success text-center">-</p>
+			</div>
+			<div class="col-sm-3">
+				<p class="text-center">Vacancies</p>
+				<p class="stat text-primary text-center">-</p>
+			</div>
+			<div class="col-sm-3">
+				<p class="text-center">Something here</p>
+				<p class="stat text-danger text-center">-</p>
+			</div>
+			<div class="col-sm-3">
+				<p class="text-center">Something Else</p>
+				<p class="stat text-warning text-center">-</p>
+			</div>
+		</div>
+	</div> -->
 	
 	<div class=" card row">
 		<div class="col-sm-12">
 			<h4 class="card-header">Property Info</h4>
-			<form action="/landlord/properties/{{$property->id}}" method="Post" class="form form-horizontal">
+			<form :action="/' + user().role + '/properties/{{$property->id}}" method="Post" class="form form-horizontal">
 				<input type="hidden" name="_token" value="{{ csrf_token() }}">
 				<input type="hidden" name="_method" value="PATCH">
 				<div class="row">
@@ -162,7 +183,7 @@
 					var params = window.location.href.split('/');
 					this.propertyId = params[5].split('?')[0];
 
-					this.$http.get('/landlord/properties/' + this.propertyId + '/devices')
+					this.$http.get('/' + this.user().role + '/properties/' + this.propertyId + '/devices')
 						.success( function(devices) {
 							this.devices = devices;
 						})

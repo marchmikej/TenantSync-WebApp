@@ -18,7 +18,7 @@ class CalendarController extends Controller {
 	 */
 	public function index()
 	{
-		return view('TenantSync::landlord/calendar');
+		return view('TenantSync::manager/calendar');
 	}
 
 	public function all(Calendar $calendar)

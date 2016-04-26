@@ -26,9 +26,9 @@ class TransactionController extends Controller {
 	 */
 	public function index()
 	{
-		$landlord = $this->user;
+		$manager = $this->user->manager;
 		$netIncome = $this->user->netIncome('-1 month');
-		return view('TenantSync::landlord.transactions.index', compact('landlord', 'netIncome'));
+		return view('TenantSync::manager.transactions.index', compact('manager', 'netIncome'));
 	}
 
 	/**

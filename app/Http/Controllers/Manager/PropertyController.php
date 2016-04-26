@@ -3,22 +3,15 @@
 namespace App\Http\Controllers\Manager;
 
 use Gate;
-use App\Http\Utilities\State;
 use App\Http\Requests;
+use App\Http\Utilities\State;
 use TenantSync\Models\Device;
 use TenantSync\Models\Property;
-use App\Http\Controllers\Controller;
 use TenantSync\Mutators\PropertyMutator;
+use App\Http\Controllers\Manager\ManagerBaseController;
 
-class PropertyController extends Controller
+class PropertyController extends ManagerBaseController
 {
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->manager = $this->user->manager;
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -28,18 +21,7 @@ class PropertyController extends Controller
     {
         $manager = $this->manager;
 
-        foreach($manager->properties as $property) {
-            $roiGroup[] = $property->roi();
-        }
-
-        $roi = array_sum($roiGroup) / count($roiGroup);
-
-        return view('TenantSync::landlord/properties/index', compact('manager', 'roi'));
-    }
-
-    public function devices($id)
-    {
-        return Device::where(['property_id' => $id])->get();
+        return view('TenantSync::landlord/properties/index', compact('manager'));
     }
 
     /**
@@ -79,7 +61,7 @@ class PropertyController extends Controller
 
         $states = State::all();
 
-        return view('TenantSync::manager/properties/show', compact('states', 'property'));
+        return view('TenantSync::manager.properties.show', compact('states', 'property'));
     }
 
     /**

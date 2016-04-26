@@ -2,25 +2,25 @@
 	<div class="card row">
 		<div id="stats" class="col-sm-12">
 			<h4 class="card-header">Overview</h4>
-			<div class="col-sm-3 card-column">
+			<div class="col-sm-6 col-md-3 card-column">
 				<p class="text-center">Net Income MTD</p>
 				<p class="stat text-success text-center">
 				@{{ money(stats.net_income) }}
 				</p>
 			</div>
-			<div @click="toggleStat('recurring')" class="col-sm-3 card-column">
+			<div @click="toggleStat('recurring')" class="col-sm-6 col-md-3 card-column">
 				<p class="text-center">Monthly Recurring Expenses</p>
 				<p class="stat clickable text-primary text-center">
 				@{{ money(stats.recurring) }}
 				</p>
 			</div>
-			<div @click="toggleStat('expenses')" class="col-sm-3 card-column">
+			<div @click="toggleStat('expenses')" class="col-sm-6 col-md-3 card-column">
 				<p class="text-center">Total Expenses MTD</p>
 				<p class="stat clickable text-danger text-center">
 				@{{ money(stats.expenses) }}
 				</p>
 			</div>
-			<div @click="toggleStat('revenue')" class="col-sm-3 card-column">
+			<div @click="toggleStat('revenue')" class="col-sm-6 col-md-3 card-column">
 				<p class="text-center">Revenue  MTD</p>
 				<p class="stat clickable text-warning text-center">
 				@{{ money(stats.revenue) }}

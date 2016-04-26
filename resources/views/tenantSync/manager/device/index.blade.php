@@ -1,4 +1,10 @@
 @extends('TenantSync::manager/layout')
+@section('heading')
+@endsection
+
+@section('head')
+	<meta id="user_id" value="{{ $user->id }}">
+@endsection
 
 @section('content')
 
@@ -52,8 +58,8 @@
 
 			ready: function() {
 				var numeral = numeral;
-				this.fetchMessages();
-				this.fetchMaintenance();
+				// this.fetchMessages();
+				// this.fetchMaintenance();
 				this.fetchProperties();
 			},
 
@@ -68,14 +74,14 @@
 			methods: {
 
 				fetchMessages: function() {
-					this.$http.get('/landlord/messages/all')
+					this.$http.get('/' + this.user().role + '/messages/all')
 					.success(function(messages) {
 						this.messages = messages;
 					});
 				},
 
 				fetchMaintenance: function() {
-					this.$http.get('/landlord/maintenance/all')
+					this.$http.get('/' + this.user().role + '/maintenance/all')
 					.success(function(maintenance) {
 						this.maintenanceRequests = maintenance;
 					});

@@ -34,9 +34,9 @@ class ManagerController extends Controller
      */
     public function create()
     {
-        $landlord = $this->user;
+        $manager = $this->user->manager;
 
-        return view('TenantSync::landlord.managers.create', compact('landlord'));
+        return view('TenantSync::landlord.managers.create', compact('manager'));
     }
 
     /**

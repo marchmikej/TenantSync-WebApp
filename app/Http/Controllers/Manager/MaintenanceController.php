@@ -1,23 +1,15 @@
 <?php namespace App\Http\Controllers\Manager;
 
 use Gate;
-use TenantSync\Models\Device; 
+use TenantSync\Models\Device;
 use TenantSync\Models\Manager;
 use TenantSync\Models\Transaction;
-use App\Http\Controllers\Controller;
 use TenantSync\Models\MaintenanceRequest;
 use App\Events\LandlordRespondedToMaintenance;
+use App\Http\Controllers\Manager\ManagerBaseController;
 
 
-class MaintenanceController extends Controller {
-
-	public function __construct()
-	{
-		parent::__construct();
-
-		$this->manager = $this->user->manager;
-	}
-
+class MaintenanceController extends ManagerBaseController {
 	/**
 	 * Display a listing of the resource.
 	 *

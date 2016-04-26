@@ -5,19 +5,17 @@ use App\Http\Requests;
 use TenantSync\Models\Device;
 use TenantSync\Models\Property;
 use TenantSync\Models\Transaction;
-use App\Http\Controllers\Controller;
 use TenantSync\Billing\RentPaymentGateway;
 use TenantSync\Models\RecurringTransaction;
 use TenantSync\Mutators\TransactionMutator;
 use App\Http\Requests\CreateTransactionRequest;
+use App\Http\Controllers\Manager\ManagerBaseController;
 
-class TransactionController extends Controller {
+class TransactionController extends ManagerBaseController {
 
 	public function __construct(TransactionMutator $transactionMutator)
 	{
 		parent::__construct();
-
-		$this->manager = $this->user->manager;
 
 		$this->transactionMutator = $transactionMutator;
 	}

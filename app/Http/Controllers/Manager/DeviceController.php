@@ -4,17 +4,10 @@ use Gate;
 use App\Http\Requests;
 use TenantSync\Models\Device;
 use TenantSync\Models\Manager;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Manager\ManagerBaseController;
 
 
-class DeviceController extends Controller {
-
-	public function __construct()
-	{
-		parent::__construct();
-
-		$this->manager = $this->user->manager;
-	}
+class DeviceController extends ManagerBaseController {
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -70,7 +63,7 @@ class DeviceController extends Controller {
 	        'deviceMessages' => $device->messages,
 	    ]);
 
-		return view('TenantSync::landlord/device/show', compact('device'));
+		return view('TenantSync::manager/device/show', compact('device'));
 	}
 
 	/**

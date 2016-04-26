@@ -180,6 +180,9 @@ Route::group(['middleware' => ['auth']], function()
 		Route::get('properties/{id}/devices', 'PropertyController@devices');
 		Route::resource('properties', 'PropertyController');
 
+		Route::patch('notifications', 'NotificationController@update');
+		Route::patch('notifications/methods', 'NotificationController@updateMethods');
+		Route::resource('notifications', 'NotificationController');
 
 		Route::post('profile/email', 'ProfileController@email');
 		Route::post('profile/password', 'ProfileController@password');

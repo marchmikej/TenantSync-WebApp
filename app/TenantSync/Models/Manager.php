@@ -25,11 +25,16 @@ class Manager extends Model {
 		'position',
 		'email',
 		'phone',
-		];
+	];
 
 	public function user()
 	{
 		return $this->belongsTo('TenantSync\Models\User');
+	}
+
+	public function isLandlord()
+	{
+		return $this->user->role == 'landlord';
 	}
 
 	public function landlord()

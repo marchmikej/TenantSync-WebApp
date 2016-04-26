@@ -6,28 +6,28 @@
 		<div class="col-sm-12">
 			<h4 class="card-header">Dashboard</h4>
 	
-			<div class="col-sm-3 card-column">
+			<div class="col-sm-6 col-md-3 card-column">
 				<p class="text-center">Alarms</p>
 				<p class="stat text-danger text-center">
 					@{{ stats.alarms }}
 				</p>
 			</div>
 	
-			<div @click="toggleStat('paid_rent')" class="col-sm-3 card-column">
+			<div @click="toggleStat('paid_rent')" class="col-sm-6 col-md-3 card-column">
 				<p class="text-center">Rent Paid MTD</p>
 				<p class="stat clickable text-success text-center">
 					@{{ money(stats.paid_rent) }}
 				</p>
 			</div>
 	
-			<div @click="toggleStat('deliquent_rent')" class="col-sm-3 card-column">
+			<div @click="toggleStat('deliquent_rent')" class="col-sm-6 col-md-3 card-column">
 				<p class="text-center">Delinquency MTD</p>
 				<p class="stat clickable text-warning text-center">
 					@{{ money(stats.deliquent_rent) }}
 				</p>
 			</div>
 			
-			<div @click="toggleStat('vacant_rent')" class="col-sm-3 card-column">
+			<div @click="toggleStat('vacant_rent')" class="col-sm-6 col-md-3 card-column">
 				<p class="text-center">Vacant Rent MTD</p>
 				<p class="stat clickable text-danger text-center">
 					@{{ money(stats.vacant_rent) }}

@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="row" id="calculator">
-	<div class="card col-sm-6 col-sm-offset-3">
+	<div class="card col-sm-6">
 		<h3 class="card-header">Aquisition Calculator</h3>
 		<form  class="form form-horizontal" @keydown.enter="calculateRoi">
 			<div class="col-sm-12">
@@ -76,14 +76,14 @@
 	</div> -->
 
 
-	<div class="row">
+
 		<div class="col-sm-6">
 			<div v-show="estimatedRoi" style="display: none;" class="col-sm-12">
 				<h3 class="text-info text-center m-t-0">Estimated ROI</h3>
 				<h1 class="text-success text-center">@{{ Math.round(estimatedRoi * 1000) / 10 }}</h1>
 			</div>
 		</div>
-	</div>
+
 </div>
 </div>
 
@@ -114,7 +114,7 @@
 
 			calculateRoi: function(e) {
 				e.preventDefault();
-				this.$http.get('/landlord/calculator/estimate_roi', this.property)
+				this.$http.get('/' + this.user().role + '/calculator/estimate_roi', this.property)
 				.success(function(roi){
 					this.estimatedRoi = roi;
 					console.log(roi);

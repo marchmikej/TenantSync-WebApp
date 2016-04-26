@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use TenantSync\Models\MaintenanceRequest;
 use App\Events\LandlordRespondedToMaintenance;
 use App\Http\Requests\UpdateMaintenanceRequest;
+use TenantSync\Mutators\MaintenanceRequestMutator;
 
 class MaintenanceController extends Controller {
 
@@ -26,9 +27,14 @@ class MaintenanceController extends Controller {
 
     public function index()
     {
-        $devices = MaintenanceRequest::getRequestsForUser($this->user, ['with' => $this->with, 'limit' => $this->limit]);
+        $maintenanceRequests = MaintenanceRequest::getRequestsForUser($this->user, [ 
+        	'with' => $this->with, 
+        	'limit' => $this->limit
+        ]);
 
-        return $devices;
+        $maintenanceRequests = MaintenanceRequestMutator::set($this->set, $maintenanceRequests);
+
+        return $maintenanceRequests;
     }
 
     public function forDevice($id) 

@@ -26,7 +26,7 @@ class MessageController extends Controller {
 	{
 		$messages =  $this->user->messages;
 
-		return view('TenantSync::landlord/messages/index', compact('messages'));
+		return view('TenantSync::manager/messages/index', compact('messages'));
 	}
 
 	/**

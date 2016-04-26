@@ -17,10 +17,10 @@
 				<div class="table-body table-striped scrollable row">
 					<div v-if="isInCurrentPage($index)" v-for="maintenance in maintenanceRequests | orderBy 'created_at' -1" class="table-row col-sm-12">
 						<div class="col-sm-4">
-							@{{ maintenance.device.property.address + ', ' + maintenance.device.location }}
+							<a :href="'/' + user().role + '/device/' + maintenance.device.id">@{{ maintenance.address }}</a>
 						</div>
 						<div class="col-sm-6">
-							<a :href="'/'+ user().role +'/maintenance/'+ maintenance.id">
+							<a class="text-info" :href="'/'+ user().role +'/maintenance/'+ maintenance.id">
 								@{{ maintenance.request }}
 							</a>
 						</div>

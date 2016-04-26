@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Manager;
 
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Manager\ManagerBaseController;
 
-class ProfileController extends Controller
+class ProfileController extends ManagerBaseController
 {
 
     public function __construct()
@@ -23,7 +23,7 @@ class ProfileController extends Controller
     {
         $manager = $this->manager;
 
-        return view('TenantSync::manager/profile/index', compact('manager'));
+        return view('TenantSync::manager/profile/show', compact('manager'));
     }
 
     public function password()

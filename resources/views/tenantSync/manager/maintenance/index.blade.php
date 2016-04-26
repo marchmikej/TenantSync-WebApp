@@ -6,7 +6,7 @@
 
 	<div class="row">
 
-	    MaintenanceRequest :<a href="/landlord/maintenance/{{ $maintenanceRequest->id }}"> {{ $maintenanceRequest->id}}</a>
+	    MaintenanceRequest :<a :href="'/' + .user().role + '/maintenance/{{ $maintenanceRequest->id }}'"> {{ $maintenanceRequest->id}}</a>
 
 	</div>
 	

@@ -5,28 +5,28 @@
 		
 				<h4 class="card-header">Overview</h4>
 		
-				<div class="col-md-6 col-md-3 card-column">
+				<div class="col-sm-6 col-md-3 card-column">
 					<p class="text-center">ROI YTD</p>
 					<p class="stat text-primary text-center">
 						@{{ stats.roi }}
 					</p>
 				</div>
 		
-				<div @click="toggleStat('paid_rent')" class="col-md-6  col-md-3 card-column">
+				<div @click="toggleStat('paid_rent')" class="col-sm-6  col-md-3 card-column">
 					<p class="text-center">Revenue YTD</p>
 					<p class="stat clickable text-success text-center">
 						@{{ money(stats.paid_rent)}}
 					</p>
 				</div>
 		
-				<div @click="toggleStat('deliquent_rent')" class="col-md-6 col-md-3 card-column">
+				<div @click="toggleStat('deliquent_rent')" class="col-sm-6 col-md-3 card-column">
 					<p class="text-center">Delinquency YTD</p>
 					<p class="stat clickable text-warning text-center">
 						@{{ money(stats.deliquent_rent) }}
 					</p>
 				</div>
 		
-				<div @click="toggleStat('vacant_rent')" class="col-md-6 col-md-3 card-column">
+				<div @click="toggleStat('vacant_rent')" class="col-sm-6 col-md-3 card-column">
 					<p class="text-center">Vacancy YTD</p>
 					<p class="stat clickable text-danger text-center">
 						@{{ money(stats.vacant_rent) }}

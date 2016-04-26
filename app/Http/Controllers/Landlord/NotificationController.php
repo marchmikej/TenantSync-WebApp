@@ -32,7 +32,7 @@ class NotificationController extends Controller
             'notifyByText' => $this->manager->text_notifications
         ]);
 
-        return view('TenantSync::landlord.notifications', compact('notifications'));
+        return view('TenantSync::manager.notifications', compact('notifications'));
     }
 
     /**
@@ -98,7 +98,7 @@ class NotificationController extends Controller
 
         $text =  $this->input['text'];
 
-        return $this->manager->updateNotificationMethods($email, $text);
+        return$ this->manager->updateNotificationMethods($email, $text);
     }
 
     /**

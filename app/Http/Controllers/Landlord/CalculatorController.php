@@ -21,7 +21,7 @@ class CalculatorController extends Controller {
 	public function index()
 	{
 		$states = State::all();
-		return view('TenantSync::landlord/calculator', compact('states'));
+		return view('TenantSync::manager/calculator', compact('states'));
 	}
 
 	public function estimateRoi()

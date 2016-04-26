@@ -14,12 +14,14 @@
 					
 					<div class="row table-heading">
 					<div class="col-sm-4">Unit</div>
-					<div class="col-sm-8">Message</div>
+					<div class="col-sm-6">Message</div>
+					<div class="col-sm-2">Message</div>
 				</div>
 				<div class="table-body table-striped">
 					<div v-for="message in messages | orderBy 'created_at' -1" class="table-row row">
 						<div class="col-sm-4"><a :href="'/'+ user().role +'/device/'+ message.device.id">@{{ message.device.property.address + ', ' + message.device.location }}</a></div>
-						<div class="col-sm-8">@{{ message.body }}</div>
+						<div class="col-sm-6">@{{ message.body }}</div>
+						<div class="col-sm-2">@{{ moment(message.created_at).format(humanDateString) }}</div>
 					</div>
 				</div>
 			</div>

@@ -22,9 +22,9 @@ class PropertyController extends Controller {
 	 */
 	public function index()
 	{
-		$landlord = $this->user;		
+		$manager = $this->user->manager;		
 
-		return view('TenantSync::landlord/properties/index', compact('landlord'));
+		return view('TenantSync::manager/properties/index', compact('manager'));
 	}
 
 	/**
@@ -36,7 +36,7 @@ class PropertyController extends Controller {
 	{
 		$states = State::all();
 
-		return view('TenantSync::landlord/properties/create', compact('states'));
+		return view('TenantSync::manager/properties/create', compact('states'));
 	}
 
 	/**
@@ -52,7 +52,9 @@ class PropertyController extends Controller {
 
 		$property = $this->user->properties->create($this->input);
 
-		return redirect()->route('landlord.properties.show', [$property]);
+		$this->user->manager->properties()->attach($property->id);
+
+		return redirect()->route('manager.properties.show', [$property]);
 
 	}
 
@@ -86,7 +88,7 @@ class PropertyController extends Controller {
 
 		$states = State::all();
 
-		return view('TenantSync::landlord/properties/show', compact('states', 'property'));
+		return view('TenantSync::manager/properties/show', compact('states', 'property'));
 	}
 
 	/**
