@@ -14,12 +14,12 @@ class CreateManagersTable extends Migration {
 	{
 		Schema::create('managers', function(Blueprint $table)
 		{
-			$table->integer('id', true);
+			$table->increments('id');
 			$table->integer('user_id')->nullable();
 			$table->integer('landlord_id')->nullable();
 			$table->string('first_name', 20)->nullable();
 			$table->string('last_name', 20)->nullable();
-			$table->string('position', 30)->default('');
+			$table->string('position', 30);
 			$table->string('email', 30);
 			$table->string('phone', 12);
 			$table->timestamps();

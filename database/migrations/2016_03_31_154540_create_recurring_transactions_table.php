@@ -14,7 +14,7 @@ class CreateRecurringTransactionsTable extends Migration {
 	{
 		Schema::create('recurring_transactions', function(Blueprint $table)
 		{
-			$table->integer('id', true);
+			$table->increments('id');
 			$table->integer('user_id')->nullable();
 			$table->integer('amount')->nullable();
 			$table->string('description')->nullable()->default('');

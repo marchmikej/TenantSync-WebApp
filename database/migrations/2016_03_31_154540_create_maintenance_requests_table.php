@@ -14,9 +14,9 @@ class CreateMaintenanceRequestsTable extends Migration {
 	{
 		Schema::create('maintenance_requests', function(Blueprint $table)
 		{
-			$table->integer('id', true);
+			$table->increments('id');
 			$table->integer('user_id');
-			$table->integer('device_id')->default(1);
+			$table->integer('device_id')->nullable();
 			$table->integer('transaction_id')->nullable();
 			$table->text('request', 65535)->nullable();
 			$table->text('response', 65535)->nullable();

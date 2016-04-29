@@ -14,7 +14,7 @@ class CreateRentBillsTable extends Migration {
 	{
 		Schema::create('rent_bills', function(Blueprint $table)
 		{
-			$table->integer('id', true);
+			$table->increments('id');
 			$table->integer('user_id')->nullable();
 			$table->integer('device_id');
 			$table->date('rent_month')->nullable();

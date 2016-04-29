@@ -12,12 +12,12 @@ class AddReadAtForMessagesAndAptForProfiles extends Migration
      */
     public function up()
     {
-        Schema::create('messages', function(Blueprint $table) {
+        Schema::table('messages', function(Blueprint $table) {
             $table->timestamp('read_at');
             $table->dropColumn('read');
         });
 
-        Schema::creat('profiles', function(Blueprint $table) {
+        Schema::table('profiles', function(Blueprint $table) {
             $table->string('apt');
         });
     }
