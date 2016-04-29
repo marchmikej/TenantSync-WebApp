@@ -13,13 +13,15 @@ class ChangeNotificationTables extends Migration
     public function up()
     {
         Schema::create('notifications', function (Blueprint $table) {
-            $table->increments('id')->change();
+            $table->increments('id');
             $table->string('name', 30);
             $table->timestamps();
         });
 
         Schema::table('managers', function (Blueprint $table) {
             $table->dropColumn('email')->change();
+            $table->dropColumn('email');
+
             $table->integer('email_notifications');
             $table->integer('text_notifications');
         });

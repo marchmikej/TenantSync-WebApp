@@ -14,17 +14,17 @@ class CreateDevicesTable extends Migration {
 	{
 		Schema::create('devices', function(Blueprint $table)
 		{
-			$table->integer('id', true);
+			$table->increments('id');
 			$table->integer('user_id')->nullable();
 			$table->integer('property_id')->nullable();
 			$table->string('routing_id')->nullable();
-			$table->string('serial', 30)->nullable()->default('');
-			$table->string('token', 80);
-			$table->integer('monthly_cost')->default(0);
-			$table->string('location', 40)->default('');
+			$table->string('serial', 30)->nullable();
+			$table->string('token', 80)->nullable();
+			$table->integer('monthly_cost')->nullable();
+			$table->string('location', 40);
 			$table->float('rent_amount', 30);
 			$table->date('rent_due')->nullable();
-			$table->float('late_fee', 30);
+			$table->float('late_fee', 30)->nullable();
 			$table->integer('grace_period');
 			$table->string('contact_name', 20)->nullable();
 			$table->string('contact_phone', 20)->nullable();

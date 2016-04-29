@@ -14,7 +14,7 @@ class CreateLandlordDevicesTable extends Migration {
 	{
 		Schema::create('landlord_devices', function(Blueprint $table)
 		{
-			$table->integer('id', true);
+			$table->increments('id');
 			$table->integer('user_id');
 			$table->integer('routing_id');
 			$table->integer('type')->nullable();

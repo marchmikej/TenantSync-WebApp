@@ -14,7 +14,7 @@ class CreateAlarmsTable extends Migration {
 	{
 		Schema::create('alarms', function(Blueprint $table)
 		{
-			$table->integer('id', true);
+			$table->increments('id');
 			$table->string('slug', 15);
 			$table->string('description', 100);
 		});

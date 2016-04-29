@@ -14,10 +14,10 @@ class CreateGatewaysTable extends Migration {
 	{
 		Schema::create('gateways', function(Blueprint $table)
 		{
-			$table->integer('id', true);
+			$table->increments('id');
 			$table->integer('user_id');
-			$table->string('pin', 40)->nullable()->default('');
-			$table->string('key', 40)->nullable()->default('');
+			$table->string('pin', 40)->nullable();
+			$table->string('key', 40)->nullable();
 			$table->timestamps();
 		});
 	}
