@@ -1,4 +1,4 @@
-@extends('TenantSync::landlord/layout')
+@extends('TenantSync::manager/layout')
 
 @section('content')
 
@@ -114,10 +114,10 @@
 
 			calculateRoi: function(e) {
 				e.preventDefault();
-				this.$http.get('/landlord/calculator/estimate_roi', this.property)
+				this.$http.get('/' + this.user().role + '/calculator/estimate_roi', this.property)
 				.success(function(roi){
 					this.estimatedRoi = roi;
-					console.log(roi);
+					// console.log(roi);
 				});
 			}
 		}

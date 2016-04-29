@@ -1,10 +1,10 @@
-@extends('TenantSync::landlord/layout')
+@extends('TenantSync::manager/layout')
 
 @section('content')
 
 	<div class="row">
 		<div class="col-sm-6 p-r-md">
-			<form id="property-form" action="/landlord/properties" method="POST" class="form form-horizontal">
+			<form id="property-form" action="/' + user().role + '/properties" method="POST" class="form form-horizontal">
 				<input type="hidden" name="_token" value="{{ csrf_token() }}">
 				<div class="card row">
 						<div class="col-sm-12">

@@ -21,7 +21,7 @@ class PropertyController extends ManagerBaseController
     {
         $manager = $this->manager;
 
-        return view('TenantSync::landlord/properties/index', compact('manager'));
+        return view('TenantSync::manager.properties.index', compact('manager'));
     }
 
     /**

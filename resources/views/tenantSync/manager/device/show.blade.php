@@ -34,13 +34,20 @@
 				<div class="col-sm-12">
 					<h3 class="card-header">
 						Recent Maintenance
+
+						<button @click="previousPage" :class="currentPage > 1 ? 'text-primary' : 'text-muted'" class="btn-clear btn icon icon-chevron-left"></button>
+
+						<button @click="nextPage" :class="lastPage == currentPage ? 'text-muted' : 'text-primary'"class="btn-clear btn icon icon-chevron-right"></button>
 					</h3>
 					<div class="row table-heading">
 						<div class="col-sm-3">Unit</div>
 						<div class="col-sm-9">Request</div>
 					</div>
-					<div class="table-body table-striped h-sm scrollable-y">
-						<div v-for="maintenance in maintenanceRequests" class="table-row row">
+					<div class="table-body table-striped h-sm">
+						<div 
+							v-if="isInCurrentPage($index)" 
+							v-for="maintenance in maintenanceRequests" class="table-row row"
+						>
 							<div class="col-sm-3">@{{ maintenance.device.location }}</div>
 							<div class="col-sm-9"><a :href="'/'+ user().role +'/maintenance/'+ maintenance.id">@{{ maintenance.request }}</a></div>
 						</div>
@@ -68,7 +75,7 @@
 								@{{ message.body }}
 							</p>	
 							<span style="width: 100%;" :class="{'pull-left': message.from_device, 'pull-right': ! message.from_device}">
-								<span class="text-success">@{{ 'sent ' + moment(message.created_at).format('MMM, D') }}</span>
+								<span class="text-muted">@{{ 'sent ' + moment(message.created_at).format('MMM, D') }}</span>
 								<span v-if="message.from_device" class="text-info">@{{ '| read ' + moment(message.read_at).format('MMM, D') }}</span>
 							</span>
 						</div>
@@ -187,112 +194,151 @@
 
 @section('scripts')
 <script>
-	vue = new Vue({
-	
-		el: "#app",
 
-		data: {
-			device: app.device,
+vue = new Vue({
 
-			maintenanceRequests: [],
+	el: "#app",
 
-			messages: app.deviceMessages,
+	data: {
+		perPage: 5,
 
-			forms: {
-				message: new TSForm({
-					device_id: app.device.id,
-					body: null,
+		device: app.device,
+
+		maintenanceRequests: [],
+
+		messages: app.deviceMessages,
+
+		lastPage: 1,
+
+		currentPage: 1,
+
+		forms: {
+			message: new TSForm({
+				device_id: app.device.id,
+				body: null,
+			})
+		}
+	},
+
+	computed: {
+		lastMaintenance: function() {
+			return this.currentPage * this.perPage;
+		},
+
+		firstMaintenance: function() {
+			return this.lastMaintenance ? this.lastMaintenance - this.perPage : 0;
+		},
+
+		lastPage: function() {
+			var pages = Math.ceil(_.size(this.maintenanceRequests)/this.perPage);
+
+			return pages;
+		},
+	},	
+
+	events: {
+		'messages-updated': function() {
+			this.fetchMessages();
+		},
+	},
+
+	ready: function() {
+		this.fetchMaintenance();
+		this.fetchMessages();
+	},
+
+	methods: {
+		fetchMaintenance: function() {
+			var data = {
+				with: ['device'],
+			};
+
+			this.$http.get('/api/devices/'+ this.device.id +'/maintenance', data)
+				.success(function(maintenanceRequests) {
+					this.maintenanceRequests = maintenanceRequests;
+				});
+		},
+
+		fetchMessages: function() {
+			this.$http.get('/api/devices/'+ this.device.id +'/messages')
+				.success(function(messages) {
+					this.messages = messages;
+					
 				})
+				.then(function() {
+					this.scrollToLatestMessage();
+				});
+		},
+
+		deleteMessage: function(id) {
+			this.$http.delete('/api/messages/'+ id)
+				.success(function(response) {
+					var message = _.find(this.messages, {id: id}); 
+
+					this.messages.$remove(message);
+				});
+		},
+
+		sendMessage: function() {
+			var that = this;
+			TS.post('/api/messages', this.forms.message)
+				.then(function(response) {
+					that.$emit('messages-updated');
+
+					that.forms.message.body = null;
+				});
+		},
+
+		submitForm: function() {
+			$('#device-form').submit();
+		},
+
+		turnAlarmOff: function() {
+			this.updateAlarm(0);
+		},
+
+		turnAlarmOn: function() {
+			this.updateAlarm(1);
+		},
+
+		updateAlarm: function(id) {
+			this.$http.patch('/api/devices/' + this.device.id, {alarm_id: id})
+			.success(function(device) {
+
+				this.device.alarm_id = device.alarm_id;
+			});
+		},
+
+		getMessageClasses: function(message) {
+			var classes = message.from_device ? ['chat-blue', 'text-left', 'pull-left'] : ['chat-gray', 'text-left', 'pull-right'];
+
+			return classes;
+		},
+
+		scrollToLatestMessage: function() {
+			var element = document.getElementById("chat");
+
+			element.scrollTop = element.scrollHeight;
+		},
+
+		isInCurrentPage: function(index) {
+			return this.firstMaintenance <= index && index < this.lastMaintenance;
+		},
+
+		nextPage: function() {
+			if(this.currentPage < this.lastPage) {
+				this.currentPage ++;
 			}
 		},
 
-		events: {
-			'messages-updated': function() {
-				this.fetchMessages();
-			},
+		previousPage: function() {
+			if(this.currentPage > 1) {
+				this.currentPage --;
+			}
 		},
+	}
+})
 
-		ready: function() {
-			this.fetchMaintenance();
-			this.fetchMessages();
-			console.log(app.device);
-		},
-
-		methods: {
-			fetchMaintenance: function() {
-				var data = {
-					with: ['device'],
-				};
-
-				this.$http.get('/api/devices/'+ this.device.id +'/maintenance', data)
-					.success(function(maintenanceRequests) {
-						this.maintenanceRequests = maintenanceRequests;
-					});
-			},
-
-			fetchMessages: function() {
-				this.$http.get('/api/devices/'+ this.device.id +'/messages')
-					.success(function(messages) {
-						this.messages = messages;
-						
-					})
-					.then(function() {
-						this.scrollToLatestMessage();
-					});
-			},
-
-			deleteMessage: function(id) {
-				this.$http.delete('/api/messages/'+ id)
-					.success(function(response) {
-						var message = _.find(this.messages, {id: id}); 
-
-						this.messages.$remove(message);
-					});
-			},
-
-			sendMessage: function() {
-				var that = this;
-				TS.post('/api/messages', this.forms.message)
-					.then(function(response) {
-						that.$emit('messages-updated');
-
-						that.forms.message.body = null;
-					});
-			},
-
-			submitForm: function() {
-				$('#device-form').submit();
-			},
-
-			turnAlarmOff: function() {
-				this.updateAlarm(0);
-			},
-
-			turnAlarmOn: function() {
-				this.updateAlarm(1);
-			},
-
-			updateAlarm: function(id) {
-				this.$http.patch('/api/devices/' + this.device.id, {alarm_id: id})
-				.success(function(device) {
-
-					this.device.alarm_id = device.alarm_id;
-				});
-			},
-
-			getMessageClasses: function(message) {
-				var classes = message.from_device ? ['chat-blue', 'text-left', 'pull-left'] : ['chat-gray', 'text-left', 'pull-right'];
-
-				return classes;
-			},
-
-			scrollToLatestMessage: function() {
-				var element = document.getElementById("chat");
-
-				element.scrollTop = element.scrollHeight;
-			},
-		}
-	})
 </script>
 @endsection
 

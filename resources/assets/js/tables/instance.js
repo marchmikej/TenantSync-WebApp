@@ -53,11 +53,15 @@ window.TSTable = Vue.component('ts-table', {
 	methods: {
 
 		previousPage: function() {
-			this.currentPage --; 
+			if(this.currentPage > 1) {
+				this.currentPage --;
+			}
 		},
 
 		nextPage: function() {
-			this.currentPage ++;
+			if(this.currentPage < this.lastPage) {
+				this.currentPage ++;
+			}
 		},
 
 		isLastPage: function() {

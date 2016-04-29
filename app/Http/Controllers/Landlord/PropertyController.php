@@ -116,7 +116,7 @@ class PropertyController extends Controller {
 			return abort(403, "Thats not yours!");
 		}
 
-		$property->update(\Request::except('_token'));
+		$property->update($this->input);
 
 		return redirect()->back();
 	}

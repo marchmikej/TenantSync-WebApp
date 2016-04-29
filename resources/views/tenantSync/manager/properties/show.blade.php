@@ -74,6 +74,13 @@
 						</div>
 
 						<div class="form-group">
+							<label class="control-label col-sm-3" for="down_payment">Down Payment</label>
+							<div class="col-sm-9">
+								<input class="form-control" type="text" name="down_payment" placeholder="Down Payment" value="{{ $property->down_payment }}"/>
+							</div>
+						</div>
+
+						<div class="form-group">
 							<label class="control-label col-sm-3" for="purchase_date">Purchase Date</label>
 							<div class="col-sm-9">
 								<input class="form-control" type="date" name="purchase_date" placeholder="Purchase Date" value="{{ $property->purchase_date }}"/>

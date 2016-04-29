@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Exception;
 use OutputInterface;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Redirect;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
@@ -40,7 +42,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        if(is_a($e, 'Illuminate\Session\TokenMismatchException')) {
+        if($e instanceof TokenMismatchException) {
             Session::regenerateToken();
 
             return Redirect::to('/');

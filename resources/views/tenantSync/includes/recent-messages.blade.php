@@ -6,8 +6,27 @@
 					<h3 class="card-header">
 						<div>
 							Recent Messages
-							<button @click="newMessage()" class=" btn btn-clear p-y-0">
+							
+
+							<button 
+								@click="newMessage()" 
+								class=" btn btn-clear p-y-0"
+							>
 								<h3 class="m-a-0 text-primary icon icon-plus"></h3>
+							</button>
+
+							<button 
+								@click="previousPage" 
+								:class="currentPage > 1 ? 'text-primary' : 'text-muted'" 
+								class="btn-clear btn icon icon-chevron-left"
+							>
+							</button>
+
+							<button 
+								@click="nextPage" 
+								:class="lastPage == currentPage ? 'text-muted' : 'text-primary'"
+								class="btn-clear btn icon icon-chevron-right"
+							>
 							</button>
 						</div>
 					</h3>
@@ -18,10 +37,20 @@
 					<div class="col-sm-2">Message</div>
 				</div>
 				<div class="table-body table-striped">
-					<div v-for="message in messages | orderBy 'created_at' -1" class="table-row row">
+					<div 
+						v-if="isInCurrentPage($index)"
+						v-for="message in messages | orderBy 'created_at' -1" 
+						class="table-row row"
+					>
 						<div class="col-sm-4"><a :href="'/'+ user().role +'/device/'+ message.device.id">@{{ message.device.property.address + ', ' + message.device.location }}</a></div>
-						<div class="col-sm-6">@{{ message.body }}</div>
-						<div class="col-sm-2">@{{ moment(message.created_at).format(humanDateString) }}</div>
+						<div class="col-sm-6">
+							<span 
+								:class="['fa', message.from_device ? 'fa-arrow-down' : 'fa-arrow-up', message.from_device ? 'text-success' : 'text-danger']"
+							>
+							</span>
+							@{{ message.body }}
+						</div>
+						<div class="col-sm-2">@{{ humanDate(message.created_at) }}</div>
 					</div>
 				</div>
 			</div>

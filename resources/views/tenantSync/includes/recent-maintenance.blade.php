@@ -25,7 +25,7 @@
 							</a>
 						</div>
 						<div class="col-sm-2">
-							@{{ moment(maintenance.created_at).format('MMM, DD') }}
+							@{{ humanDate(maintenance.created_at) }}
 						</div>
 					</div>
 				</div>

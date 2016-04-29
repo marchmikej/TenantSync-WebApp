@@ -98,7 +98,7 @@ class NotificationController extends Controller
 
         $text =  $this->input['text'];
 
-        return$ this->manager->updateNotificationMethods($email, $text);
+        return $this->manager->updateNotificationMethods($email, $text);
     }
 
     /**

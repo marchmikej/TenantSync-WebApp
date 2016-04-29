@@ -7,13 +7,6 @@ use App\Http\Controllers\Manager\ManagerBaseController;
 
 class ProfileController extends ManagerBaseController
 {
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->manager = $this->user->manager;
-    }
     /**
      * Display a listing of the resource.
      *

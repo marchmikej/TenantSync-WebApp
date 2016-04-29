@@ -15,6 +15,8 @@ Vue.component('recent-maintenance', {
 
 			perPage: 5,
 
+
+
 			currentPage: 1,
 		};
 
@@ -62,14 +64,12 @@ Vue.component('recent-maintenance', {
 			if(this.currentPage < this.lastPage) {
 				this.currentPage ++;
 			}
-			console.log('next');
 		},
 
 		previousPage: function() {
 			if(this.currentPage > 1) {
 				this.currentPage --;
 			}
-			console.log('prev');
 		},
 	},
 })

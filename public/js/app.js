@@ -556,14 +556,12 @@ Vue.component('recent-maintenance', {
 			if (this.currentPage < this.lastPage) {
 				this.currentPage++;
 			}
-			console.log('next');
 		},
 
 		previousPage: function previousPage() {
 			if (this.currentPage > 1) {
 				this.currentPage--;
 			}
-			console.log('prev');
 		}
 	}
 });
@@ -581,6 +579,10 @@ Vue.component('recent-messages', {
 
 			numeral: window.numeral,
 
+			perPage: 5,
+
+			currentPage: 1,
+
 			forms: {
 				message: new TSForm({
 					device_id: [],
@@ -589,6 +591,22 @@ Vue.component('recent-messages', {
 				})
 			}
 		};
+	},
+
+	computed: {
+		lastMessage: function lastMessage() {
+			return this.currentPage * this.perPage;
+		},
+
+		firstMessage: function firstMessage() {
+			return this.lastMessage ? this.lastMessage - this.perPage : 0;
+		},
+
+		lastPage: function lastPage() {
+			var pages = Math.ceil(_.size(this.messages) / this.perPage);
+
+			return pages;
+		}
 	},
 
 	ready: function ready() {
@@ -606,7 +624,7 @@ Vue.component('recent-messages', {
 
 		fetchMessages: function fetchMessages() {
 			var data = {
-				limit: 5,
+				//limit: 5,
 				'with': ['device']
 			};
 
@@ -699,6 +717,22 @@ Vue.component('recent-messages', {
 			this.forms.message.device_id.$remove(Number(element.dataset.id));
 
 			element.checked = false;
+		},
+
+		isInCurrentPage: function isInCurrentPage(index) {
+			return this.firstMessage <= index && index < this.lastMessage;
+		},
+
+		nextPage: function nextPage() {
+			if (this.currentPage < this.lastPage) {
+				this.currentPage++;
+			}
+		},
+
+		previousPage: function previousPage() {
+			if (this.currentPage > 1) {
+				this.currentPage--;
+			}
 		}
 	}
 });
@@ -1241,11 +1275,15 @@ window.TSTable = Vue.component('ts-table', {
 	methods: {
 
 		previousPage: function previousPage() {
-			this.currentPage--;
+			if (this.currentPage > 1) {
+				this.currentPage--;
+			}
 		},
 
 		nextPage: function nextPage() {
-			this.currentPage++;
+			if (this.currentPage < this.lastPage) {
+				this.currentPage++;
+			}
 		},
 
 		isLastPage: function isLastPage() {
@@ -1877,13 +1915,31 @@ Vue.mixin({
 		},
 
 		money: function money(number) {
-			var money = numeral(number).format('$0');
+			var money = numeral(number).format('$0,0');
 
 			if (number % 1 != 0) {
-				money = '~' + money;
+				money = money + '~';
 			}
 
 			return money;
+		},
+
+		percent: function percent(number) {
+			var percent = numeral(number).format('0.0%');
+
+			return percent;
+		},
+
+		humanDate: function humanDate(date) {
+			var formattedDate = moment(date).format(this.humanDateString);
+
+			return formattedDate;
+		},
+
+		humanDateWithYear: function humanDateWithYear(date) {
+			var formattedDate = moment(date).format(this.humanDateString + ' Y');
+
+			return formattedDate;
 		}
 	}
 });

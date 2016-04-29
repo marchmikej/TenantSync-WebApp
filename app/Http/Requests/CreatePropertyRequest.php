@@ -30,7 +30,7 @@ class CreatePropertyRequest extends Request
             'zip' => 'required|numeric',
             'purchase_price' => 'required|numeric',
             'purchase_date' => 'required|date',
-            'value' => 'required|numeric',
+            // 'value' => 'required|numeric',
             'closing_costs' => 'required|numeric',
             'taxes' => 'required|numeric',
             'expenses' => 'required|numeric',

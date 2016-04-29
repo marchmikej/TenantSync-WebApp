@@ -22,9 +22,10 @@ class DeviceController extends Controller {
 	 */
 	public function index()
 	{
-		$devices = Device::where(['user_id' => $this->user->id])->get();
+		// $devices = Device::where(['user_id' => $this->user->id])->get();
+		$devices = $this->user->devices;
 
-		return view('TenantSync::landlord/device/index', compact('devices'));
+		return view('TenantSync::manager/device/index', compact('devices'));
 	}
 
 	/**

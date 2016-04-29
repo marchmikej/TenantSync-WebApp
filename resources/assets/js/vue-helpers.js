@@ -58,13 +58,31 @@ Vue.mixin({
 		},
 
 		money: function(number) {
-			var money = numeral(number).format('$0');
+			var money = numeral(number).format('$0,0');
 
 			if (number % 1 != 0) {
-				money  = '~' + money;
+				money  = money + '~';
 			}
 
 			return money;
+		},
+
+		percent: function(number) {
+			var percent = numeral(number).format('0.0%');
+
+			return percent;
+		},
+
+		humanDate: function(date) {
+			var formattedDate = moment(date).format(this.humanDateString);
+
+			return formattedDate;
+		},
+
+		humanDateWithYear: function(date) {
+			var formattedDate = moment(date).format(this.humanDateString + ' Y');
+
+			return formattedDate;
 		},
 	}
 });

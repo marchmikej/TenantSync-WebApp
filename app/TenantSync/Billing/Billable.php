@@ -95,16 +95,11 @@ trait Billable {
 		return true;
 	}
 
-	// public function addPaymentMethod($userOptions)
-	// {
-	// 	return (new UsaEpayGateway($this->sourceKey(), $this->sourcePin()))->addPaymentMethod($token, $this->getCustomerId());
-	// }
-
-	// public function updateBillingInfo($options)
-	// {
-	// 	// update usaepay customer stuff
-	// 	return (new UsaEpayGateway($this->sourceKey(), $this->sourcePin()))->updateBillingInfo($token, $this->getCustomerId());
-	// }
+	public function updateBillingInfo($options)
+	{
+		// update usaepay customer stuff
+		return (new UsaEpayGateway($this->sourceKey(), $this->sourcePin()))->updateBillingInfo($token, $this->getCustomerId());
+	}
 
 	// public function addDevice($device)
 	// {

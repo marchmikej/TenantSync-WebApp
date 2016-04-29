@@ -1,4 +1,5 @@
 @import "../fullcalendar/fullcalendar.min.css";
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,300);
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
 
 html {
@@ -12898,6 +12899,10 @@ h5.card-header {
 
 .card div.card-column:last-child {
   border-right: none;
+}
+
+.top-nav .nav-dropdown {
+  padding-left: 0px;
 }
 
 .b-r {

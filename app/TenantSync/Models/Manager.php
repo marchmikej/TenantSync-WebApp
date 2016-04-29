@@ -23,7 +23,6 @@ class Manager extends Model {
 		'first_name',
 		'last_name',
 		'position',
-		'email',
 		'phone',
 	];
 
@@ -160,5 +159,15 @@ class Manager extends Model {
 		$this->save();
 
 		return $this;
+	}
+
+	public function getEmailAttribute()
+	{
+		return $this->email();
+	}
+
+	public function email()
+	{
+		return $this->user->email;
 	}
 }

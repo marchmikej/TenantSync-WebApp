@@ -15,35 +15,35 @@
 						v-if="inCurrentPage($index)" 
 						class="table-row row"
 					>
-						<div class="col-sm-5"><a href="/landlord/properties/@{{ property.id }}">@{{property.address + ', ' + property.city + ' ' + property.state}}</a></div>
-						<div class="col-sm-2 text-success">@{{ numeral(property.roi).format('0.0 %') }}</div>
+						<div class="col-sm-5"><a href="/landlord/properties/@{{ property.id }}">@{{ property.address + ', ' + property.city + ' ' + property.state }}</a></div>
+						<div class="col-sm-2 text-success">@{{ percent(property.roi) }}</div>
 						<div class="col-sm-2 text-danger">@{{ property.devices.length }}</div>
-						<div class="col-sm-2 text-primary">$@{{numeral(property.value).format('0,0.00')}}</div>
+						<div class="col-sm-2 text-primary">@{{ money(property.value) }}</div>
 						<div @click="showDetails(property.id)" class="col-sm-1 btn btn-clear icon icon-plus p-y-0"></div>
 
 						<div :data-property-id="property.id" class="sub-table bg-muted" style="display: none;">
 							<div class="table-row p-t-md p-b-md">
 								<div class="col-sm-6">
 									<div class="col-sm-6 text-left">Z-estimate</div>
-									<div class="col-sm-6 text-right">$@{{ property.value ? numeral(property.value).format('0,0.00') : '-'}}</div>
+									<div class="col-sm-6 text-right">@{{ property.value ? money(property.value) : '-'}}</div>
 									<div class="col-sm-6 text-left">Purchase Price</div>
-									<div class="col-sm-6 text-right">$@{{ property.purchase_price ? numeral(property.purchase_price).format('0,0.00') : '-'}}</div>
+									<div class="col-sm-6 text-right">@{{ property.purchase_price ? money(property.purchase_price) : '-'}}</div>
 									<div class="col-sm-6 text-left">Closing Costs</div>
-									<div class="col-sm-6 text-right">$@{{ property.closing_costs ? property.closing_costs : '-' }}</div>
+									<div class="col-sm-6 text-right">@{{ property.closing_costs ? money(property.closing_costs) : '-' }}</div>
 									<div class="col-sm-6 text-left">Expenses</div>
-									<div class="col-sm-6 text-right">$@{{ property.expenses  ? property.expenses : '-'}}</div>
+									<div class="col-sm-6 text-right">@{{ property.expenses  ? money(property.expenses) : '-'}}</div>
 									<div class="col-sm-6 text-left">Taxes</div>
-									<div class="col-sm-6 text-right">$@{{ property.taxes ? property.taxes : '-' }}</div>
+									<div class="col-sm-6 text-right">@{{ property.taxes ? money(property.taxes) : '-' }}</div>
 									<div class="col-sm-6 text-left">Insurance</div>
-									<div class="col-sm-6 text-right">$@{{ property.insurance ? property.insurance : '-' }}</div>
+									<div class="col-sm-6 text-right">@{{ property.insurance ? money(property.insurance) : '-' }}</div>
 								</div>
 								<div class="col-sm-6">
 									<div class="col-sm-6 text-left">Mortgage Rate</div>
-									<div class="col-sm-6 text-right">@{{ property.mortgage_rate ? property.mortgage_rate : '-' }}</div>
+									<div class="col-sm-6 text-right">@{{ property.mortgage_rate ? percent(property.mortgage_rate) : '-' }}</div>
 									<div class="col-sm-6 text-left">Mortgage Payment</div>
-									<div class="col-sm-6 text-right">@{{ property.mortgage_payment ? property.mortgage_payment : '-' }}</div>
+									<div class="col-sm-6 text-right">@{{ property.mortgage_payment ? money(property.mortgage_payment) : '-' }}</div>
 									<div class="col-sm-6 text-left">Purchase Date</div>
-									<div class="col-sm-6 text-right">@{{ property.purchase_date ? property.purchase_date : '-' }}</div>
+									<div class="col-sm-6 text-right">@{{ property.purchase_date ? humanDateWithYear(property.purchase_date) : '-' }}</div>
 									<!-- 
 									<div class="col-sm-6 text-left">Aquisition Cost</div>
 									<div class="col-sm-6 text-right">@{{ +property.down_payment + +property.closing_costs }}</div>
