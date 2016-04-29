@@ -13,22 +13,33 @@ class ChangeNotificationTables extends Migration
     public function up()
     {
         Schema::create('notifications', function (Blueprint $table) {
-            $table->increments('id')->primary();
+            $table->increments('id')->change();
             $table->string('name', 30);
             $table->timestamps();
         });
 
-        Schema::create('manager', function (Blueprint $table) {
+        Schema::table('managers', function (Blueprint $table) {
             $table->dropColumn('email')->change();
             $table->integer('email_notifications');
             $table->integer('text_notifications');
         });
 
         Schema::create('manager_notification', function (Blueprint $table) {
-            $table->increments('id')->primary();
+            $table->increments('id');
             $table->string('user_id', 20);
             $table->string('notification_id', 20);
             $table->timestamps();
+        });
+
+        Schema::table('manager_property', function(Blueprint $table) {
+            $table->dropColumn('email_message');
+            $table->dropColumn('app_message');
+            $table->dropColumn('email_maintenance');
+            $table->dropColumn('app_maintenance');
+            $table->dropColumn('email_payment');
+            $table->dropColumn('app_payment');
+            $table->dropColumn('email_missed_payment');
+            $table->dropColumn('app_missed_payment');
         });
 
         Schema::rename('landlord_devices', 'user_devices');
@@ -41,6 +52,12 @@ class ChangeNotificationTables extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('notifications');
+        Schema::drop('manager_notification');
+        Schema::table('manager', function(Blueprint $table) {
+            $table->dropColumn('email_notifications');
+            $table->dropColumn('text_notifications');
+            $table->string('email');
+        });
     }
 }
