@@ -19,7 +19,6 @@ class ChangeNotificationTables extends Migration
         });
 
         Schema::table('managers', function (Blueprint $table) {
-            $table->dropColumn('email')->change();
             $table->dropColumn('email');
 
             $table->integer('email_notifications');
