@@ -77,7 +77,7 @@ class DeviceApiController extends Controller {
 			'status' => 'awaiting_response',
 		]);
 			
-		//\Event::fire(new DeviceMadeUpdate($this->device->owner->id, $this->device->id, "New Maintenance Request","landlord/device"));
+		\Event::fire(new DeviceMadeUpdate($this->device->owner->id, $this->device->id, "New Maintenance Request","landlord/device"));
 		
 		return response()->json(['Maintenance request successfully created.']);
 	}
@@ -125,7 +125,7 @@ class DeviceApiController extends Controller {
 			'from_device' => 1
 		]);
 
-		//\Event::fire(new DeviceMadeUpdate($this->device->owner->id, $this->device->id, $this->input['message'],"landlord/device"));
+		\Event::fire(new DeviceMadeUpdate($this->device->owner->id, $this->device->id, $this->input['message'],"landlord/device"));
 
 		return response()->json(['Message created succesfully.']);
 	}
