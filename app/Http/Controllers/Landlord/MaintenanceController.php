@@ -63,7 +63,7 @@ class MaintenanceController extends Controller {
 			return abort(403, "Thats not yours!");
 		}
 		
-		return view('TenantSync::landlord/maintenance/show', compact('maintenanceRequest'));
+		return view('TenantSync::manager/maintenance/show', compact('maintenanceRequest'));
 	}
 
 	/**

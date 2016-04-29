@@ -97,7 +97,7 @@ class MaintenanceController extends Controller {
 		\Event::fire(new LandlordRespondedToMaintenance($maintenanceRequest->device->id, 'Maintenance response received.'));
 		$maintenanceRequest->save();
 
-		return 'success';
+		return $maintenanceRequest->fresh();
 	}
 
 	public function show($id)
