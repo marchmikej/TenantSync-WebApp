@@ -27,7 +27,7 @@ class ChangeNotificationTables extends Migration
 
         Schema::create('manager_notification', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('user_id', 20);
+            $table->string('manager_id', 20);
             $table->string('notification_id', 20);
             $table->timestamps();
         });

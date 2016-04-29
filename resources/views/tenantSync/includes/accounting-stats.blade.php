@@ -17,7 +17,7 @@
 			<div @click="toggleStat('expenses')" class="col-sm-6 col-md-3 card-column">
 				<p class="text-center">Total Expenses MTD</p>
 				<p class="stat clickable text-danger text-center">
-				@{{ money(stats.expenses) }}
+				@{{ money(Math.abs(stats.expenses)) }}
 				</p>
 			</div>
 			<div @click="toggleStat('revenue')" class="col-sm-6 col-md-3 card-column">
