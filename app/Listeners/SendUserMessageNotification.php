@@ -33,19 +33,19 @@ class SendUserMessageNotification {
         // Get device that fired event 
         $device = Device::find($event->deviceId);
         
-        $managers = $this->device->property->managers()
+        $managers = $device->property->managers()
             ->whereHas('notifications', function($query) {
                 $query->where(['name' => 'message_received']);
             })
             ->get();
 
-        $data = [
-            'manager' => $manager, 
-            'event' => $event,
-        ];
-
         // Send the notification via email, text, or both.
         $managers->each(function($manager) {
+            $data = [
+                'manager' => $manager, 
+                'event' => $event,
+            ];
+            
             if ($manager->email_notifications) {
                 Mail::queue('emails.usersend', $data, function ($message) use ($device, $manager) {
                     $message->to($manager->email, $manager->last_name)

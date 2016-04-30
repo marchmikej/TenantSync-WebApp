@@ -1,4 +1,6 @@
-<?php namespace App\Listeners;
+<?php 
+
+namespace App\Listeners;
 
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldBeQueued;
