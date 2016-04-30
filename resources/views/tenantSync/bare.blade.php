@@ -101,6 +101,17 @@
 	<!-- Scripts -->
 	<script src="/js/core.js"></script>
 	<script src="/js/app.js"></script>
+	<script>
+		$(window).load(function() {
+			var app = document.getElementById('app');
+
+			app.style.visibility = 'hidden';
+
+			setTimeout(function() {
+				app.style.visibility = 'visible';
+			}, 500);
+		});
+	</script>
 	@yield('scripts')
 	<script>
 		if(typeof vue === 'undefined') {

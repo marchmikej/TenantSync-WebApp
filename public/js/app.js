@@ -1155,13 +1155,17 @@ Vue.component('devices-table', TSTable.extend({
 
 			perPage: 10,
 
+			currentPage: 1,
+
+			lastPage: 1,
+
 			listName: 'devices',
 
 			columns: [{
 				name: 'address',
 				label: 'Address',
 				width: 'col-sm-6',
-				isSortable: false
+				isSortable: true
 			}, {
 				name: 'rent_owed',
 				label: 'Rent Owed',
@@ -1181,6 +1185,22 @@ Vue.component('devices-table', TSTable.extend({
 
 			devices: []
 		};
+	},
+
+	computed: {
+		lastDevice: function lastDevice() {
+			return this.currentPage * this.perPage;
+		},
+
+		firstDevice: function firstDevice() {
+			return this.lastDevice ? this.lastDevice - this.perPage : 0;
+		},
+
+		lastPage: function lastPage() {
+			var pages = Math.ceil(_.size(this.devices) / this.perPage);
+
+			return pages;
+		}
 	},
 
 	ready: function ready() {
@@ -1212,6 +1232,22 @@ Vue.component('devices-table', TSTable.extend({
 			return _.filter(property.devices, function (device) {
 				device.status != 'active';
 			}).length;
+		},
+
+		isInCurrentPage: function isInCurrentPage(index) {
+			return this.firstDevice <= index && index < this.lastDevice;
+		},
+
+		nextPage: function nextPage() {
+			if (this.currentPage < this.lastPage) {
+				this.currentPage++;
+			}
+		},
+
+		previousPage: function previousPage() {
+			if (this.currentPage > 1) {
+				this.currentPage--;
+			}
 		}
 	}
 
