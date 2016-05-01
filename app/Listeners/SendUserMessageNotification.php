@@ -51,7 +51,7 @@ class SendUserMessageNotification {
                     $message->to($manager->email, $manager->last_name)
                             ->subject('Message from ' . $device->address);
 
-                    $message->from('admin@tenantsync.com', 'TenantSync');
+                    $message->from(env('SEND_EMAIL', 'admin@tenantsyncdev.com'), 'TenantSync');
                 });
             }
 
