@@ -29,6 +29,7 @@
 	<header>
 		<nav class="nav navbar-default m-b"> 
 			<div class="container-fluid">
+
 				<!-- Brand and toggle get grouped for better mobile display -->
 				<div class="nav-header">
 					@if(\Auth::check())
@@ -40,87 +41,93 @@
 					</button>
 					@endif
 
-
 				  	<a class="navbar-brand p-r-md" href="/"><img src="/images/logo.png" alt="TenantSync"/></a>
-
 				</div>
+
 				<!-- Collect the nav links, forms, and other content for toggling -->
 				<div class="collapse navbar-collapse top-nav text-center" id="bs-example-navbar-collapse-1">
-
 					@if(\Auth::check())
 					<ul class="nav navbar-nav navbar-right p-r">
 						@yield('topmenu')
 					</ul>
 					@endif
-				
 				</div><!-- /.navbar-collapse -->
+
 			</div><!-- /.container-fluid -->
 		</nav>
 	</header>
 
-	<div id="app" class="page-content-wrapper">
-		<div class="container">
-			<h2 class="text-info">@yield('heading')</h2>
-		</div>
-		<div class="container">
-		@if ($errors->any())
-			<div class="errors col-xs-12">
-				<ul>
-					@foreach($errors->all() as $error)
-					<li class="text-danger">{{ $error }}</li>
-					@endforeach
-				</ul>
+		<div id="app" class="page-content-wrapper" style="{visibility: hidden}">
+			<div class="container">
+				<h2 class="text-info">@yield('heading')</h2>
 			</div>
-		@endif
 
-		@if (session('messages'))
-			<div class="errors col-xs-12">
-				<ul>
-					@foreach(session('messages') as $message)
-					<li class="text-success">{{ $message }}</li>
-					@endforeach
-				</ul>
+			<div class="container">
+			@if ($errors->any())
+				<div class="errors col-xs-12">
+					<ul>
+						@foreach($errors->all() as $error)
+						<li class="text-danger">{{ $error }}</li>
+						@endforeach
+					</ul>
+				</div>
+			@endif
+
+			@if (session('messages'))
+				<div class="errors col-xs-12">
+					<ul>
+						@foreach(session('messages') as $message)
+						<li class="text-success">{{ $message }}</li>
+						@endforeach
+					</ul>
+				</div>
+			@endif
 			</div>
-		@endif
-		</div>
 
 			<div class="container">
 				@yield('content')
 			</div>
-
-	</div>
-	
-	<footer class="footer p-a">
-		<div class="container">
+		</div>
+		
+		<footer class="footer p-a">
+			<div class="container">
 				<div class="col-sm-4">
 					<span>Copyright Valmar 2015</span>
 				</div>
-		</div>
-	</footer>
-	
-	<!-- Scripts -->
-	<script src="/js/core.js"></script>
-	<script src="/js/app.js"></script>
-	<script>
-		$(window).load(function() {
-			var app = document.getElementById('app');
+			</div>
+		</footer>
+		
+		<!-- Scripts -->
+		<script src="/js/core.js"></script>
+		<script src="/js/app.js"></script>
+		<script>
+			$(window).load(function() {
+				var app = document.getElementById('app');
+				app.style.visibility = 'hidden';
 
-			app.style.visibility = 'hidden';
-
-			setTimeout(function() {
-				app.style.visibility = 'visible';
-			}, 500);
-		});
-	</script>
-	@yield('scripts')
-	<script>
-		if(typeof vue === 'undefined') {
-			var vue = new Vue({
-				el: '#app',
+				setTimeout(function() {
+					app.style.visibility = 'visible';
+				}, 500);
 			});
-		}
-	</script>
+		</script>
 
+		@yield('scripts')
+
+		<script>
+			if(typeof vue === 'undefined') {
+				var vue = new Vue({
+					el: '#app',
+
+					ready: function() {
+						var app = document.getElementById('app');
+
+						app.style.visibility = 'visible';
+					},
+				});
+			}
+		</script>
+
+	</div>
 </body>
 </html>
 

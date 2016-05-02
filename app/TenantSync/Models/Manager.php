@@ -63,9 +63,9 @@ class Manager extends Model {
 		return collect(\DB::table('devices')->whereIn('property_id', $this->properties->keyBy('id')->keys()->toArray())->get());
 	}
 
-	public function devicesToNotify()
+	public function personalDevices()
 	{
-		return $this->hasMany('TenantSync\Models\UserDevice', 'manager.user_id', 'user_devices.user_id');
+		return $this->user->personalDevices;
 	}
 
 	public function messages()

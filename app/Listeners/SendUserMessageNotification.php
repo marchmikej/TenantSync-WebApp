@@ -1,12 +1,12 @@
 <?php namespace App\Listeners;
 
-use DB;
 use Mail;
-use Services\GoogleMessenger;
+use App\Services\GoogleMessenger;
 use TenantSync\Models\Device;
 use TenantSync\Models\Manager;
 use TenantSync\Models\Property;
 use App\Events\DeviceMadeUpdate;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldBeQueued;
 
@@ -33,6 +33,10 @@ class SendUserMessageNotification {
         // Get device that fired event 
         $device = Device::find($event->deviceId);
         
+        if ($device->property->managers->isEmpty()) {
+            return false;
+        }
+
         $managers = $device->property->managers()
             ->whereHas('notifications', function($query) {
                 $query->where(['name' => 'message_received']);
@@ -40,12 +44,12 @@ class SendUserMessageNotification {
             ->get();
 
         // Send the notification via email, text, or both.
-        $managers->each(function($manager) {
+        $managers->each(function($manager) use ($event, $device) {
             $data = [
                 'manager' => $manager, 
                 'event' => $event,
             ];
-            
+
             if ($manager->email_notifications) {
                 Mail::queue('emails.usersend', $data, function ($message) use ($device, $manager) {
                     $message->to($manager->email, $manager->last_name)
@@ -56,7 +60,7 @@ class SendUserMessageNotification {
             }
 
             if ($manager->text_notifications) {
-                $manager->devicesToNotify->each(function($managerDevice) use ($device, $manager, $event) {
+                $manager->personalDevices()->each(function($managerDevice) use ($device, $manager, $event) {
                     $deviceTypes = [
                         0 => 'Iphone',
                         1 => 'Android',

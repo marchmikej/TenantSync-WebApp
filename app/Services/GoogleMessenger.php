@@ -1,6 +1,6 @@
 <?php 
 
-namespace Services;
+namespace App\Services;
 
 class GoogleMessenger {
 	
@@ -11,15 +11,15 @@ class GoogleMessenger {
 		    1 => 'Android',
 		];
 		
-		$deviceType = $deviceTypes[$managerDevice->type];
+		$deviceType = $deviceTypes[$device->type];
 
-		self::sendTo.$deviceType($device, $message, $urlSend);
+		self::{'sendTo'. $deviceType}($device, $message, $urlSend);
 	}
 
 	public static function sendToIphone($iphone, $message, $urlSend)
     {
         // Put your device token here (without spaces):
-        $deviceToken = $device_token = $device->routing_id;
+        $device_token = $iphone->routing_id;
 
         // Put your private key's passphrase here:
         $passphrase = env('APN_PASSPHRASE', "NONE");
@@ -36,7 +36,7 @@ class GoogleMessenger {
         if (!$fp)
             exit("Failed to connect: $err $errstr" . PHP_EOL);
 
-        echo 'Connected to APNS' . PHP_EOL;
+        //echo 'Connected to APNS' . PHP_EOL;
 
         // Create the payload body
         $body['aps'] = array(
@@ -50,15 +50,15 @@ class GoogleMessenger {
         $payload = json_encode($body);
 
         // Build the binary notification
-        $msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
+        $msg = chr(0) . pack('n', 32) . pack('H*', $device_token) . pack('n', strlen($payload)) . $payload;
 
         // Send it to the server
         $result = fwrite($fp, $msg, strlen($msg));
 
-        if (!$result)
-            echo 'Message not delivered' . PHP_EOL;
-        else
-            echo 'Message successfully delivered' . PHP_EOL;
+        // if (!$result)
+        //     echo 'Message not delivered' . PHP_EOL;
+        // else
+        //     echo 'Message successfully delivered' . PHP_EOL;
 
         // Close the connection to the server
         fclose($fp);

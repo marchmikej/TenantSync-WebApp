@@ -127,6 +127,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasMany('TenantSync\Models\Order');
 	}
 
+	public function personalDevices()
+	{
+		return $this->hasMany('TenantSync\Models\UserDevice');
+	}
+
 	public function netIncome($fromDate = '-1 year')
 	{
 		return array_sum(

@@ -6,10 +6,10 @@ use TenantSync\Models\Device;
 use TenantSync\Models\Property;
 use TenantSync\Models\Transaction;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CreateTransactionRequest;
 use TenantSync\Billing\RentPaymentGateway;
-use TenantSync\Mutators\TransactionMutator;
 use TenantSync\Models\RecurringTransaction;
+use TenantSync\Mutators\TransactionMutator;
+use App\Http\Requests\CreateTransactionRequest;
 
 class TransactionController extends Controller {
 

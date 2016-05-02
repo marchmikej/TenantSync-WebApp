@@ -6,14 +6,6 @@
 					<h3 class="card-header">
 						<div>
 							Recent Messages
-							
-
-							<button 
-								@click="newMessage()" 
-								class=" btn btn-clear p-y-0"
-							>
-								<h3 class="m-a-0 text-primary icon icon-plus"></h3>
-							</button>
 
 							<button 
 								@click="previousPage" 
@@ -27,6 +19,13 @@
 								:class="lastPage == currentPage ? 'text-muted' : 'text-primary'"
 								class="btn-clear btn icon icon-chevron-right"
 							>
+							</button>
+
+							<button 
+								@click="newMessage()" 
+								class=" btn btn-clear p-y-0"
+							>
+								<h3 class="m-a-0 text-primary icon icon-plus"></h3>
 							</button>
 						</div>
 					</h3>
