@@ -34,6 +34,7 @@ class CreateCellCarries extends Migration
     {
         Schema::drop('cell_carriers');
         Schema::table('users', function(Blueprint $table) {
-            $table->dropColumn('cell_carriers');
+            $table->dropColumn('cell_carrier');
+        });
     }
 }
