@@ -7,7 +7,7 @@
 		<div class="card-header">
 			<h3>New Manager</h3>
 		</div>
-		<form :action="/' + user().role + '/managers" method="POST" class="form form-horizontal">
+		<form :action="'/' + user().role + '/managers'" method="POST" class="form form-horizontal">
 		<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 			<div class="form-group">

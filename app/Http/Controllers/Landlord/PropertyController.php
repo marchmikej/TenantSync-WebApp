@@ -36,7 +36,7 @@ class PropertyController extends Controller {
 	{
 		$states = State::all();
 
-		return view('TenantSync::manager/properties/create', compact('states'));
+		return view('TenantSync::landlord/properties/create', compact('states'));
 	}
 
 	/**
@@ -50,7 +50,7 @@ class PropertyController extends Controller {
 
 		// $property = Property::create($this->input);
 
-		$property = $this->user->properties->create($this->input);
+		$property = $this->user->properties()->create($this->input);
 
 		$this->user->manager->properties()->attach($property->id);
 
