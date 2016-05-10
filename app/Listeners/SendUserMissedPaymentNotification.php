@@ -30,49 +30,58 @@ class SendUserMissedPaymentNotification {
     {
         // Get device that fired event 
         $device = Device::find($event->deviceId);
+        
+        $managers = $device->property->managers()->get();
 
-        $managers = $this->device->property->managers()
-            ->whereHas('notifications', function($query) {
-                $query->where(['name' => 'missed_payment']);
-            })
-            ->get();
+        for ($y = 0; $y < count($managers); $y++)
+        {
+            $currentRow=$managers[$y];
+            // This is for email notifications
+            if ($currentRow->email_notifications)
+            {
+                $data = array("deviceId"=>$event->deviceId, "email"=>$currentRow->email(), "name"=>$currentRow->last_name, "message"=>$event->message, "property"=>$device->address);
+                if($currentRow->position == "Landlord") {
+                    Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/landlord/device/" . $data['deviceId'],  function ($message) use ($data) {
+                        $message->to($data['email'],$data['name'])
+                            ->subject('Message received from ' . $data['property']);
 
-        $data = [
-            'manager' => $manager, 
-            'event' => $event,
-        ];
-
-        // Send the notification via email, text, or both.
-        $managers->each(function($manager) {
-            if ($manager->email_notifications) {
-                Mail::queue('emails.usersend', $data, function ($message) use ($device, $manager) {
-                    $message->to($manager->email, $manager->last_name)
-                            ->subject('Missed payment from ' . $device->address);
-
-                    $message->from('admin@tenantsync.com', 'TenantSync');
-                });
+                        $message->from(env('SEND_EMAIL', 'admin@tenantsyncdev.com'), 'TenantSync');
+                    });
+                }
+                else
+                {
+                    Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/manager/device/" . $data['deviceId'],  function ($message) use ($data) {
+                        $message->to($data['email'],$data['name'])
+                            ->subject('Message received from ' . $data['property']);
+                        $message->from(env('SEND_EMAIL', 'admin@tenantsyncdev.com'), 'TenantSync');
+                    });
+                }
             }
 
-            if ($manager->text_notifications) {
-                $manager->devicesToNotify->each(function($managerDevice) use ($device, $manager, $event) {
-                    $deviceTypes = [
-                        0 => 'Iphone',
-                        1 => 'Android',
-                    ];
+            // This is for email text
+            if ($currentRow->text_notifications && $currentRow->cell_carrier > 0)
+            {
+                $users = DB::table('cell_carriers')->where('id', '=', $currentRow->cell_carrier)->get();
+                $phone = $currentRow->phone . "@" . $users[0]->email_suffix;
+                $data = array("deviceId"=>$event->deviceId, "email"=>$phone, "name"=>$currentRow->last_name, "message"=>$event->message, "property"=>$device->address);
+                if($currentRow->position == "Landlord") {
+                    Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/landlord/device/" . $data['deviceId'],  function ($message) use ($data) {
+                        $message->to($data['email'],$data['name'])
+                            ->subject('Message received from ' . $data['property']);
 
-                    $deviceMessages = [
-                        0 => "You missed a payment from  " . $device->address,
-                        1 => "MESSAGE: Missed payment from " . $device->address . " ENDMESSAGE URL: https://app.tenantsync.com",
-                    ];
-
-                    $deviceType = $deviceTypes[$managerDevice->type];
-
-                    $message = $deviceMessaeges[$managerDevice->type];
-
-                    GoogleMessenger::sendToDevice($managerDevice, $message, $event->urlSend);
-                });
+                        $message->from(env('SEND_EMAIL', 'admin@tenantsyncdev.com'), 'TenantSync');
+                    });
+                }
+                else
+                {
+                    Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/manager/device/" . $data['deviceId'],  function ($message) use ($data) {
+                        $message->to($data['email'],$data['name'])
+                            ->subject('Message received from ' . $data['property']);
+                        $message->from(env('SEND_EMAIL', 'admin@tenantsyncdev.com'), 'TenantSync');
+                    });
+                }
             }
-        });
+        }
     }
 
     //     \Event::fire(new DeviceRefresh($event->deviceId));

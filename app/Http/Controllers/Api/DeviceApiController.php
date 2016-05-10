@@ -104,6 +104,22 @@ class DeviceApiController extends Controller {
 		if($this->device->messages) {
 			$messages = $this->device->messages()->orderBy('created_at','asc')->get(['body', 'from_device', 'created_at']);
 
+			// This handles timezone viewing for each device
+			if($this->device->timezone == null) 
+			{		
+				for ($y = 0; $y < count($messages); $y++)
+        		{
+    	        	$messages[$y]->created_at=$messages[$y]->created_at->timezone('America/New_York');
+        		}
+			}
+			else
+			{
+	        	for ($y = 0; $y < count($messages); $y++)
+        		{
+    	        	$messages[$y]->created_at=$messages[$y]->created_at->timezone($this->device->timezone);
+        		}
+			}
+
 			return $messages;
 		}
 
