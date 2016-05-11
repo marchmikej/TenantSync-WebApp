@@ -46,7 +46,7 @@ class DeviceApiController extends Controller {
 			return response()->json(['There are no active requests for this device.']);
 		}
 
-		return response()->jsonArray($maintenanceRequests);
+		return response()->json($maintenanceRequests);
 	}
 
 	public function updateMaintenanceRequest($id)
@@ -241,6 +241,8 @@ class DeviceApiController extends Controller {
 		$version=$this->input['version'];
 		if($version == "1.0") {
 			return "tenantSync_1_1.apk";
+		} if($version == "1.2") {
+			return "tenantSync_1_2_1.apk";
 		} else {
 			return "NOUPDATE";
 		}
