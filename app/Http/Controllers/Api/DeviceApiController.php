@@ -241,6 +241,8 @@ class DeviceApiController extends Controller {
 		$version=$this->input['version'];
 		if($version == "1.0") {
 			return "tenantSync_1_1.apk";
+		} if($version == "1.2") {
+			return "tenantSync_1_2_1.apk";
 		} else {
 			return "NOUPDATE";
 		}
