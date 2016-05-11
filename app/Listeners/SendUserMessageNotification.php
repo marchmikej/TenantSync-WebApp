@@ -61,9 +61,9 @@ class SendUserMessageNotification {
             }
 
             // This is for email text
-            if ($currentRow->text_notifications && $currentRow->cell_carrier > 0)
+            if ($currentRow->text_notifications && $currentRow->cell_carrier_id > 0)
             {
-                $users = DB::table('cell_carriers')->where('id', '=', $currentRow->cell_carrier)->get();
+                $users = DB::table('cell_carriers')->where('id', '=', $currentRow->cell_carrier_id)->get();
                 $phone = $currentRow->phone . "@" . $users[0]->email_suffix;
                 $data = array("deviceId"=>$event->deviceId, "email"=>$phone, "name"=>$currentRow->last_name, "message"=>$event->message, "property"=>$device->address);
                 if($currentRow->position == "Landlord") {
