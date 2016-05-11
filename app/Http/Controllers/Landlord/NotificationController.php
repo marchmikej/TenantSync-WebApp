@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Landlord;
 
 use App\Http\Requests;
 use Illuminate\Http\Request;
+use TenantSync\Models\CellCarrier;
 use TenantSync\Models\Notification;
 use App\Http\Controllers\Controller;
 
@@ -25,11 +26,15 @@ class NotificationController extends Controller
 
         $userNotifications = $this->manager->notifications;
 
+        $cellCarriers = CellCarrier::all();
+
         \JavaScript::put([
             'allNotifications' => $notifications->toJson(),
             'userNotifications' => $userNotifications->toJson(),
             'notifyByEmail' => $this->manager->email_notifications,
-            'notifyByText' => $this->manager->text_notifications
+            'notifyByText' => $this->manager->text_notifications,
+            'cellCarrier' => $this->manager->cell_carrier_id,
+            'cellCarriers' => $cellCarriers,
         ]);
 
         return view('TenantSync::manager.notifications', compact('notifications'));

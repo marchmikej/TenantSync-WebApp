@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Manager;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Requests;
-use App\Http\Controllers\Manager\ManagerBaseController;
+use Illuminate\Http\Request;
+use TenantSync\Models\CellCarrier;
+use App\Http\Controllers\Controller;
 
-class ProfileController extends ManagerBaseController
+class CellCarrierController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,50 +16,9 @@ class ProfileController extends ManagerBaseController
      */
     public function index()
     {
-        $manager = $this->manager;
+        $cellCarriers = CellCarrier::all();
 
-        return view('TenantSync::manager/profile/show', compact('manager'));
-    }
-
-    public function password()
-    {
-        if(! \Hash::check($this->input['current_password'], $this->user->password)) {
-            return redirect()->back()->withErrors(["Current password doesn't match"]);
-        }
-
-        $this->validate($this->request, [
-            'password' => 'required|confirmed|min:6',
-        ]);
-
-        $this->user->password = \Hash::make($this->input['password']);
-
-        $this->user->save();
-
-        return redirect()->back();
-    }
-
-    public function email()
-    {
-        $this->validate($this->request, [
-                'email' => 'required|email|unique:users,email',
-            ]);
-        
-        $this->user->email = $this->input['email'];
-        
-        $this->user->save();
-        
-        return redirect()->back();
-    }
-
-    public function updateCellCarrier()
-    {
-        $carrierId = isset($this->input['cell_carrier_id']) ? $this->input['cell_carrier_id']: null;
-
-        $this->manager->cell_carrier_id = $carrierId;
-
-        $this->manager->save();
-
-        return $this->manager;
+        return $cellCarriers;
     }
 
     /**

@@ -24,6 +24,9 @@ class Manager extends Model {
 		'last_name',
 		'position',
 		'phone',
+		'cell_carrier_id',
+		'emailNotifications',
+		'textNotifications',
 	];
 
 	public function user()
@@ -56,6 +59,11 @@ class Manager extends Model {
 	public function properties()
 	{
 		return $this->belongsToMany('TenantSync\Models\Property');
+	}
+
+	public function cellCarrier()
+	{
+		return $this->belongsTo('TenantSync\Models\CellCarrier');
 	}
 
 	public function devices()

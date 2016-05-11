@@ -68,6 +68,8 @@ Route::group(['middleware' => ['auth']], function()
 	Route::patch('api/maintenance/{id}', 'Api\MaintenanceController@update');
 	Route::patch('api/maintenance/{id}/close', 'Api\MaintenanceController@closeMaintenance');
 	Route::resource('api/maintenance', 'Api\MaintenanceController');
+
+	Route::get('api/cell-carriers', 'Api\CellCarrierController@index');
 	// End Api routes
 
 	// Sales rep routes
@@ -176,6 +178,8 @@ Route::group(['middleware' => ['auth']], function()
 		Route::get('device/all', 'DeviceController@all');
 		Route::post('device/message', 'MessageController@store');
 		Route::resource('device', 'DeviceController');
+
+		Route::patch('cell-carrier', 'ProfileController@updateCellCarrier');
 
 		Route::get('properties/all', 'PropertyController@all');
 		Route::get('properties/{id}/devices', 'PropertyController@devices');
