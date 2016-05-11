@@ -46,7 +46,7 @@ class DeviceApiController extends Controller {
 			return response()->json(['There are no active requests for this device.']);
 		}
 
-		return response()->json($maintenanceRequests);
+		return response()->jsonArray($maintenanceRequests);
 	}
 
 	public function updateMaintenanceRequest($id)
