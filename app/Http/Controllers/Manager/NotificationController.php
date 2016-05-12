@@ -28,7 +28,7 @@ class NotificationController extends ManagerBaseController
             'userNotifications' => $userNotifications->toJson(),
             'notifyByEmail' => $this->manager->email_notifications,
             'notifyByText' => $this->manager->text_notifications,
-            'cellCarrier' => $this->manager->cellCarrier->id,
+            'cellCarrier' => $this->manager->cell_carrier_id,
             'cellCarriers' => $cellCarriers,
         ]);
 
