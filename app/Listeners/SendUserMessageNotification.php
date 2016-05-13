@@ -35,52 +35,64 @@ class SendUserMessageNotification {
         
         $managers = $device->property->managers()->get();
 
-        for ($y = 0; $y < count($managers); $y++)
+        $notification = DB::table('notifications')->where('name', '=', 'message_received')->get();
+        // If the message_received exists in notifications table we can proceed
+        if(count($notification) > 0) 
         {
-            $currentRow=$managers[$y];
-            // This is for email notifications
-            if ($currentRow->email_notifications)
+            for ($y = 0; $y < count($managers); $y++)
             {
-                $data = array("deviceId"=>$event->deviceId, "email"=>$currentRow->email(), "name"=>$currentRow->last_name, "message"=>$event->message, "property"=>$device->address);
-                if($currentRow->position == "Landlord") {
-                    Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/landlord/device/" . $data['deviceId'],  function ($message) use ($data) {
-                        $message->to($data['email'],$data['name'])
-                            ->subject('Message received from ' . $data['property']);
+                $currentManager=$managers[$y];
 
-                        $message->from(env('SEND_EMAIL', 'admin@tenantsyncdev.com'), 'TenantSync');
-                    });
-                }
-                else
+                //If a row exists here then the manager has selected to receive this type of notification
+                $shouldNotify = DB::table('manager_notification')
+                    ->where('notification_id', '=', $notification[0]->id)
+                    ->where('manager_id', '=', $currentManager->id)
+                    ->get();
+
+                // This is for email notifications
+                if ($currentManager->email_notifications && count($shouldNotify) > 0)
                 {
-                    Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/manager/device/" . $data['deviceId'],  function ($message) use ($data) {
-                        $message->to($data['email'],$data['name'])
-                            ->subject('Message received from ' . $data['property']);
-                        $message->from(env('SEND_EMAIL', 'admin@tenantsyncdev.com'), 'TenantSync');
-                    });
-                }
-            }
+                    $data = array("deviceId"=>$event->deviceId, "email"=>$currentManager->email(), "name"=>$currentManager->last_name, "message"=>$event->message, "property"=>$device->address);
+                    if($currentManager->position == "Landlord") {
+                        Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/landlord/device/" . $data['deviceId'],  function ($message) use ($data) {
+                            $message->to($data['email'],$data['name'])
+                                ->subject('Message received from ' . $data['property']);
 
-            // This is for email text
-            if ($currentRow->text_notifications && $currentRow->cell_carrier_id > 0)
-            {
-                $users = DB::table('cell_carriers')->where('id', '=', $currentRow->cell_carrier_id)->get();
-                $phone = $currentRow->phone . "@" . $users[0]->email_suffix;
-                $data = array("deviceId"=>$event->deviceId, "email"=>$phone, "name"=>$currentRow->last_name, "message"=>$event->message, "property"=>$device->address);
-                if($currentRow->position == "Landlord") {
-                    Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/landlord/device/" . $data['deviceId'],  function ($message) use ($data) {
-                        $message->to($data['email'],$data['name'])
-                            ->subject('Message received from ' . $data['property']);
-
-                        $message->from(env('SEND_EMAIL', 'admin@tenantsyncdev.com'), 'TenantSync');
-                    });
+                            $message->from(env('SEND_EMAIL', 'admin@tenantsyncdev.com'), 'TenantSync');
+                        });
+                    }
+                    else
+                    {
+                        Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/manager/device/" . $data['deviceId'],  function ($message) use ($data) {
+                            $message->to($data['email'],$data['name'])
+                                ->subject('Message received from ' . $data['property']);
+                            $message->from(env('SEND_EMAIL', 'admin@tenantsyncdev.com'), 'TenantSync');
+                        });
+                    }
                 }
-                else
+
+                // This is for email text
+                if ($currentManager->text_notifications && $currentManager->cell_carrier_id > 0 && count($shouldNotify) > 0)
                 {
-                    Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/manager/device/" . $data['deviceId'],  function ($message) use ($data) {
-                        $message->to($data['email'],$data['name'])
-                            ->subject('Message received from ' . $data['property']);
-                        $message->from(env('SEND_EMAIL', 'admin@tenantsyncdev.com'), 'TenantSync');
-                    });
+                    $users = DB::table('cell_carriers')->where('id', '=', $currentManager->cell_carrier_id)->get();
+                    $phone = $currentManager->phone . "@" . $users[0]->email_suffix;
+                    $data = array("deviceId"=>$event->deviceId, "email"=>$phone, "name"=>$currentManager->last_name, "message"=>$event->message, "property"=>$device->address);
+                    if($currentManager->position == "Landlord") {
+                        Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/landlord/device/" . $data['deviceId'],  function ($message) use ($data) {
+                            $message->to($data['email'],$data['name'])
+                                ->subject('Message received from ' . $data['property']);
+
+                            $message->from(env('SEND_EMAIL', 'admin@tenantsyncdev.com'), 'TenantSync');
+                        });
+                    }
+                    else
+                    {
+                        Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/manager/device/" . $data['deviceId'],  function ($message) use ($data) {
+                            $message->to($data['email'],$data['name'])
+                                ->subject('Message received from ' . $data['property']);
+                            $message->from(env('SEND_EMAIL', 'admin@tenantsyncdev.com'), 'TenantSync');
+                        });
+                    }
                 }
             }
         }
