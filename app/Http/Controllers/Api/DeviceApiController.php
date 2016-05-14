@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use TenantSync\Models\Device;
 use TenantSync\Models\Message;
 use App\Events\DeviceMadeUpdate;
+use App\Events\DeviceUpdateMaintenance;
 use TenantSync\Models\RentPayment;
 use TenantSync\Models\Transaction;
 use App\Http\Controllers\Controller;
