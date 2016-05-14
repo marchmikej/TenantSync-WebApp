@@ -13,7 +13,7 @@ class DeviceUpdateMaintenance extends Event {
 	public $deviceName;
     public $message;
     public $urlSend;
-    public $maintenanceRequestId
+    public $maintenanceRequestId;
 
 	/**
 	 * Create a new event instance.
