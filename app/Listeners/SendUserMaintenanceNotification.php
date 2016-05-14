@@ -54,7 +54,7 @@ class SendUserMaintenanceNotification {
                 {
                     $data = array("deviceId"=>$event->deviceId, "email"=>$currentManager->email(), "name"=>$currentManager->last_name, "message"=>$event->message, "property"=>$device->address);
                     if($currentManager->position == "Landlord") {
-                        Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/landlord/device/" . $data['deviceId'],  function ($message) use ($data) {
+                        Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/landlord/maintenance/" . $data['maintenanceRequestId'],  function ($message) use ($data) {
                             $message->to($data['email'],$data['name'])
                                 ->subject('Maintenance update from ' . $data['property']);
 
@@ -63,7 +63,7 @@ class SendUserMaintenanceNotification {
                     }
                     else
                     {
-                        Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/manager/device/" . $data['deviceId'],  function ($message) use ($data) {
+                        Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/manager/maintenance/" . $data['maintenanceRequestId'],  function ($message) use ($data) {
                             $message->to($data['email'],$data['name'])
                                 ->subject('Maintenance update from ' . $data['property']);
                             $message->from(env('SEND_EMAIL', 'admin@tenantsyncdev.com'), 'TenantSync');
@@ -78,7 +78,7 @@ class SendUserMaintenanceNotification {
                     $phone = $currentManager->phone . "@" . $users[0]->email_suffix;
                     $data = array("deviceId"=>$event->deviceId, "email"=>$phone, "name"=>$currentManager->last_name, "message"=>$event->message, "property"=>$device->address);
                     if($currentManager->position == "Landlord") {
-                        Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/landlord/device/" . $data['deviceId'],  function ($message) use ($data) {
+                        Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/landlord/maintenance/" . $data['maintenanceRequestId'],  function ($message) use ($data) {
                             $message->to($data['email'],$data['name'])
                                 ->subject('Maintenance update from ' . $data['property']);
 
@@ -87,7 +87,7 @@ class SendUserMaintenanceNotification {
                     }
                     else
                     {
-                        Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/manager/device/" . $data['deviceId'],  function ($message) use ($data) {
+                        Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/manager/maintenance/" . $data['maintenanceRequestId'],  function ($message) use ($data) {
                             $message->to($data['email'],$data['name'])
                                 ->subject('Maintenance update from ' . $data['property']);
                             $message->from(env('SEND_EMAIL', 'admin@tenantsyncdev.com'), 'TenantSync');

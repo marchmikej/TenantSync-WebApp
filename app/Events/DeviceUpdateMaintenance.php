@@ -13,13 +13,14 @@ class DeviceUpdateMaintenance extends Event {
 	public $deviceName;
     public $message;
     public $urlSend;
+    public $maintenanceRequestId
 
 	/**
 	 * Create a new event instance.
 	 *
 	 * @return void
 	 */
-	public function __construct($userId, $deviceId, $message, $urlSend)
+	public function __construct($userId, $deviceId, $message, $maintenanceRequestId)
     {
     	$deviceData = \DB::table('devices')
         	->where('id', '=', $deviceId)
@@ -29,7 +30,7 @@ class DeviceUpdateMaintenance extends Event {
         $this->userId = $userId;
         $this->deviceId = $deviceId;
         $this->message = $message;
-        $this->urlSend = $urlSend . "/" . $deviceId;
+        $this->maintenanceRequestId = $maintenanceRequestId;
     }
 
 }
