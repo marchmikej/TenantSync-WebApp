@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use TenantSync\Models\Device;
 use TenantSync\Models\Message;
 use App\Events\DeviceMadeUpdate;
+use App\Events\DeviceUpdateMaintenance;
 use TenantSync\Models\RentPayment;
 use TenantSync\Models\Transaction;
 use App\Http\Controllers\Controller;
@@ -59,6 +60,8 @@ class DeviceApiController extends Controller {
 
 		$maintenanceRequest->update($this->input);
 
+		\Event::fire(new DeviceUpdateMaintenance($this->device->owner->id, $this->device->id, "Maintenance Request Updated",$maintenanceRequest->id));
+
 		return response()->json(['Maintenace request updated.']);
 	}
 
@@ -77,7 +80,7 @@ class DeviceApiController extends Controller {
 			'status' => 'awaiting_response',
 		]);
 			
-		\Event::fire(new DeviceMadeUpdate($this->device->owner->id, $this->device->id, "New Maintenance Request","landlord/device"));
+		\Event::fire(new DeviceUpdateMaintenance($this->device->owner->id, $this->device->id, "New Maintenance Request",$maintenanceRequest->id));
 		
 		return response()->json(['Maintenance request successfully created.']);
 	}

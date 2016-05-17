@@ -3,6 +3,7 @@
 use App\Http\Controllers\Controller;
 use Illuminate\Auth\AuthManager as Auth;
 use Illuminate\Http\Request;
+use App\Events\DeviceUpdateMaintenance;
 use TenantSync\Models\Device;
 use TenantSync\Models\Property;
 use TenantSync\Models\User;
@@ -54,7 +55,8 @@ class HomeController extends Controller {
 
 	public function test()
     {
-        $file= public_path(). "/images/app-debug.apk";
+	\Event::fire(new DeviceUpdateMaintenance(57, 88, "New Maintenance Request",21));
+/*        $file= public_path(). "/images/app-debug.apk";
 
     	$headers = array(
         	'Content-Type: application/vnd.android.package-archive',
@@ -66,6 +68,7 @@ class HomeController extends Controller {
 
 	    return $response;
     	// return response()->download($file, 'app-debug.apk', $headers);
+*/
     }
 
 }  
