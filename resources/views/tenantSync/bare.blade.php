@@ -96,8 +96,6 @@
 				</div>
 			</div>
 		</footer>
-		
-		@include('TenantSync::globals')
 
 		<!-- Scripts -->
 		<script src="/js/core.js"></script>
