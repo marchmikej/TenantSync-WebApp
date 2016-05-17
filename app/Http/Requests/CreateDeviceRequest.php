@@ -24,9 +24,8 @@ class CreateDeviceRequest extends Request
     public function rules()
     {
         return [
-            'payment_method_id' => 'required',
+            //'payment_method_id' => 'required',
             'property_id' => 'required',
-            //'financed' => 'required',
             'serial' => 'required',
             'location' => 'required',
             'rent_amount' => 'required',

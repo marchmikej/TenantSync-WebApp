@@ -48,7 +48,7 @@ class DeviceController extends SalesController {
 				'status' => 'active',
 			]);
 			
-			$paymentMethodId = $data['payment_method_id'];
+			//$paymentMethodId = $data['payment_method_id'];
 
 			$device = $property->addDevice($data);
 		});

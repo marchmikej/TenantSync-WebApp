@@ -161,4 +161,9 @@ class Property extends Model {
 		//upon device activation the users recurring amount will be reevaluated and charged appropriatly
 	}
 
+	public function fullAddress()
+	{
+		return $this->address . ', ' . $this->city . ' ' . $this->state;
+	}
+
 }

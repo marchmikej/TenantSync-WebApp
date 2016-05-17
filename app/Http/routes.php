@@ -100,6 +100,7 @@ Route::group(['middleware' => ['auth']], function()
 		Route::resource('/landlord', 'LandlordController');
 
 		Route::resource('/properties/{id}/device', 'DeviceController');
+		Route::resource('/properties', 'PropertyController');
 
 		Route::resource('device', 'DeviceController');
 

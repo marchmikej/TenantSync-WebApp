@@ -116,32 +116,23 @@
 	</div>
 	<div class="row card">
 		<div class="col-sm-10">
-			<h2 class="text-info m-t-0">Devices</h2>
+			<h2 class="text-info m-t-0">
+				Properties
+				<button class=" btn btn-clear p-y-0"><a href="/sales/landlord/{{ $landlord->id }}/properties/create"><h3 class="m-a-0 text-primary icon icon-plus"></h3></a></button>
+			</h2>
 		</div>
-		<!-- <div class="col-sm-2">
-			<a href="/sales/landlord/{{ $landlord->id }}/device/create"><button class="col-sm-12 btn btn-primary">Add Device</button></a>
-		</div> -->
 
 		<div class="col-sm-12">
 			<table class="devices-table table">
 				<thead>
 					<th>Address</th>
-					<th>Apt.</th>
-					<th>Alarm</th>
-					<th>Status</th>
- 					<th>Serial</th>
-					<th></th>
+					<th>Devices</th>
 				</thead>
 				<tbody>
-					@foreach($landlord->devices as $device)
+					@foreach($landlord->properties as $property)
 					<tr>
-						<td><a href="/sales/device/{{ $device->id }}">{{ $device->property->address . ', ' .  $device->property->city . ' ' . $device->property->state }}</a></td>
-						<td>{{ $device->location }}</td>
-						<td class="{{ $device->alarm_id ? 'text-danger': 'text-success' }}">{{ $device->alarm_id ? 'Deliquent': 'Off' }}</td>
-						<td>{{ $device->status }}</td>
-						<td>{{ $device->serial }}</td>
-						
-						<td></td>
+						<td><a href="/sales/properties/{{ $property->id }}">{{ $property->fullAddress() }}</a></td>
+						<td>{{ $property->devices->count() }}</td>
 					</tr>
 					@endforeach
 				</tbody>

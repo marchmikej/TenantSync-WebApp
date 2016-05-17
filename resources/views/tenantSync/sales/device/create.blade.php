@@ -77,8 +77,9 @@
 						<input class="form-control col-sm-3" type="text" name="zip" placeholder="Zip code"/>
 					</div>
 				</div>
+				<button @click.prevent="createDevice" type="submit" class="btn btn-primary form-control m-b">Continue</button>
 			</div>
-			<div class="col-sm-6">
+			<!-- <div class="col-sm-6">
 				<h4 class="text-info p-l-0">Payment Details</h4>
 
 				<div class="form-group">
@@ -98,7 +99,7 @@
 				</div>
 
 				<button @click.prevent="createDevice" type="submit" class="btn btn-primary form-control">Continue</button>
-			</div>
+			</div> -->
 		</form>
 	</div>
 

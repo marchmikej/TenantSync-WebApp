@@ -1,4 +1,4 @@
-@extends('TenantSync::manager.layout')
+@extends('TenantSync::sales.layout')
 
 @section('content')
 
@@ -27,7 +27,10 @@
 	
 	<div class=" card row">
 		<div class="col-sm-12">
-			<h4 class="card-header">Property Info</h4>
+			<h4 class="card-header">
+				Property Info
+				<button class=" btn btn-clear p-y-0"><a href="/sales/properties/{{ $property->id }}/devices/create"><h3 class="m-a-0 text-primary icon icon-plus"></h3></a></button>
+			</h4>
 			<form :action="'/' + user().role + '/properties/{{$property->id}}'" method="Post" class="form form-horizontal">
 				<input type="hidden" name="_token" value="{{ csrf_token() }}">
 				<input type="hidden" name="_method" value="PATCH">
@@ -135,24 +138,35 @@
 			</form>
 		</div>
 	</div>
-	
-	<devices-table 
-		:search="'{{ $property->address }}'" 
-		inline-template
-	>
-		@include('TenantSync::includes.tables.devices-table')
-	</devices-table>
 
-	<transactions-table 
-		:search="'{{ $property->address }}'"
-		inline-template
-	>
-		@include('TenantSync::includes.tables.transactions-table')
-	</transactions-table>
-
+	<div class="card row">
+		<div class="col-sm-12">
+			<table class="devices-table table">
+				<thead>
+					<th>Address</th>
+					<th>Apt.</th>
+					<th>Alarm</th>
+					<th>Status</th>
+						<th>Serial</th>
+					<th></th>
+				</thead>
+				<tbody>
+					@foreach($property->devices as $device)
+					<tr>
+						<td><a href="/sales/device/{{ $device->id }}">{{ $device->property->address . ', ' .  $device->property->city . ' ' . $device->property->state }}</a></td>
+						<td>{{ $device->location }}</td>
+						<td class="{{ $device->alarm_id ? 'text-danger': 'text-success' }}">{{ $device->alarm_id ? 'Deliquent': 'Off' }}</td>
+						<td>{{ $device->status }}</td>
+						<td>{{ $device->serial }}</td>
+						
+						<td></td>
+					</tr>
+					@endforeach
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
-
-
 
 @endsection
 
@@ -176,7 +190,7 @@
 
 
 			ready: function() {
-				this.fetchDevices();
+				//this.fetchDevices();
 			},
 
 

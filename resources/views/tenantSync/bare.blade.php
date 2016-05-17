@@ -97,9 +97,12 @@
 			</div>
 		</footer>
 		
+		@include('TenantSync::globals')
+
 		<!-- Scripts -->
 		<script src="/js/core.js"></script>
 		<script src="/js/app.js"></script>
+		
 		<script>
 			$(window).load(function() {
 				var app = document.getElementById('app');

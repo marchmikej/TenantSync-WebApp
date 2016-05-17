@@ -6,6 +6,7 @@ use App\Http\Requests;
 use TenantSync\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Utilities\State;
+use TenantSync\Models\Property;
 use App\Http\Controllers\Controller;
 
 class PropertyController extends Controller
@@ -59,7 +60,11 @@ class PropertyController extends Controller
      */
     public function show($id)
     {
-        //
+        $property = Property::find($id);
+
+        $states = State::all();
+
+        return view('TenantSync::sales.properties.show', compact('property', 'states'));
     }
 
     /**
@@ -80,9 +85,17 @@ class PropertyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update($id)
     {
-        //
+        $property = Property::find($id);
+
+        // if(Gate::denies('has-property', $property)) {
+        //     return abort(403, "Thats not yours!");
+        // }
+
+        $property->update(\Request::except('_token'));
+        
+        return redirect()->back();
     }
 
     /**
