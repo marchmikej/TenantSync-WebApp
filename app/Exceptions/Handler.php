@@ -6,6 +6,7 @@ use Exception;
 use OutputInterface;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Session\TokenMismatchException;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
@@ -42,11 +43,12 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        if($e instanceof TokenMismatchException) {
-            Session::regenerateToken();
-
-            return Redirect::to('/');
+        if ($e instanceof TokenMismatchException){
+            //redirect to form an example of how I handle mine
+            return redirect('/')
+                ->withErrors(["You have been idle for too long. Please try again."]);
         }
+
 
         if (\App::runningInConsole()) {
             return $this->renderForConsole((new ConsoleOutput('VERBOSITY_DEBUG')), $e);

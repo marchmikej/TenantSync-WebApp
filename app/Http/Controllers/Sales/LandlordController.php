@@ -43,7 +43,7 @@ class LandlordController extends SalesController {
 
 		\DB::commit();
 
-		return redirect()->action('Sales\PropertyController@create', [$landlord->id]);
+		return redirect('/sales/landlord/' . $landlord->id . '/properties/create');
 	}
 
 	public function show($id)
