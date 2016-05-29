@@ -129,6 +129,11 @@ Route::group(['middleware' => ['auth']], function()
 		Route::resource('maintenance', 'MaintenanceController');
 
 
+		//Landlord report routes
+		Route::get('getreports', 'ReportController@index');
+		Route::get('getreports/overdueusage', 'ReportController@overdueUsage');
+		Route::get('getreports/printdevices', 'ReportController@printMyDevices');
+
 		Route::get('device/all', 'DeviceController@all');
 		Route::post('device/message', 'MessageController@store');
 		Route::resource('device', 'DeviceController');
