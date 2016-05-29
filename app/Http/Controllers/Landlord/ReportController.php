@@ -1,4 +1,4 @@
-<?php namespace App\Http\Controllers;
+<?php namespace App\Http\Controllers\Landlord;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Auth\AuthManager as Auth;
@@ -12,53 +12,65 @@ use TenantSync\Models\User;
 use TenantSync\Mutators\PropertyMutator;
 use Response;
 
-class HomeController extends Controller {
+class ReportController extends Controller {
 
-	public function index(Auth $auth)
+	public function __construct(Request $request)
 	{
-		if($auth->check())
-		{
-			switch($auth->user()->role)
-			{
-				case 'admin':
-					return $this->admin();
-				case 'sales':
-					return $this->sales();
-				case 'landlord':
-					return $this->landlord();
-				case 'manager':
-					return $this->manager();
-			}
+		parent::__construct();
+	}
+
+	public function index()
+	{
+		return view('TenantSync::landlord/reports/index');
+	}
+
+	public function overdueUsage() 
+	{
+		$devices = $this->user->devices;
+		$content="device_id,location,address,city,state,zip,interaction,time\n";
+		//This for loop goes through each of the landlords devices
+        for ($x = 0; $x < count($devices); $x++)
+        {
+            $currentDevice=$devices[$x];
+			$overdueUsage = OverdueUsage::where('device_id', '=', $currentDevice->id)->get();
+			//This for loop goes through each devices overdue usage
+		    for ($y = 0; $y < count($overdueUsage); $y++)
+		    {
+		       	$currentDevice=Device::find($overdueUsage[$y]->device_id);
+	         	$currentType=OverdueType::find($overdueUsage[$y]->overdue_type_id);
+	          	$content = $content . $currentDevice["id"] . "," . $currentDevice["location"] . "," . $currentDevice->property->address . "," . $currentDevice->property->city . "," . $currentDevice->property->state . "," . $currentDevice->property->zip . "," . $currentType->overdue_description . "," . $overdueUsage[$y]->created_at . "\n";
+		    }
 		}
-		return view('auth/login');
-	}
-
-	public function sales()
-	{
-		$landlords = User::where(['role' => 'landlord'])->get();
-		$devices = Device::all();
-		return view('TenantSync::sales.index', compact('landlords', 'devices'));
-	}
-
-	public function landlord()
-	{
-		$manager = $this->user->manager();
 		
-		$devices = $this->user->devices->load(['property', 'alarm']);
-
-		return view('TenantSync::manager.index', compact('devices', 'manager'));
+       	return Response::make($content, '200', array(
+    		'Content-Type' => 'application/octet-stream',
+    		'Content-Disposition' => 'attachment; filename="TenantSyncOverdueUsage.csv"'
+		));
 	}
 
-	public function manager()
+	public function printMyDevices()
 	{
-		$manager = $this->user->manager;
+		$devices = $this->user->devices;
+		$content ="device_id,serial,location,property,city,state,zip,rent_amount,late_fee,rent_owed\n";
 
-		return view('TenantSync::manager.index', compact('manager'));
+		if(count($devices) > 0) 
+        {
+            for ($y = 0; $y < count($devices); $y++)
+            {
+            	$currentDevice=$devices[$y];
+            	$content = $content . $currentDevice["id"] . "," . $currentDevice["serial"] . "," . $currentDevice["location"] . "," . $currentDevice->property->address . "," . $currentDevice->property->city . "," . $currentDevice->property->state . "," . $currentDevice->property->zip . "," . $currentDevice["rent_amount"] . "," . $currentDevice["late_fee"] . "," . $currentDevice->rentOwed() . "\n";
+            }
+        }
+
+		// return an string as a file to the user
+		return Response::make($content, '200', array(
+    		'Content-Type' => 'application/octet-stream',
+    		'Content-Disposition' => 'attachment; filename="TenantSyncDevices.csv"'
+		)); 
 	}
 
 	public function test()
     {
-    	return "test";
     	/*
     	$device=Device::find(73);
     	
@@ -67,7 +79,7 @@ class HomeController extends Controller {
 				'device_id' => $device->id, 
 				'overdue_types_id' => 5
 			]);
-	    } 
+	    } */
 	    $overdueUsage = OverdueUsage::where('device_id', '=', 73)->get();
 	    //$overdueType = OverdueType::find($overdueType->overdue_types_id);
 	    echo "device_id,location,address,city,state,zip,interaction,time\n</br>";
@@ -78,8 +90,11 @@ class HomeController extends Controller {
           	$content = $currentDevice["id"] . "," . $currentDevice["location"] . "," . $currentDevice->property->address . "," . $currentDevice->property->city . "," . $currentDevice->property->state . "," . $currentDevice->property->zip . "," . $currentType->overdue_description . "," . $overdueUsage[$y]->created_at . "\n";
           	echo $content . "</br>";
         }
-    	return 'done';
-
+    	// return an string as a file to the user
+		return Response::make($content, '200', array(
+    		'Content-Type' => 'application/octet-stream',
+    		'Content-Disposition' => 'attachment; filename="TenantSyncDevices.csv"'
+		));
     	/*  This is for dowloading a csv file 
 		$devices = Device::all();
 		$content ="device_id,location,property,city,state,zip,rent_amount,late_fee,rent_owed\n";

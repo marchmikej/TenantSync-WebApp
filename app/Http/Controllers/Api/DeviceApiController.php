@@ -3,6 +3,7 @@
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use TenantSync\Models\Device;
+use TenantSync\Models\OverdueUsage;
 use TenantSync\Models\Message;
 use App\Events\DeviceMadeUpdate;
 use App\Events\DeviceUpdateMaintenance;
@@ -28,6 +29,13 @@ class DeviceApiController extends Controller {
 
 	public function getMaintenanceRequests()
 	{
+	   	if($this->device->alarm_id > 0) {
+	    	OverdueUsage::create([
+				'device_id' => $this->device->id, 
+				'overdue_type_id' => 4
+			]);
+	    }
+
 		$maintenanceRequests = $this->device->maintenanceRequests->filter(function($maintenanceRequest) {
 			return $maintenanceRequest->isOpen();
 		});
@@ -54,6 +62,13 @@ class DeviceApiController extends Controller {
 	{	
 		$maintenanceRequest = $this->device->maintenanceRequests->find($id);
 
+	   	if($this->device->alarm_id > 0) {
+	    	OverdueUsage::create([
+				'device_id' => $this->device->id, 
+				'overdue_type_id' => 3
+			]);
+	    }
+
 		if(! $maintenanceRequest) {
 			return response()->json(['error' => 'Maintenance request doesn\'t exists']);
 		}
@@ -67,6 +82,12 @@ class DeviceApiController extends Controller {
 
 	public function storeMaintenanceRequest(MaintenanceRequest $maintenanceRequest)
 	{
+	   	if($this->device->alarm_id > 0) {
+	    	OverdueUsage::create([
+				'device_id' => $this->device->id, 
+				'overdue_type_id' => 2
+			]);
+	    }
 		// Prevent duplication from repeating requests
 		if($this->device->maintenanceRequests()->where(['update_key' => $this->input['update_key']])->exists()) {
 			return response()->json(['Maintenance request successfully created.']);
@@ -104,6 +125,13 @@ class DeviceApiController extends Controller {
 
 	public function getMessages()
 	{
+	   	if($this->device->alarm_id > 0) {
+	    	OverdueUsage::create([
+				'device_id' => $this->device->id, 
+				'overdue_type_id' => 1
+			]);
+	    }
+
 		if($this->device->messages) {
 			$messages = $this->device->messages()->orderBy('created_at','asc')->get(['body', 'from_device', 'created_at']);
 
@@ -131,6 +159,13 @@ class DeviceApiController extends Controller {
 
 	public function storeMessage()
 	{
+	   	if($this->device->alarm_id > 0) {
+	    	OverdueUsage::create([
+				'device_id' => $this->device->id, 
+				'overdue_type_id' => 5
+			]);
+	    }
+
 		// Prevent duplication from repeating requests
 		if($this->device->messages()->where(['update_key' => $this->input['update_key']])->exists()) {
 			return response()->json(['Message successfully sent.']);
@@ -160,6 +195,12 @@ class DeviceApiController extends Controller {
 
 	public function rentStatus()
 	{
+	   	if($this->device->alarm_id > 0) {
+	    	OverdueUsage::create([
+				'device_id' => $this->device->id, 
+				'overdue_type_id' => 7
+			]);
+	    }
 		return response()->json([
 			'rent_amount' => $this->device->rent_amount, 
 			'balance_due' => $this->device->balance()
@@ -168,6 +209,12 @@ class DeviceApiController extends Controller {
 
 	public function payRent()
 	{ 
+	   	if($this->device->alarm_id > 0) {
+	    	OverdueUsage::create([
+				'device_id' => $this->device->id, 
+				'overdue_type_id' => 6
+			]);
+	    }
 		// Transactions api url https://www.usaepay.com/gate.php
 
 		\DB::beginTransaction();
