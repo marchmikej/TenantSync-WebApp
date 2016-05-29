@@ -242,11 +242,11 @@ var vue = new Vue({
 		},
 
 		createDevice: function($e) {
-			if(! this.payment.id) {
-				swal('Uh Oh.', 'Please select a payment method.');
+			// if(! this.payment.id) {
+			// 	swal('Uh Oh.', 'Please select a payment method.');
 
-				return false;
-			}
+			// 	return false;
+			// }
 			
 			document.querySelector('.device-form').submit();
 		},
