@@ -1,8 +1,10 @@
 <?php
 
 return [
+
+	'testSoapUrl' => 'https://sandbox.usaepay.com/soap/gate/0AE595C1/usaepay.wsdl',
 	
-	'soapUrl' => 'https://sandbox.usaepay.com/soap/gate/0AE595C1/usaepay.wsdl',
+	'soapUrl' => 'https://www.usaepay.com/soap/gate/0AE595C1/usaepay.wsdl',
 
 	'sourceKey' => '_OAo2776ws1599T3Y5yLvX65d4j5G0y0',
 	
