@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'from' => ['address' => 'tenantSync@gmail.com', 'name' => 'TenantSync'],
+    'from' => ['address' => 'admin@tenantsync.com', 'name' => 'TenantSync'],
 
     /*
     |--------------------------------------------------------------------------
