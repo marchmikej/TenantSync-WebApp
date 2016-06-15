@@ -53,7 +53,7 @@ class SendUserMaintenanceNotification {
                 if ($currentManager->email_notifications && count($shouldNotify) > 0)
                 {
                     $data = array("maintenanceRequestId"=>$event->maintenanceRequestId,"deviceId"=>$event->deviceId, "email"=>$currentManager->email(), "name"=>$currentManager->last_name, "message"=>$event->message, "property"=>$device->address);
-                    if($currentManager->position == "Landlord") {
+                    if($currentManager->user_id == $device->user_id) {
                         Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/landlord/maintenance/" . $data['maintenanceRequestId'],  function ($message) use ($data) {
                             $message->to($data['email'],$data['name'])
                                 ->subject('Maintenance update from ' . $data['property']);
@@ -77,7 +77,7 @@ class SendUserMaintenanceNotification {
                     $users = DB::table('cell_carriers')->where('id', '=', $currentManager->cell_carrier_id)->get();
                     $phone = $currentManager->phone . "@" . $users[0]->email_suffix;
                     $data = array("maintenanceRequestId"=>$event->maintenanceRequestId,"deviceId"=>$event->deviceId, "email"=>$phone, "name"=>$currentManager->last_name, "message"=>$event->message, "property"=>$device->address);
-                    if($currentManager->position == "Landlord") {
+                    if($currentManager->user_id == $device->user_id) {
                         Mail::raw($data['message'] . "\n" . env('URL_BASE', 'https://portal.tenantsync.com') . "/landlord/maintenance/" . $data['maintenanceRequestId'],  function ($message) use ($data) {
                             $message->to($data['email'],$data['name'])
                                 ->subject('Maintenance update from ' . $data['property']);
