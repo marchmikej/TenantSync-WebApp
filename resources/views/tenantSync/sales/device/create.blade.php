@@ -23,6 +23,13 @@
 				</div>
 
 				<div class="form-group">
+					<label class="control-label col-sm-3" for="token">Token</label>
+					<div class="col-sm-9">
+						<input class="form-control" type="text" name="token" placeholder="Device Token"/>
+					</div>
+				</div>
+
+				<div class="form-group">
 					<label class="control-label col-sm-3" for="location">Location</label>
 					<div class="col-sm-9">
 						<input class="form-control" type="text" name="location" placeholder="Location of the device"/>

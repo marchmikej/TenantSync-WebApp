@@ -41,7 +41,7 @@ class DeviceController extends SalesController {
 
 		\DB::transaction(function() use ($id, $property) {
 			$data = array_merge($this->input, [
-				'token' => \Token::create(),
+				// 'token' => \Token::create(),
 				'rent_due' => Carbon::parse('first day of next month'),
 				'monthly_cost' => 10,
 				'alarm_id' => 0,

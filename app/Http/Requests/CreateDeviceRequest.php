@@ -29,6 +29,7 @@ class CreateDeviceRequest extends Request
             'serial' => 'required',
             'location' => 'required',
             'rent_amount' => 'required',
+            'token' => 'required',
             //'rent_due' => 'required',
             'late_fee' => 'required',
             'grace_period' => 'required',

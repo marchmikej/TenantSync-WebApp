@@ -29,7 +29,6 @@
 		<div class="col-sm-12">
 			<h4 class="card-header">
 				Property Info
-				<button class=" btn btn-clear p-y-0"><a href="/sales/properties/{{ $property->id }}/devices/create"><h3 class="m-a-0 text-primary icon icon-plus"></h3></a></button>
 			</h4>
 			<form :action="'/' + user().role + '/properties/{{$property->id}}'" method="Post" class="form form-horizontal">
 				<input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -141,6 +140,10 @@
 
 	<div class="card row">
 		<div class="col-sm-12">
+			<h4 class="card-header">
+				Devices
+				<button class=" btn btn-clear p-y-0"><a href="/sales/properties/{{ $property->id }}/device/create"><h3 class="m-a-0 text-primary icon icon-plus"></h3></a></button>
+			</h4>
 			<table class="devices-table table">
 				<thead>
 					<th>Address</th>
