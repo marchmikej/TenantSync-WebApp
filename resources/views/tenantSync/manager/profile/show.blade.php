@@ -19,9 +19,9 @@
 			</div>
 
 			<button class="btn btn-primary col-sm-3 col-sm-offset-9">Save</button>
-
 		</form>
 	</div>
+
 	<div class="col-sm-6">
 		<div>
 			<div class="card-header">
@@ -55,7 +55,9 @@
 			</form>
 		</div>
 	</div>
+</div>
 
+<div class="row card">
 	@if($manager->isLandlord())
 	<div class="col-sm-6">
 		<div class="card-header">
@@ -149,42 +151,26 @@
 			<button class="btn btn-primary col-sm-3 col-sm-offset-9 form-control">Save</button>
 		</form>	
 	</div>
+	@endif
 
-	<!-- <div class="col-sm-6">
-		<div>
-			<div class="card-header">
-					<h4>Password Reset</h4>
+	@if(!$manager->isLandlord())
+	<div class="col-sm-12">
+		<form action="/manager/{{ $manager->id }}" method="POST" class="form form-horizontal">
+			<input type="hidden" name="method" value="PATCH">
+			<input type="hidden" name="_token" value="{{ csrf_token() }}">
+			<div class="form-group">
+				<label class="control-label col-sm-3" for="phone">Phone Number</label>
+				<div class="col-sm-9">
+					<input class="form-control" type="text" name="phone" placeholder="Phone Number" value="{{ $manager->phone }}"/>
 				</div>
-			<form class="form form-horizontal" action="/landlord/profile/password" method="POST">
-				<input type="hidden" name="_token" value="{{ csrf_token() }}">
-				
-				<div class="form-group">
-					<label class="control-label col-sm-3" for="current_password">Current Password</label>
-					<div class="col-sm-9">
-						<input class="form-control" type="password" name="current_password" placeholder="Current Password" value="{{ old('current_password') }}"/>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label col-sm-3" for="password">New Password</label>
-					<div class="col-sm-9">
-						<input class="form-control" type="password" name="password" placeholder="Password" value="{{ old('password') }}"/>
-					</div>
-				</div>
-
-				<div class="form-group">
-					<label class="control-label col-sm-3" for="password_confirmation">Confirm</label>
-					<div class="col-sm-9">
-						<input class="form-control" type="password" name="password_confirmation" placeholder="Confirm" value="{{ old('password_confirmation') }}"/>
-					</div>
-				</div>
-
-				<button class="btn btn-primary col-sm-3 col-sm-offset-9 form-control">Submit</button>
-
-			</form>
-		</div> -->
+			</div>
+		
+			<button class="btn btn-primary col-sm-3 col-sm-offset-9">Save</button>
+		</form>
 	</div>
 	@endif
 </div>
+
 
 @endsection
 
