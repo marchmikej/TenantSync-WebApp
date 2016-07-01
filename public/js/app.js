@@ -1610,7 +1610,7 @@ Vue.component('transactions-table', {
 		'default': function _default() {
 			return {
 				from: moment().subtract(1, 'month').format(dateString),
-				to: moment().add(1, 'year').format(dateString)
+				to: moment().format(dateString)
 			};
 		}
 	}, {
