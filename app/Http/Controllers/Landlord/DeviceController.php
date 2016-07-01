@@ -11,7 +11,6 @@ class DeviceController extends Controller {
 
 	public function __construct()
 	{
-
 		parent::__construct();
 	}
 
@@ -58,6 +57,8 @@ class DeviceController extends Controller {
 	public function show($id)
 	{
 		$device = Device::find($id);
+		
+		$device = DeviceMutator::set('balance', $device);
 
 		if(Gate::denies('owned-by-user', $device)) {
 			return abort(403, "Thats not yours!");

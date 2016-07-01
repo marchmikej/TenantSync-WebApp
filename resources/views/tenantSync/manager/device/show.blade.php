@@ -26,8 +26,11 @@
 
 	<div class="row" v-cloak>
 		<h4 class="col-sm-3 text-primary p-l-0 m-b-0"><a :href="'/' + user().role + '/properties/' + device.property_id">{{ $device->property->address . ', ' . $device->property->city }}</a></h4>
-		<button v-if="device.alarm_id" @click="turnAlarmOff()" class="btn btn-danger col-sm-3 col-sm-offset-6 m-b">Turn Off Alarm</button>
-		<button v-if="! device.alarm_id" @click="turnAlarmOn()" class="btn btn-success col-sm-3 col-sm-offset-6 m-b">Turn On Alarm</button>
+
+		<h2 class="col-sm-6 text-danger text-right">@{{ money(device.balance) }}</h2>
+
+		<button v-if="device.alarm_id" @click="turnAlarmOff()" class="btn btn-danger col-sm-3 m-b">Turn Off Alarm</button>
+		<button v-if="! device.alarm_id" @click="turnAlarmOn()" class="btn btn-success col-sm-3 m-b">Turn On Alarm</button>
 
 		<div class="col-sm-6 p-r-md">
 			<div class="card row">

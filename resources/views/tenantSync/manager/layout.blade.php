@@ -4,6 +4,7 @@
 @section('topmenu')
 
 		<!-- <ul class="nav navbar-nav navbar-right"> -->
+			<!-- <li><a href="/">Dashboard</a></li> -->
 			@if(Auth::user()->role ==  'landlord')
 			<li><a href="/{{Auth::user()->role}}/properties">Portfolio</a></li>
 			@endif
