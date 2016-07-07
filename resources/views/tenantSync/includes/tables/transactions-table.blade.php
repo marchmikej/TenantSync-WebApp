@@ -1,13 +1,25 @@
 <div>
 	<div class="card row">
 		<div class="col-sm-12">
-			<h3 class="card-header">
-				Transactions
-				<button @click="generateModal()" class=" btn btn-clear text-primary p-y-0"><h3 class="m-a-0 icon icon-plus"></h3></button>
-				<input type="text" class="col-sm-2 col-xs-12 pull-right form-control" placeholder="search..." v-model='search'>
-				<input type="date" class="col-sm-2 col-xs-12 pull-right form-control" v-model="dates.from">
-			</h3>
-	
+			<div class="card-header">
+				<h3>
+					Transactions
+					<button @click="generateModal()" class=" btn btn-clear text-primary p-y-0"><h3 class="m-a-0 icon icon-plus"></h3></button>
+				</h3>
+			
+					<input type="text" class="col-sm-2 col-xs-12 pull-right form-control" placeholder="search..." v-model='search'>
+					 
+					<input type="date" class="col-sm-2 col-xs-12 pull-right form-control" v-model="dates.to">
+					<span class="pull-right floated-label">
+					 	To
+					</span>
+					
+					<input @click="toggleInput()" id="test" type="date" class="col-sm-2 col-xs-12 pull-right form-control" v-model="dates.from">
+					<span class="pull-right floated-label">
+						From
+					</span>
+				
+			</div>
 			<table-headers :columns="columns" :sort-key.sync="sortKey" :reverse.sync="reverse"></table-headers>
 	
 			<div class="table-body table-striped">
@@ -18,7 +30,7 @@
 					<div class="col-sm-1">@{{ (transaction.date.substring(5) + '/' + transaction.date.substring(2, 4)).replace('-', '/') }}</div>
 					<div class="col-sm-1">
 						<button 
-							@click="generateModal( transaction.id )" 
+							@click="generateModal( transaction.id )"
 							class="btn btn-clear p-t-0 p-r-0"
 						><span class="text-primary icon icon-edit"></span></button>
 						<button 

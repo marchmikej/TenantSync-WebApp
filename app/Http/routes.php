@@ -21,7 +21,7 @@ Route::post('device-api/loginapp', 'Api\PhoneAppController@isUser');
 Route::post('device-api/verifyupgrade', 'Api\DeviceApiController@verifyUpgrade');
 
 // Password reset Routes
-Route::get('password/reset/{token}', '\App\Http\Controllers\Auth\PasswordController@getReset');
+Route::get('/rpasswordeset/{token}', '\App\Http\Controllers\Auth\PasswordController@getReset');
 Route::post('password/reset', '\App\Http\Controllers\Auth\PasswordController@postReset');
 Route::get('password/email', '\App\Http\Controllers\Auth\PasswordController@getEmail');
 Route::post('password/email', '\App\Http\Controllers\Auth\PasswordController@postEmail');
@@ -173,6 +173,8 @@ Route::group(['middleware' => ['auth']], function()
 	Route::group(['prefix' => 'manager', 'namespace' => 'Manager', 'middleware' => ['manager']], function()
 	{
 		Route::get('/', 'DeviceController@index');
+		Route::post('{id}', 'ManagerController@update');
+		
 		Route::get('calculator', '\App\Http\Controllers\Manager\CalculatorController@index');
 		Route::get('calculator/estimate_roi', '\App\Http\Manager\Landlord\CalculatorController@estimateRoi');
 		Route::get('calendar', 'CalendarController@index');
@@ -206,7 +208,7 @@ Route::group(['middleware' => ['auth']], function()
 
 		Route::get('transaction/all', 'TransactionController@all');
 		Route::patch('transaction/{id}','TransactionController@update');
-		Route::delete('{id}','TransactionController@destroy');
+		Route::delete('transaction/{id}','TransactionController@destroy');
 		Route::resource('transaction', 'TransactionController');
 	});
 });

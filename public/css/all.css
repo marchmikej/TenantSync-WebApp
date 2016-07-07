@@ -12880,6 +12880,7 @@ body {
 .card-header h3,
 .card-header h4,
 .card-header h5 {
+  display: inline-block;
   font-weight: 300;
   font-size: 1.9em;
 }
@@ -12888,6 +12889,7 @@ h2.card-header,
 h3.card-header,
 h4.card-header,
 h5.card-header {
+  display: inline-block;
   font-weight: 300;
   font-size: 1.9em;
 }
@@ -12903,6 +12905,10 @@ h5.card-header {
 
 .top-nav .nav-dropdown {
   padding-left: 0px;
+}
+
+.floated-label {
+  padding: 8px;
 }
 
 .b-r {

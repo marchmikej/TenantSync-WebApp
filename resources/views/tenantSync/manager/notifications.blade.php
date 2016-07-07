@@ -11,7 +11,7 @@
 				@click="toggleNotificationMethod($event)" 
 				data-method="emailNotifications" 
 				class="col-sm-2 btn" 
-				:class="[emailNotifications ? 'btn-success' : 'btn-danger']"
+				:class="[emailNotifications ? 'btn-success' : 'btn-muted']"
 			>
 				Email
 				</button>
@@ -20,7 +20,7 @@
 				@click="toggleNotificationMethod($event)" 
 				data-method="textNotifications" 
 				class="col-sm-2 btn m-l" 
-				:class="[textNotifications ? 'btn-success' : 'btn-danger']"
+				:class="[textNotifications ? 'btn-success' : 'btn-muted']"
 			>
 			Text
 			</button>

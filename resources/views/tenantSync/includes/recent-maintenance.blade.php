@@ -15,16 +15,31 @@
 					<div class="col-sm-2">Date</div>
 				</div>
 				<div class="table-body table-striped scrollable row">
-					<div v-if="isInCurrentPage($index)" v-for="maintenance in maintenanceRequests | orderBy 'created_at' -1" class="table-row col-sm-12">
+					<div 
+						v-if="isInCurrentPage($index)" 
+						v-for="maintenance in maintenanceRequests | orderBy 'created_at' -1" 
+						class="table-row col-sm-12"
+					>
 						<div class="col-sm-4">
-							<a :href="'/' + user().role + '/device/' + maintenance.device.id">@{{ maintenance.address }}</a>
+							<a 
+								:class="{'text-muted': maintenance.status == 'closed'}"
+								:href="'/' + user().role + '/device/' + maintenance.device.id"
+							>
+								@{{ maintenance.address }}
+							</a>
 						</div>
 						<div class="col-sm-6">
-							<a class="text-info" :href="'/'+ user().role +'/maintenance/'+ maintenance.id">
+							<a 
+								:class="[maintenance.status == 'closed' ? 'text-muted' : 'text-info']"
+								:href="'/'+ user().role +'/maintenance/'+ maintenance.id"
+							>
 								@{{ maintenance.request }}
 							</a>
 						</div>
-						<div class="col-sm-2">
+						<div
+							class="col-sm-2"
+							:class="{'text-muted': maintenance.status == 'closed'}"
+						>
 							@{{ humanDate(maintenance.created_at) }}
 						</div>
 					</div>
