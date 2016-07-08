@@ -4,6 +4,7 @@ use Gate;
 use App\Http\Requests;
 use TenantSync\Models\Device;
 use TenantSync\Models\Manager;
+use TenantSync\Mutators\DeviceMutator;
 use App\Http\Controllers\Manager\ManagerBaseController;
 
 
@@ -51,6 +52,8 @@ class DeviceController extends ManagerBaseController {
 	public function show($id)
 	{
 		$device = Device::find($id);
+
+		$device = DeviceMutator::set('balance', $device);
 
 		if(Gate::denies('has-device', $device)) {
 			return abort(403, "Thats not yours!");
