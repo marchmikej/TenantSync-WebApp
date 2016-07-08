@@ -14,7 +14,7 @@
 					 	To
 					</span>
 					
-					<input @click="toggleInput()" id="test" type="date" class="col-sm-2 col-xs-12 pull-right form-control" v-model="dates.from">
+					<input id="test" type="date" class="col-sm-2 col-xs-12 pull-right form-control" v-model="dates.from">
 					<span class="pull-right floated-label">
 						From
 					</span>

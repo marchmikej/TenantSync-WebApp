@@ -58,6 +58,8 @@ class UpdateDeviceAlarms extends Command implements SelfHandling
                     continue;
                 }
 
+                // If it is past the grace period and there is a balance
+                // the device is deliquent
                 if(strtotime($latestBill->rent_month. ' + ' .$device->grace_period. ' days') < time()) {
                     array_push($deliquentDevices, $device->id);
                 }

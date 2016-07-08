@@ -102,7 +102,7 @@
 								</a>
 							</div>		
 							<div class="col-sm-3 col-sm-offset-3 text-danger">
-								@{{ money(device.balance_due) }}
+								@{{ money(device.rent_owed) }}
 							</div>		
 						</div>
 					</div>
@@ -197,7 +197,11 @@ var vue = new Vue({
 
 	methods: {
 		fetchDevices: function() {
-			this.$http.get('/api/devices')
+			var data = {
+				set: ['rent_owed'],
+			};
+
+			this.$http.get('/api/devices', data)
 				.success(function(devices) {
 					this.devices = devices;
 				});
@@ -271,50 +275,59 @@ var vue = new Vue({
 		},
 
 		deliquentDevices: function() {
-			var deviceListWithDuplicates = _.pluck(this.rentBills, 'device');
-
-			var devices = [];
-
-			_.each(deviceListWithDuplicates, function(device) {
-				if(_.find(devices, {'id': device.id})) {
-					return false;
-				}
-				return devices.push(device);
+			return _.filter(this.devices, function(device) {
+				return device.rent_owed > 0;
 			});
+			 
+		
+			// var deviceListWithDuplicates = _.pluck(this.rentBills, 'device');
 
-			_.each(devices, function(device) {
-				var rentBills = _.where(this.rentBills, {'device_id': device.id});
+			// var devices = [];
 
-				var rentPayments = _.where(this.paidRentTransactions(), {'payable_id': device.id});
+			// _.each(deviceListWithDuplicates, function(device) {
+			// 	if(_.find(devices, {'id': device.id})) {
+			// 		return false;
+			// 	}
+			// 	return devices.push(device);
+			// });
 
-				var rentBillTotal = _.reduce(rentBills, function(initial, bill) {
-					return initial + Number(bill.bill_amount);
-				}, 0);
+			// _.each(devices, function(device) {
+			// 	var rentBills = _.where(this.rentBills, {'device_id': device.id});
 
-				var rentPaymentTotal = _.reduce(rentPayments, function(initial, payment) {
-					return initial + Number(payment.amount);
-				}, 0);
+			// 	var rentPayments = _.where(this.paidRentTransactions(), {'payable_id': device.id});
 
-				if(rentBillTotal > rentPaymentTotal) {
-					device.balance_due = rentBillTotal - rentPaymentTotal;
-				}
-			}.bind(this));
+			// 	var rentBillTotal = _.reduce(rentBills, function(initial, bill) {
+			// 		return initial + Number(bill.bill_amount);
+			// 	}, 0);
 
-			devices = _.filter(devices, function(device) {
-				return device.balance_due;
-			});
+			// 	var rentPaymentTotal = _.reduce(rentPayments, function(initial, payment) {
+			// 		return initial + Number(payment.amount);
+			// 	}, 0);
 
-			return devices;
+			// 	if(rentBillTotal > rentPaymentTotal) {
+			// 		device.balance_due = rentBillTotal - rentPaymentTotal;
+			// 	}
+			// }.bind(this));
+
+			// devices = _.filter(devices, function(device) {
+			// 	return device.balance_due;
+			// });
+
+			// return devices;
 		},
 
 		deliquentRent: function() {
-			var totalBills = _.reduce(this.rentBills, function(initial, bill) {
-				return initial + Number(bill.bill_amount);
+			return _.reduce(this.deliquentDevices(), function(carry, device) {
+				return carry + device.rent_owed;
 			}, 0);
+			
+			// var totalBills = _.reduce(this.rentBills, function(initial, bill) {
+			// 	return initial + Number(bill.bill_amount);
+			// }, 0);
 
-			var deliquentRent = totalBills - this.paidRent();
+			// var deliquentRent = totalBills - this.paidRent();
 
-			return deliquentRent > 0 ? deliquentRent : 0;
+			// return deliquentRent > 0 ? deliquentRent : 0;
 		},
 
 		vacantRentBills: function() {
