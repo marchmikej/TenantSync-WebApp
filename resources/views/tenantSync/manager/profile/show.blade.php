@@ -87,7 +87,7 @@
 			<div class="form-group">
 				<label class="control-label col-sm-3" for="phone">Phone</label>
 				<div class="col-sm-9">
-					<input class="form-control" type="text" name="phone" placeholder="Phone" value="{{ $landlord->profile->phone }}"/>
+					<input class="form-control" type="text" name="phone" placeholder="Phone" value="{{ $landlord->profile->phone }}" maxlength="10"/>
 				</div>
 			</div>
 
@@ -161,7 +161,7 @@
 			<div class="form-group">
 				<label class="control-label col-sm-3" for="phone">Phone Number</label>
 				<div class="col-sm-9">
-					<input class="form-control" type="text" name="phone" placeholder="Phone Number" value="{{ $manager->phone }}"/>
+					<input class="form-control" type="text" name="phone" placeholder="Phone Number" value="{{ $manager->phone }}" maxlength="10"/>
 				</div>
 			</div>
 		
