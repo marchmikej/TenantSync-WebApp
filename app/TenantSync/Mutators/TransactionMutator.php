@@ -20,7 +20,7 @@ class TransactionMutator extends ModelMutator {
 		switch($transaction->payable_type) {
 			case 'TenantSync\\Models\\Device': 
 				$device = Device::find($transaction->payable_id);
-				return $device->property->address . ', ' . $device->location;
+				return $device->address;
 			case 'TenantSync\\Models\\Property':
 				return Property::find($transaction->payable_id)->address;
 			default:
