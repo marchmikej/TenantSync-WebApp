@@ -51,9 +51,7 @@ class LandlordTest extends TestCase
      **/
     public function it_creates_new_landlord()
     {
-        $this->it_logs_in_as('sales');
-
-        $user = \Auth::user();
+        $user = $this->it_logs_in_as('sales');
 
         $password = str_random(8);
 

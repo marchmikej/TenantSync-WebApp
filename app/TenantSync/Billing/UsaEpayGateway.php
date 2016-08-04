@@ -42,7 +42,7 @@ class UsaEpayGateway {
 		$clear = $sourceKey . $seed . $pin;
 		$hash = sha1($clear);
 
-		$ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '108.17.11.34';//exec('curl ifconfig.me');
+		$ip = isset($_SERVER['REMOTE_HOST']) ? $_SERVER['REMOTE_HOST'] : gethostbyaddr($_SERVER["REMOTE_ADDR"]);// exec('curl ifconfig.me');
 
 		$token = [
 			'SourceKey' => $sourceKey,

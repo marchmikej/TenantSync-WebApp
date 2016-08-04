@@ -102,8 +102,8 @@ $factory->define($modelPath.Message::class, function($faker) use ($modelPath) {
 $factory->define($modelPath.Gateway::class, function($faker) use ($modelPath) {
 
 	return [
-		'key' => '_OAo2776ws1599T3Y5yLvX65d4j5G0y0', 
-		'pin' => '1234',
+		'key' => '_h896eYUZjU757UEUR5qh31eVxjF82h6', 
+		'pin' => '4444',
 	];
 });
 
