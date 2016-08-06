@@ -198,4 +198,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	{
 		return $this->gateway->pin;
 	}
+
+	public function getAuthIdentifierName()
+	{
+		return 'id';
+	}
 }
