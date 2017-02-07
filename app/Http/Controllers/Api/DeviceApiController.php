@@ -244,7 +244,7 @@ class DeviceApiController extends Controller {
 
 			\DB::commit();
 
-			\Event::fire(new DeviceMadePayment($this->device->id));
+			\Event::fire(new DeviceMadePayment($this->device->id), $amount);
 		}
 		else {
 			\DB::rollback();

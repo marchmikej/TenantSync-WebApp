@@ -19,15 +19,15 @@ class DeviceMadePayment extends Event {
 	 *
 	 * @return void
 	 */
-	public function __construct($deviceId)
+    public function __construct($deviceId, $amount)
     {
-    	$deviceData = \DB::table('devices')
-        	->where('id', '=', $deviceId)
-        	->get();
+        $deviceData = \DB::table('devices')
+            ->where('id', '=', $deviceId)
+            ->get();
         $this->propertyId = $deviceData[0]->property_id;
         $this->deviceName = $deviceData[0]->location;
         $this->deviceId = $deviceId;
-        $this->message = "Device made payment ";
+        $this->message = "Device made payment for " . $amount;
         $this->deviceRoute = $deviceData[0]->routing_id;
         $this->urlSend = "landlord/" . $deviceId;
     }
