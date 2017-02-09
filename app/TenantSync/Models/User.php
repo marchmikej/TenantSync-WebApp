@@ -1,14 +1,15 @@
 <?php namespace TenantSync\Models;
 
+use App\SessionHistory;
 use TenantSync\Billing\Billable;
+use TenantSync\Auth\AuthorizesUser;
 use Illuminate\Auth\Authenticatable;
 use TenantSync\Auth\UserRelationships;
-use TenantSync\Auth\AuthorizesUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Foundation\Auth\Access\Authorizable;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, AuthorizableContract {
@@ -202,5 +203,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	public function getAuthIdentifierName()
 	{
 		return 'id';
+	}
+
+	public function recordLogin()
+	{
+		SessionHistory::recordLogin($this);
+	}
+
+	public function recordLogout()
+	{
+		SessionHistory::recordLogout($this);
 	}
 }

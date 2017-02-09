@@ -91,6 +91,10 @@ class MaintenanceController extends Controller {
 			return abort(403, "Thats not yours!");
 		}
 
+		if (! $maintenanceRequest->appointment_date) {
+			$maintenanceRequest->first_response_at = Carbon::now();
+		}
+
 		$fields = [
 			'cost',
 			'status',
@@ -121,6 +125,8 @@ class MaintenanceController extends Controller {
 		if(isset($this->input['cost'])) {
 			$maintenanceRequest->transaction->update(['amount' => abs($this->input['cost']) * -1, 'date' => date('Y-m-d', strtotime($maintenanceRequest->appointment_date))]);
 		}
+
+		$maintenanceRequest->increment('times_scheduled');
 
 		\Event::fire(new LandlordRespondedToMaintenance($maintenanceRequest->device->id, 'Maintenance response received.'));
 

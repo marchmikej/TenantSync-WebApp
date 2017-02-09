@@ -1,5 +1,6 @@
 <?php namespace TenantSync\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class MaintenanceRequest extends Model {
@@ -26,6 +27,10 @@ class MaintenanceRequest extends Model {
 		'update_key',
 		'appointment_date',
 		'transaction_id',
+		'first_response_at',
+		'times_scheduled',
+		'closed_at',
+		'scheduled_at',
 	];
 
 	/**
@@ -65,6 +70,19 @@ class MaintenanceRequest extends Model {
 	public function setAppointmentDateAttribute($date)
 	{
 		$this->attributes['appointment_date'] = date('Y-m-d H:i:s', strtotime($date));
+	}
+
+	public function setStatusAttribute($value)
+	{
+		if ($value == 'closed') {
+			$this->fill(['closed_at' => Carbon::now()])->save();
+		}
+
+		if ($value == 'scheduled') {
+			$this->fill(['scheduled_at' => Carbon::now()])->save();
+		}
+
+		return $value;
 	}
 
 	public function cost()

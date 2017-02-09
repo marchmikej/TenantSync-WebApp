@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use Gate;
+use Carbon\Carbon;
 use App\Events\Event;
 use TenantSync\Models\Device;
 use TenantSync\Models\Transaction;
@@ -69,6 +70,14 @@ class MaintenanceController extends Controller {
 			'appointment_date',
 		];
 
+		if (! $maintenanceRequest->appointment_date) {
+			$maintenanceRequest->first_response_at = Carbon::now();
+		}
+
+		if ($this->input['status']) {
+			# code...
+		}
+
 		foreach($fields as $field) {
 			if(isset($this->input[$field])) {
 				$maintenanceRequest->$field = $this->input[$field];
@@ -93,6 +102,8 @@ class MaintenanceController extends Controller {
 		{
 			$maintenanceRequest->transaction->update(['amount' => abs($this->input['cost']) * -1, 'date' => date('Y-m-d', strtotime($maintenanceRequest->appointment_date))]);
 		}
+
+		$maintenanceRequest->increment('times_scheduled');
 
 		\Event::fire(new LandlordRespondedToMaintenance($maintenanceRequest->device->id, 'Maintenance response received.'));
 		$maintenanceRequest->save();

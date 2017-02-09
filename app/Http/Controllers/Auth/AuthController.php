@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use Validator;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 
@@ -20,7 +21,10 @@ class AuthController extends Controller
     |
     */
 
-    use AuthenticatesAndRegistersUsers;
+    use AuthenticatesAndRegistersUsers {
+        login as coreLogin;
+        logout as coreLogout;
+    }
 
     /**
      * Create a new authentication controller instance.
@@ -60,5 +64,23 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+    }
+
+    public function login(Request $request)
+    {
+        $response = $this->coreLogin($request);
+
+        if (\Auth::check()) {
+            \Auth::user()->recordLogin();
+        }
+
+        return $response;
+    }
+
+    public function logout()
+    {
+        \Auth::user()->recordLogout();
+
+        return $this->coreLogout();
     }
 }
