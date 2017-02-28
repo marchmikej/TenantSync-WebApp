@@ -6,6 +6,7 @@ use TenantSync\Auth\AuthorizesUser;
 use Illuminate\Auth\Authenticatable;
 use TenantSync\Auth\UserRelationships;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -14,7 +15,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, AuthorizableContract {
 
-	use Authenticatable, CanResetPassword, Authorizable;
+	use Authenticatable, CanResetPassword, Authorizable, Notifiable;
 
 	/**
 	 * Application's Traits (Separation of various types of methods)

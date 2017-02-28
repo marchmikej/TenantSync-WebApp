@@ -5,9 +5,8 @@ namespace App\Console\Commands;
 use TenantSync\Models\Device;
 use TenantSync\Models\RentBill;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Bus\SelfHandling;
 
-class UpdateDeviceAlarms extends Command implements SelfHandling
+class UpdateDeviceAlarms extends Command
 {
      /**
      * The name and signature of the console command.

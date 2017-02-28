@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -21,31 +21,31 @@ class AuthServiceProvider extends ServiceProvider
      * @param  \Illuminate\Contracts\Auth\Access\Gate  $gate
      * @return void
      */
-    public function boot(GateContract $gate)
+    public function boot()
     {
-        $this->registerPolicies($gate);
+        $this->registerPolicies();
 
-        $gate->define('owned-by-user', function($user, $model) 
+        Gate::define('owned-by-user', function($user, $model) 
         {   
             return $user->owns($model);
         });
 
-        $gate->define('has-transaction', function($user, $transaction) 
+        Gate::define('has-transaction', function($user, $transaction) 
         {   
             return $user->hasTransaction($transaction);
         });
 
-        $gate->define('has-recurring', function($user, $transaction) 
+        Gate::define('has-recurring', function($user, $transaction) 
         {   
             return $user->hasRecurring($transaction);
         });
 
-        $gate->define('has-property', function($user, $property) 
+        Gate::define('has-property', function($user, $property) 
         {   
             return $user->hasProperty($property);
         });
 
-        $gate->define('has-device', function($user, $device) 
+        Gate::define('has-device', function($user, $device) 
         {   
             return $user->hasDevice($device);
         });

@@ -2,6 +2,10 @@
 
 return [
 
+    /**
+     * The Name of your application
+     */
+    'name' => 'TenantSync',
 
     /**
      * Set the environment
@@ -148,15 +152,16 @@ return [
         App\Providers\AppServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
+        Illuminate\Notifications\NotificationServiceProvider::class,
 
         /*
          * Added by Mitch
          */
         App\Providers\AuthServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
         App\Providers\ViewServiceProvider::class,
-        //Barryvdh\Debugbar\ServiceProvider::class,
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
+        //Barryvdh\Debugbar\ServiceProvider::class,
         // Way\Generators\GeneratorsServiceProvider::class,
         // Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
 
@@ -194,6 +199,7 @@ return [
         'Lang'      => Illuminate\Support\Facades\Lang::class,
         'Log'       => Illuminate\Support\Facades\Log::class,
         'Mail'      => Illuminate\Support\Facades\Mail::class,
+        'Notify'    => Illuminate\Support\Facades\Notification::class,
         'Password'  => Illuminate\Support\Facades\Password::class,
         'Queue'     => Illuminate\Support\Facades\Queue::class,
         'Redirect'  => Illuminate\Support\Facades\Redirect::class,

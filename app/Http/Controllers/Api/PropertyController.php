@@ -91,12 +91,14 @@ class PropertyController extends Controller
     public function update(CreatePropertyRequest $request, $id)
     {
         $property = Property::find($id);
+        
         if(Gate::denies('has-property', $property))
         {
             return abort(403, "Thats not yours!");
         }
 
         $property->update(\Request::except('_token'));
+
         return $property;
     }
 

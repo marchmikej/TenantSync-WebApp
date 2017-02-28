@@ -6,10 +6,11 @@
     "type": "project",
     "require": {
         "php": ">=5.5.9",
-        "laravel/framework": "5.2.*",
+        "laravel/framework": "5.3.*",
         "barryvdh/laravel-debugbar": "^2.1",
         "guzzlehttp/guzzle": "~5.3|~6.0",
-        "laracasts/utilities": "~2.0"
+        "laracasts/utilities": "~2.0",
+        "pusher/pusher-php-server": "^2.6"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -18,8 +19,8 @@
         "phpspec/phpspec": "~2.1",
         "xethron/migrations-generator": "dev-l5",
         "way/generators": "dev-feature/laravel-five-stable",
-        "symfony/dom-crawler": "~3.0",
-        "symfony/css-selector": "~3.0"
+        "symfony/dom-crawler": "~3.1.0",
+        "symfony/css-selector": "~3.1.0"
     },
     "repositories": [
         {

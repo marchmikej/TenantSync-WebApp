@@ -1,5 +1,8 @@
 <?php 
 
+Auth::routes();
+Route::get('/logout', 'Auth\LoginController@logout'); 
+
 Route::get('test', 'HomeController@test');
 
 Route::get('/', 'HomeController@index');
