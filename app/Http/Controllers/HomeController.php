@@ -36,7 +36,9 @@ class HomeController extends Controller {
 	public function sales()
 	{
 		$landlords = User::where(['role' => 'landlord'])->get();
+
 		$devices = Device::all();
+		
 		return view('TenantSync::sales.index', compact('landlords', 'devices'));
 	}
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
@@ -51,10 +52,10 @@ class LoginController extends Controller
         return $response;
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         \Auth::user()->recordLogout();
 
-        return $this->coreLogout();
+        return $this->coreLogout($request);
     }
 }

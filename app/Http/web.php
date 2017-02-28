@@ -24,17 +24,17 @@ Route::post('device-api/loginapp', 'Api\PhoneAppController@isUser');
 Route::post('device-api/verifyupgrade', 'Api\DeviceApiController@verifyUpgrade');
 
 // Password reset Routes
-Route::get('/rpasswordeset/{token}', '\App\Http\Controllers\Auth\PasswordController@getReset');
-Route::post('password/reset', '\App\Http\Controllers\Auth\PasswordController@postReset');
-Route::get('password/email', '\App\Http\Controllers\Auth\PasswordController@getEmail');
-Route::post('password/email', '\App\Http\Controllers\Auth\PasswordController@postEmail');
+Route::get('/reset/{token}', '\App\Http\Controllers\Auth\PasswordController@showLinkResetForm');
+Route::post('password/reset', '\App\Http\Controllers\Auth\PasswordController@sendResetLinkEmail');
+Route::get('password/email', '\App\Http\Controllers\Auth\PasswordController@showResetForm');
+Route::post('password/email', '\App\Http\Controllers\Auth\PasswordController@reset');
 
 // Auth Routes
-Route::get('login', '\App\Http\Controllers\Auth\AuthController@getLogin');
-Route::post('login', '\App\Http\Controllers\Auth\AuthController@postLogin');
+Route::get('login', '\App\Http\Controllers\Auth\LoginController@showLoginForm');
+Route::post('login', '\App\Http\Controllers\Auth\LoginController@login');
 Route::get('auth/login/{routing_id?}', 'HomeController@index');
-Route::post('auth/login/{routing_id?}', '\App\Http\Controllers\Auth\AuthController@postLogin');
-Route::get('logout', '\App\Http\Controllers\Auth\AuthController@getLogout');
+Route::post('auth/login/{routing_id?}', '\App\Http\Controllers\Auth\LoginController@login');
+Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 
 Route::group(['middleware' => ['auth']], function()
 {
